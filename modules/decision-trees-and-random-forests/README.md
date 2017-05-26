@@ -1,4 +1,4 @@
 # Decision Trees and Random Forests
 
-* Author: Sudhakaran Prabakaran *
+**Author: Sudhakaran Prabakaran**
 

@@ -1,5 +1,5 @@
 # Dimensionality Reduction
 
-* Author: Chris Penfold *
+**Author: Chris Penfold**
 
 

@@ -1,5 +1,5 @@
 # Support Vector Machines
 
-* Author: Matt Wayland *
+**Author: Matt Wayland**
 
 

@@ -1,5 +1,5 @@
 # Artificial Neural Networks
 
-* Author: Sudhakaran Prabakaran *
+**Author: Sudhakaran Prabakaran**
 
 
