@@ -1,5 +1,0 @@
-# Clustering
-
-**Author: Matt Wayland**
-
-
