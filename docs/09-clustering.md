@@ -2,28 +2,33 @@
 
 <!-- Matt -->
 
+<!-- http://www.madgroup.path.cam.ac.uk/microarraysummary.shtml -->
+
 ## Types of cluster
 
 
 
 ## Clustering algorithms
 
-### K-means clustering
+### K-means
 
 Pseudocode
-```
-randomly choose k examples as initial centroids
-while true:
-  1) create k clusters by assigning each example to closest centroid
-  2) compute k new centroids by averaging the examples in each cluster
-  3) if none of the centroids differ from the previous iteration:
-      return the current set of clusters
-```
+
+### DBSCAN
+Density-based spatial clustering of applications with noise
+
+### OPTICS
+Ordering points to identify the clustering structure
+
 
 ## Visualization
+Dendrogram
 
+Heatmap
 
 ## Examples
+
+### Image segmentation
 
 
 
