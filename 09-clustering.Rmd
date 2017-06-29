@@ -10,15 +10,24 @@
 
 ## Clustering algorithms
 
+## Distance metrics
+
+\begin{equation} 
+  f\left(k\right) = \binom{n}{k} p^k\left(1-p\right)^{n-k}
+  (\#eq:binom)
+\end{equation} 
+
+\begin{equation}
+  \sum_{i=1}^{n} X^3_i
+  (\#eq:minkowski)
+\end{equation}
+
 ### K-means
 
 Pseudocode
 
 ### DBSCAN
 Density-based spatial clustering of applications with noise
-
-### OPTICS
-Ordering points to identify the clustering structure
 
 
 ## Visualization
@@ -30,6 +39,7 @@ Heatmap
 
 ### Image segmentation
 
+### Quality control
 
 
 ## Summary
@@ -44,4 +54,8 @@ Heatmap
 ## Exercises
 
 
+\@ref(solutions-clustering)
+
 ## Extended exercises
+
+
