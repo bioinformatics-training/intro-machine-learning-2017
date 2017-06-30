@@ -7,20 +7,17 @@
 ## Types of cluster
 
 
+## Distance metrics
+
+
+**Minkowski distance:**
+\begin{equation}
+  distance\left(x,y,p\right)=\left(\sum_{i=1}^{n} abs(x_i-y_i)^p\right)^{1/p}
+  (\#eq:minkowski)
+\end{equation}
 
 ## Clustering algorithms
 
-## Distance metrics
-
-\begin{equation} 
-  f\left(k\right) = \binom{n}{k} p^k\left(1-p\right)^{n-k}
-  (\#eq:binom)
-\end{equation} 
-
-\begin{equation}
-  \sum_{i=1}^{n} X^3_i
-  (\#eq:minkowski)
-\end{equation}
 
 ### K-means
 
@@ -54,7 +51,7 @@ Heatmap
 ## Exercises
 
 
-\@ref(solutions-clustering)
+Exercise solutions: \@ref(solutions-clustering)
 
 ## Extended exercises
 
