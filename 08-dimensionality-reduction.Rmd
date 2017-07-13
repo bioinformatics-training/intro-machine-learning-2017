@@ -2,3 +2,14 @@
 
 <!-- Chris -->
 
+## Linear Dimensionality Reduction
+
+### Principle Component Analysis
+
+### Horeshoe effect
+
+## Nonlinear Dimensionality Reduction
+
+### Gaussian Process Latent Variable Models
+
+### GPLVMs with informative priors
