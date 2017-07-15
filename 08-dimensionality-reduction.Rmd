@@ -10,6 +10,8 @@
 
 ## Nonlinear Dimensionality Reduction
 
+### t-SNE
+
 ### Gaussian Process Latent Variable Models
 
 ### GPLVMs with informative priors
