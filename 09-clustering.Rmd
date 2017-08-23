@@ -4,8 +4,36 @@
 
 <!-- http://www.madgroup.path.cam.ac.uk/microarraysummary.shtml -->
 
+## Introduction
+
 ## Types of cluster
 
+```{r clusterTypes, fig.cap='Example clusters', out.width='80%', fig.asp=.9, fig.align='center', echo=F}
+library(ggplot2)
+library(GGally)
+
+blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
+aggregation <- read.table("data/example_clusters/aggregation.txt")
+noisyMoons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+noisyCircles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+d31 <- read.table("data/example_clusters/D31.txt")
+noStructure <- read.csv("data/example_clusters/no_structure.csv", header=F)
+
+plotList <- list(
+qplot(x=V1, y=V2, data=blobs, geom="point", size=I(0.2)),
+qplot(x=V1, y=V2, data=aggregation, geom="point", size=I(0.2)),
+qplot(x=V1, y=V2, data=noisyMoons, geom="point", size=I(0.2)),
+qplot(x=V1, y=V2, data=noisyCircles, geom="point", size=I(0.2)),
+qplot(x=V1, y=V2, data=d31, geom="point", size=I(0.2)),
+qplot(x=V1, y=V2, data=noStructure, geom="point", size=I(0.2))
+)
+
+pm <- ggmatrix(
+  plotList, nrow=3, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F
+) + theme_bw()
+
+pm
+```
 
 ## Distance metrics
 

@@ -4,8 +4,14 @@
 
 <!-- http://www.madgroup.path.cam.ac.uk/microarraysummary.shtml -->
 
+## Introduction
+
 ## Types of cluster
 
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters" width="80%" />
+<p class="caption">(\#fig:clusterTypes)Example clusters</p>
+</div>
 
 ## Distance metrics
 

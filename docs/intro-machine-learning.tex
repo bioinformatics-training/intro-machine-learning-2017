@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-06-30}
+  \date{2017-08-23}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -244,6 +244,13 @@ Chapter \ref{methods}.
 Figures and tables with captions will be placed in \texttt{figure} and
 \texttt{table} environments, respectively.
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{, }\DecValTok{4}\NormalTok{, .}\DecValTok{1}\NormalTok{, .}\DecValTok{1}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(pressure, }\DataTypeTok{type =} \StringTok{'b'}\NormalTok{, }\DataTypeTok{pch =} \DecValTok{19}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.8\linewidth]{01-intro_files/figure-latex/nice-fig-1} 
@@ -322,6 +329,25 @@ forests}\label{decision-trees-and-random-forests}
 \chapter{Artificial neural networks}\label{artificial-neural-networks}
 
 \chapter{Dimensionality reduction}\label{dimensionality-reduction}
+
+\section{Linear Dimensionality
+Reduction}\label{linear-dimensionality-reduction}
+
+\subsection{Principle Component
+Analysis}\label{principle-component-analysis}
+
+\subsection{Horeshoe effect}\label{horeshoe-effect}
+
+\section{Nonlinear Dimensionality
+Reduction}\label{nonlinear-dimensionality-reduction}
+
+\subsection{t-SNE}\label{t-sne}
+
+\subsection{Gaussian Process Latent Variable
+Models}\label{gaussian-process-latent-variable-models}
+
+\subsection{GPLVMs with informative
+priors}\label{gplvms-with-informative-priors}
 
 \chapter{Clustering}\label{clustering}
 
