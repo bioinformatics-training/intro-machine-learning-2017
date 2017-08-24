@@ -22,10 +22,10 @@
   <meta name="twitter:description" content="Course materials for An Introduction to Machine Learning" />
   <meta name="twitter:image" content="figures/cover_image.png" />
 
-<meta name="author" content="Sudhakaran Prabakaran, Matthew Wayland and Christopher Penfold">
+<meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-08-23">
+<meta name="date" content="2017-08-24">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -137,14 +137,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.1" data-path="clustering.html"><a href="clustering.html#introduction"><i class="fa fa-check"></i><b>10.1</b> Introduction</a></li>
 <li class="chapter" data-level="10.2" data-path="clustering.html"><a href="clustering.html#types-of-cluster"><i class="fa fa-check"></i><b>10.2</b> Types of cluster</a></li>
 <li class="chapter" data-level="10.3" data-path="clustering.html"><a href="clustering.html#distance-metrics"><i class="fa fa-check"></i><b>10.3</b> Distance metrics</a></li>
-<li class="chapter" data-level="10.4" data-path="clustering.html"><a href="clustering.html#clustering-algorithms"><i class="fa fa-check"></i><b>10.4</b> Clustering algorithms</a><ul>
-<li class="chapter" data-level="10.4.1" data-path="clustering.html"><a href="clustering.html#k-means"><i class="fa fa-check"></i><b>10.4.1</b> K-means</a></li>
-<li class="chapter" data-level="10.4.2" data-path="clustering.html"><a href="clustering.html#dbscan"><i class="fa fa-check"></i><b>10.4.2</b> DBSCAN</a></li>
+<li class="chapter" data-level="10.4" data-path="clustering.html"><a href="clustering.html#k-means"><i class="fa fa-check"></i><b>10.4</b> K-means</a><ul>
+<li class="chapter" data-level="10.4.1" data-path="clustering.html"><a href="clustering.html#image-segmentation"><i class="fa fa-check"></i><b>10.4.1</b> Image segmentation</a></li>
 </ul></li>
-<li class="chapter" data-level="10.5" data-path="clustering.html"><a href="clustering.html#visualization"><i class="fa fa-check"></i><b>10.5</b> Visualization</a></li>
-<li class="chapter" data-level="10.6" data-path="clustering.html"><a href="clustering.html#examples"><i class="fa fa-check"></i><b>10.6</b> Examples</a><ul>
-<li class="chapter" data-level="10.6.1" data-path="clustering.html"><a href="clustering.html#image-segmentation"><i class="fa fa-check"></i><b>10.6.1</b> Image segmentation</a></li>
-<li class="chapter" data-level="10.6.2" data-path="clustering.html"><a href="clustering.html#quality-control"><i class="fa fa-check"></i><b>10.6.2</b> Quality control</a></li>
+<li class="chapter" data-level="10.5" data-path="clustering.html"><a href="clustering.html#hierarchic-methods"><i class="fa fa-check"></i><b>10.5</b> Hierarchic methods</a><ul>
+<li class="chapter" data-level="10.5.1" data-path="clustering.html"><a href="clustering.html#linkage-algorithms"><i class="fa fa-check"></i><b>10.5.1</b> Linkage algorithms</a></li>
+<li class="chapter" data-level="10.5.2" data-path="clustering.html"><a href="clustering.html#quality-control"><i class="fa fa-check"></i><b>10.5.2</b> Quality control</a></li>
+</ul></li>
+<li class="chapter" data-level="10.6" data-path="clustering.html"><a href="clustering.html#dbscan"><i class="fa fa-check"></i><b>10.6</b> DBSCAN</a><ul>
+<li class="chapter" data-level="10.6.1" data-path="clustering.html"><a href="clustering.html#gene-expression"><i class="fa fa-check"></i><b>10.6.1</b> Gene expression</a></li>
 </ul></li>
 <li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#summary"><i class="fa fa-check"></i><b>10.7</b> Summary</a><ul>
 <li class="chapter" data-level="10.7.1" data-path="clustering.html"><a href="clustering.html#applications"><i class="fa fa-check"></i><b>10.7.1</b> Applications</a></li>
@@ -214,29 +215,115 @@ Figure 10.1: Example clusters
   \tag{10.1}
 \end{equation}\]</span>
 </div>
-<div id="clustering-algorithms" class="section level2">
-<h2><span class="header-section-number">10.4</span> Clustering algorithms</h2>
-<div id="k-means" class="section level3">
-<h3><span class="header-section-number">10.4.1</span> K-means</h3>
+<div id="k-means" class="section level2">
+<h2><span class="header-section-number">10.4</span> K-means</h2>
 <p>Pseudocode</p>
-</div>
-<div id="dbscan" class="section level3">
-<h3><span class="header-section-number">10.4.2</span> DBSCAN</h3>
-<p>Density-based spatial clustering of applications with noise</p>
-</div>
-</div>
-<div id="visualization" class="section level2">
-<h2><span class="header-section-number">10.5</span> Visualization</h2>
-<p>Dendrogram</p>
-<p>Heatmap</p>
-</div>
-<div id="examples" class="section level2">
-<h2><span class="header-section-number">10.6</span> Examples</h2>
+<p>to illustrate range of different types of data that can be clustered - image segmentation</p>
 <div id="image-segmentation" class="section level3">
-<h3><span class="header-section-number">10.6.1</span> Image segmentation</h3>
+<h3><span class="header-section-number">10.4.1</span> Image segmentation</h3>
+</div>
+</div>
+<div id="hierarchic-methods" class="section level2">
+<h2><span class="header-section-number">10.5</span> Hierarchic methods</h2>
+<table>
+<caption><span id="tab:distance-matrix">Table 10.1: </span>Example distance matrix</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">A</th>
+<th align="left">B</th>
+<th align="left">C</th>
+<th align="left">D</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>B</td>
+<td align="left">2</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td>C</td>
+<td align="left">6</td>
+<td align="left">5</td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td>D</td>
+<td align="left">10</td>
+<td align="left">10</td>
+<td align="left">5</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td>E</td>
+<td align="left">9</td>
+<td align="left">8</td>
+<td align="left">3</td>
+<td align="left">4</td>
+</tr>
+</tbody>
+</table>
+<div id="linkage-algorithms" class="section level3">
+<h3><span class="header-section-number">10.5.1</span> Linkage algorithms</h3>
+<div id="single-linkage" class="section level4">
+<h4><span class="header-section-number">10.5.1.1</span> Single linkage</h4>
+<p>nearest neighbours linkage</p>
+<table>
+<caption><span id="tab:single-merge">Table 10.2: </span>Merge distances for single linkage.</caption>
+<thead>
+<tr class="header">
+<th align="left">Distance</th>
+<th align="left">Groups</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="left">A,B,C,D,E</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">(A,B),C,D,E</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">(A,B),(C,E),D</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">(A,B)(C,D,E)</td>
+</tr>
+<tr class="odd">
+<td align="left">5</td>
+<td align="left">(A,B,C,D,E)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="complete-linkage" class="section level4">
+<h4><span class="header-section-number">10.5.1.2</span> Complete linkage</h4>
+<p>furthest neighbours</p>
+</div>
+<div id="average-linkage" class="section level4">
+<h4><span class="header-section-number">10.5.1.3</span> Average linkage</h4>
+<p>UPGMA (Unweighted Pair Group Method with Arithmetic Mean)</p>
+</div>
 </div>
 <div id="quality-control" class="section level3">
-<h3><span class="header-section-number">10.6.2</span> Quality control</h3>
+<h3><span class="header-section-number">10.5.2</span> Quality control</h3>
+<p>could save this example for exercises</p>
+</div>
+</div>
+<div id="dbscan" class="section level2">
+<h2><span class="header-section-number">10.6</span> DBSCAN</h2>
+<p>Density-based spatial clustering of applications with noise</p>
+<div id="gene-expression" class="section level3">
+<h3><span class="header-section-number">10.6.1</span> Gene expression</h3>
+<p>tissue types?</p>
 </div>
 </div>
 <div id="summary" class="section level2">

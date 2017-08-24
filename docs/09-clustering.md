@@ -22,27 +22,68 @@
   (\#eq:minkowski)
 \end{equation}
 
-## Clustering algorithms
-
-
-### K-means
+## K-means
 
 Pseudocode
 
-### DBSCAN
-Density-based spatial clustering of applications with noise
-
-
-## Visualization
-Dendrogram
-
-Heatmap
-
-## Examples
+to illustrate range of different types of data that can be clustered - image segmentation
 
 ### Image segmentation
 
+
+
+## Hierarchic methods
+
+
+
+
+Table: (\#tab:distance-matrix)Example distance matrix
+
+     A    B    C    D  
+---  ---  ---  ---  ---
+B    2                 
+C    6    5            
+D    10   10   5       
+E    9    8    3    4  
+
+### Linkage algorithms
+
+#### Single linkage
+nearest  neighbours linkage
+
+
+
+Table: (\#tab:single-merge)Merge distances for single linkage.
+
+Distance   Groups        
+---------  --------------
+0          A,B,C,D,E     
+2          (A,B),C,D,E   
+3          (A,B),(C,E),D 
+4          (A,B)(C,D,E)  
+5          (A,B,C,D,E)   
+
+
+#### Complete linkage
+furthest neighbours
+
+
+
+
+#### Average linkage
+UPGMA (Unweighted Pair Group Method with Arithmetic Mean) 
+
+
+
+
 ### Quality control
+could save this example for exercises
+
+## DBSCAN
+Density-based spatial clustering of applications with noise
+
+### Gene expression
+tissue types?
 
 
 ## Summary

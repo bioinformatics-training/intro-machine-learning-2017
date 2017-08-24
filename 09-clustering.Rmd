@@ -20,12 +20,30 @@ d31 <- read.table("data/example_clusters/D31.txt")
 noStructure <- read.csv("data/example_clusters/no_structure.csv", header=F)
 
 plotList <- list(
-qplot(x=V1, y=V2, data=blobs, geom="point", size=I(0.2)),
-qplot(x=V1, y=V2, data=aggregation, geom="point", size=I(0.2)),
-qplot(x=V1, y=V2, data=noisyMoons, geom="point", size=I(0.2)),
-qplot(x=V1, y=V2, data=noisyCircles, geom="point", size=I(0.2)),
-qplot(x=V1, y=V2, data=d31, geom="point", size=I(0.2)),
-qplot(x=V1, y=V2, data=noStructure, geom="point", size=I(0.2))
+qplot(x=V1, y=V2, data=blobs, geom="point", size=I(0.2)) + annotate("text",
+                                                                    x=(0.01 * (max(blobs$V1)-min(blobs$V1))) + min(blobs$V1), 
+                                                                    y=(0.9 * (max(blobs$V2)-min(blobs$V2))) + min(blobs$V2), 
+                                                                    label ="A", size=8, col="blue"),
+qplot(x=V1, y=V2, data=aggregation, geom="point", size=I(0.2)) + annotate("text",
+                                                                          x=(0.01 * (max(aggregation$V1)-min(aggregation$V1))) + min(aggregation$V1), 
+                                                                          y=(0.9 * (max(aggregation$V2)-min(aggregation$V2))) + min(aggregation$V2), 
+                                                                          label="B", size=8, col="blue"),
+qplot(x=V1, y=V2, data=noisyMoons, geom="point", size=I(0.2)) + annotate("text",
+                                                                         x=(0.01 * (max(noisyMoons$V1)-min(noisyMoons$V1))) + min(noisyMoons$V1),
+                                                                         y=(0.9 * (max(noisyMoons$V2)-min(noisyMoons$V2))) + min(noisyMoons$V2),
+                                                                         label="C", size=8, col="blue"),
+qplot(x=V1, y=V2, data=noisyCircles, geom="point", size=I(0.2)) + annotate("text",
+                                                                           x=(0.01 * (max(noisyCircles$V1)-min(noisyCircles$V1))) + min(noisyCircles$V1),
+                                                                           y=(0.9 * (max(noisyCircles$V2)-min(noisyCircles$V2))) + min(noisyCircles$V2),
+                                                                           label="D", size=8, col="blue"),
+qplot(x=V1, y=V2, data=d31, geom="point", size=I(0.2)) + annotate("text",
+                                                                  x=(0.01 * (max(d31$V1)-min(d31$V1))) + min(d31$V1),
+                                                                  y=(0.9 * (max(d31$V2)-min(d31$V2))) + min(d31$V2),
+                                                                  label="E", size=8, col="blue"),
+qplot(x=V1, y=V2, data=noStructure, geom="point", size=I(0.2)) + annotate("text",
+                                                                         x=(0.01 * (max(noStructure$V1)-min(noStructure$V1))) + min(noStructure$V1),
+                                                                         y=(0.9 * (max(noStructure$V2)-min(noStructure$V2))) + min(noStructure$V2),
+                                                                         label="F", size=8, col="blue")
 )
 
 pm <- ggmatrix(
@@ -44,27 +62,94 @@ pm
   (\#eq:minkowski)
 \end{equation}
 
-## Clustering algorithms
-
-
-### K-means
+## K-means
 
 Pseudocode
 
-### DBSCAN
-Density-based spatial clustering of applications with noise
-
-
-## Visualization
-Dendrogram
-
-Heatmap
-
-## Examples
+to illustrate range of different types of data that can be clustered - image segmentation
 
 ### Image segmentation
 
+
+
+## Hierarchic methods
+
+```{r echo=F}
+m <- matrix(c(rep(NA,5),
+       2,rep(NA,4),
+       6,5,rep(NA,3),
+       10,10,5,rep(NA,2),
+       9,8,3,4,NA),ncol=5,byrow=T,
+       dimnames=list(LETTERS[1:5], LETTERS[1:5])
+)
+
+mDisplay <- matrix(c(
+       2,rep("",3),
+       6,5,rep("",2),
+       10,10,5,rep("",1),
+       9,8,3,4),ncol=4,byrow=T,
+       dimnames=list(LETTERS[2:5], LETTERS[1:4])
+)
+
+d <- as.dist(m)
+```
+
+```{r distance-matrix, tidy=FALSE, echo=F}
+knitr::kable(
+  mDisplay, caption = 'Example distance matrix',
+  booktabs = TRUE
+)
+```
+
+### Linkage algorithms
+Make one section
+panel of three dendrograms
+one table
+
+
+#### Single linkage
+nearest  neighbours linkage
+```{r echo=F}
+hclustSingle <- hclust(d, method="single")
+```
+
+```{r single-merge, tidy=FALSE, echo=F}
+Distance <- c(0,hclustSingle$height)
+Groups <- c("A,B,C,D,E", "(A,B),C,D,E", "(A,B),(C,E),D", "(A,B)(C,D,E)", "(A,B,C,D,E)")
+singleMerge <- as.data.frame(cbind(Distance,Groups))
+knitr::kable(
+  singleMerge, caption = 'Merge distances for single linkage.',
+  booktabs = TRUE
+)
+```
+
+
+#### Complete linkage
+furthest neighbours
+```{r echo=F}
+hclustComplete <- hclust(d, method="complete")
+```
+
+```{r complete-merge, tidy=FALSE, echo=F}
+Distance <- c(0,)
+```
+
+#### Average linkage
+UPGMA (Unweighted Pair Group Method with Arithmetic Mean) 
+
+```{r echo=F}
+hclustAverage <- hclust(d, method="average")
+```
+
+
 ### Quality control
+could save this example for exercises
+
+## DBSCAN
+Density-based spatial clustering of applications with noise
+
+### Gene expression
+tissue types?
 
 
 ## Summary
