@@ -25,7 +25,7 @@
 \usepackage{hyperref}
 \hypersetup{unicode=true,
             pdftitle={An Introduction to Machine Learning},
-            pdfauthor={Sudhakaran Prabakaran, Matthew Wayland and Christopher Penfold},
+            pdfauthor={Sudhakaran Prabakaran, Matt Wayland and Chris Penfold},
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
@@ -119,12 +119,12 @@
   \title{An Introduction to Machine Learning}
   \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-  \author{Sudhakaran Prabakaran, Matthew Wayland and Christopher Penfold}
+  \author{Sudhakaran Prabakaran, Matt Wayland and Chris Penfold}
   \preauthor{\centering\large\emph}
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-08-23}
+  \date{2017-08-24}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -351,7 +351,18 @@ priors}\label{gplvms-with-informative-priors}
 
 \chapter{Clustering}\label{clustering}
 
+\section{Introduction}\label{introduction}
+
 \section{Types of cluster}\label{types-of-cluster}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/clusterTypes-1} 
+
+}
+
+\caption{Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.}\label{fig:clusterTypes}
+\end{figure}
 
 \section{Distance metrics}\label{distance-metrics}
 
@@ -362,27 +373,69 @@ priors}\label{gplvms-with-informative-priors}
   \label{eq:minkowski}
 \end{equation}
 
-\section{Clustering algorithms}\label{clustering-algorithms}
-
-\subsection{K-means}\label{k-means}
+\section{K-means}\label{k-means}
 
 Pseudocode
 
-\subsection{DBSCAN}\label{dbscan}
-
-Density-based spatial clustering of applications with noise
-
-\section{Visualization}\label{visualization}
-
-Dendrogram
-
-Heatmap
-
-\section{Examples}\label{examples}
+to illustrate range of different types of data that can be clustered -
+image segmentation
 
 \subsection{Image segmentation}\label{image-segmentation}
 
+\section{Hierarchic methods}\label{hierarchic-methods}
+
+\begin{table}
+
+\caption{\label{tab:distance-matrix}Example distance matrix}
+\centering
+\begin{tabular}[t]{lllll}
+\toprule
+  & A & B & C & D\\
+\midrule
+B & 2 &  &  & \\
+C & 6 & 5 &  & \\
+D & 10 & 10 & 5 & \\
+E & 9 & 8 & 3 & 4\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Linkage algorithms}\label{linkage-algorithms}
+
+Make one section panel of three dendrograms one table
+
+Single linkage - nearest neighbours linkage Complete linkage - furthest
+neighbours linkage Average linkage - UPGMA (Unweighted Pair Group Method
+with Arithmetic Mean)
+
+\begin{table}
+
+\caption{\label{tab:single-merge}Merge distances for objects in the example distance matrix using three different linkage methods.}
+\centering
+\begin{tabular}[t]{llll}
+\toprule
+Groups & Single & Complete & Average\\
+\midrule
+A,B,C,D,E & 0 & 0 & 0\\
+(A,B),C,D,E & 2 & 2 & 2\\
+(A,B),(C,E),D & 3 & 3 & 3\\
+(A,B)(C,D,E) & 4 & 5 & 4.5\\
+(A,B,C,D,E) & 5 & 10 & 8\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Quality control}\label{quality-control}
+
+could save this example for exercises
+
+\section{DBSCAN}\label{dbscan}
+
+Density-based spatial clustering of applications with noise
+
+\subsection{Gene expression}\label{gene-expression}
+
+tissue types?
 
 \section{Summary}\label{summary}
 

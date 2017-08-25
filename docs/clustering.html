@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-08-24">
+<meta name="date" content="2017-08-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -201,9 +201,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="types-of-cluster" class="section level2">
 <h2><span class="header-section-number">10.2</span> Types of cluster</h2>
 <div class="figure" style="text-align: center"><span id="fig:clusterTypes"></span>
-<img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters" width="80%" />
+<img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*." width="80%" />
 <p class="caption">
-Figure 10.1: Example clusters
+Figure 10.1: Example clusters. <strong>A</strong>, <em>blobs</em>; <strong>B</strong>, <em>aggregation</em> <span class="citation">(Gionis, Mannila, and Tsaparas <a href="#ref-Gionis2007">2007</a>)</span>; <strong>C</strong>, <em>noisy moons</em>; <strong>D</strong>, <em>noisy circles</em>; <strong>E</strong>, <em>D31</em> <span class="citation">(Veenman, Reinders, and Backer <a href="#ref-Veenman2002">2002</a>)</span>; <strong>F</strong>, <em>no structure</em>.
 </p>
 </div>
 </div>
@@ -269,48 +269,56 @@ Figure 10.1: Example clusters
 </table>
 <div id="linkage-algorithms" class="section level3">
 <h3><span class="header-section-number">10.5.1</span> Linkage algorithms</h3>
-<div id="single-linkage" class="section level4">
-<h4><span class="header-section-number">10.5.1.1</span> Single linkage</h4>
-<p>nearest neighbours linkage</p>
+<p>Make one section panel of three dendrograms one table</p>
+<p>Single linkage - nearest neighbours linkage Complete linkage - furthest neighbours linkage Average linkage - UPGMA (Unweighted Pair Group Method with Arithmetic Mean)</p>
 <table>
-<caption><span id="tab:single-merge">Table 10.2: </span>Merge distances for single linkage.</caption>
+<caption><span id="tab:distance-merge">Table 10.2: </span>Merge distances for objects in the example distance matrix using three different linkage methods.</caption>
 <thead>
 <tr class="header">
-<th align="left">Distance</th>
 <th align="left">Groups</th>
+<th align="left">Single</th>
+<th align="left">Complete</th>
+<th align="left">Average</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">0</td>
 <td align="left">A,B,C,D,E</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
 </tr>
 <tr class="even">
-<td align="left">2</td>
 <td align="left">(A,B),C,D,E</td>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">2</td>
 </tr>
 <tr class="odd">
-<td align="left">3</td>
 <td align="left">(A,B),(C,E),D</td>
+<td align="left">3</td>
+<td align="left">3</td>
+<td align="left">3</td>
 </tr>
 <tr class="even">
-<td align="left">4</td>
 <td align="left">(A,B)(C,D,E)</td>
+<td align="left">4</td>
+<td align="left">5</td>
+<td align="left">4.5</td>
 </tr>
 <tr class="odd">
-<td align="left">5</td>
 <td align="left">(A,B,C,D,E)</td>
+<td align="left">5</td>
+<td align="left">10</td>
+<td align="left">8</td>
 </tr>
 </tbody>
 </table>
-</div>
-<div id="complete-linkage" class="section level4">
-<h4><span class="header-section-number">10.5.1.2</span> Complete linkage</h4>
-<p>furthest neighbours</p>
-</div>
-<div id="average-linkage" class="section level4">
-<h4><span class="header-section-number">10.5.1.3</span> Average linkage</h4>
-<p>UPGMA (Unweighted Pair Group Method with Arithmetic Mean)</p>
+<div class="figure" style="text-align: center"><span id="fig:linkageComparison"></span>
+<img src="09-clustering_files/figure-html/linkageComparison-1.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-2.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-3.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" />
+<p class="caption">
+Figure 10.2: Dendrograms for the example distance matrix using three different linkage methods.
+</p>
 </div>
 </div>
 <div id="quality-control" class="section level3">
@@ -350,6 +358,15 @@ Figure 10.1: Example clusters
 
 
 
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Gionis2007">
+<p>Gionis, A., H. Mannila, and P. Tsaparas. 2007. “Clustering aggregation.” <em>ACM Transactions on Knowledge Discovery from Data (TKDD)</em> 1 (1): 1–30.</p>
+</div>
+<div id="ref-Veenman2002">
+<p>Veenman, C.J., M.J.T. Reinders, and E. Backer. 2002. “A maximum variance cluster algorithm.” <em>IEEE Trans. Pattern Analysis and Machine Intelligence</em> 24 (9): 1273–80.</p>
+</div>
+</div>
             </section>
 
           </div>

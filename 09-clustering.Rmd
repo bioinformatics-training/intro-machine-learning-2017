@@ -8,7 +8,7 @@
 
 ## Types of cluster
 
-```{r clusterTypes, fig.cap='Example clusters', out.width='80%', fig.asp=.9, fig.align='center', echo=F}
+```{r clusterTypes, fig.cap='Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.', out.width='80%', fig.asp=.9, fig.align='center', echo=F}
 library(ggplot2)
 library(GGally)
 
@@ -106,40 +106,84 @@ Make one section
 panel of three dendrograms
 one table
 
+Single linkage - nearest neighbours linkage
+Complete linkage - furthest neighbours linkage
+Average linkage - UPGMA (Unweighted Pair Group Method with Arithmetic Mean) 
 
-#### Single linkage
-nearest  neighbours linkage
 ```{r echo=F}
 hclustSingle <- hclust(d, method="single")
-```
-
-```{r single-merge, tidy=FALSE, echo=F}
-Distance <- c(0,hclustSingle$height)
-Groups <- c("A,B,C,D,E", "(A,B),C,D,E", "(A,B),(C,E),D", "(A,B)(C,D,E)", "(A,B,C,D,E)")
-singleMerge <- as.data.frame(cbind(Distance,Groups))
-knitr::kable(
-  singleMerge, caption = 'Merge distances for single linkage.',
-  booktabs = TRUE
-)
-```
-
-
-#### Complete linkage
-furthest neighbours
-```{r echo=F}
 hclustComplete <- hclust(d, method="complete")
-```
-
-```{r complete-merge, tidy=FALSE, echo=F}
-Distance <- c(0,)
-```
-
-#### Average linkage
-UPGMA (Unweighted Pair Group Method with Arithmetic Mean) 
-
-```{r echo=F}
 hclustAverage <- hclust(d, method="average")
 ```
+
+
+
+```{r distance-merge, tidy=FALSE, echo=F}
+Single <- c(0,hclustSingle$height)
+Complete <- c(0,hclustComplete$height)
+Average <- c(0,hclustAverage$height)
+Groups <- c("A,B,C,D,E", "(A,B),C,D,E", "(A,B),(C,E),D", "(A,B)(C,D,E)", "(A,B,C,D,E)")
+distanceMerge <- as.data.frame(cbind(Groups,Single,Complete,Average))
+knitr::kable(
+  distanceMerge, caption = 'Merge distances for objects in the example distance matrix using three different linkage methods.',
+  booktabs = TRUE
+) 
+
+```
+
+```{r linkageComparison, fig.cap='Dendrograms for the example distance matrix using three different linkage methods. ', out.width='100%', fig.asp=0.3, fig.align='center', fig.show='hold',echo=F}
+library(ggdendro)
+
+dend_single <- as.dendrogram(hclustSingle)
+dend_complete <- as.dendrogram(hclustComplete)
+dend_average <- as.dendrogram(hclustAverage)
+
+dd_single <- dendro_data(dend_single, type="rectangle")
+dd_complete <- dendro_data(dend_complete, type="rectangle")
+dd_average <- dendro_data(dend_average, type="rectangle")
+
+p_single <- ggplot(segment(dd_single)) +
+  geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) +
+  coord_flip() +
+  scale_y_reverse(expand=c(0.05,0)) +
+  ggtitle("Single linkage") +
+  geom_text(aes(x = x, y = y, label = label, angle = 0, hjust = -1), data= label(dd_single)) +
+  ylab("Distance") +
+  theme(axis.title.y=element_blank(), 
+        axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank())
+p_single
+
+p_complete <- ggplot(segment(dd_complete)) +
+  geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) +
+  coord_flip() +
+  scale_y_reverse(expand=c(0.05,0)) +
+  ggtitle("Complete linkage") +
+  geom_text(aes(x = x, y = y, label = label, angle = 0, hjust = -1), data= label(dd_complete)) +
+  ylab("Distance") +
+  theme(axis.title.y=element_blank(), 
+        axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank())
+p_complete
+
+p_average <- ggplot(segment(dd_average)) +
+  geom_segment(aes(x=x, y=y, xend=xend, yend=yend)) +
+  coord_flip() +
+  scale_y_reverse(expand=c(0.05,0)) +
+  ggtitle("Average linkage") +
+  geom_text(aes(x = x, y = y, label = label, angle = 0, hjust = -1), data= label(dd_average)) +
+  ylab("Distance") +
+  theme(axis.title.y=element_blank(), 
+        axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank())
+p_average
+
+
+
+
+
+```
+
 
 
 ### Quality control
