@@ -6,6 +6,8 @@
 
 ## Introduction
 
+Hierarchic (produce dendrogram) vs partitioning methods
+
 ## Types of cluster
 
 ```{r clusterTypes, fig.cap='Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.', out.width='80%', fig.asp=.9, fig.align='center', echo=F}
@@ -62,11 +64,8 @@ pm
   (\#eq:minkowski)
 \end{equation}
 
-## K-means
+Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
-Pseudocode
-
-to illustrate range of different types of data that can be clustered - image segmentation
 
 ### Image segmentation
 
@@ -186,8 +185,44 @@ p_average
 
 
 
-### Quality control
-could save this example for exercises
+
+## K-means
+
+Pseudocode
+
+to illustrate range of different types of data that can be clustered - image segmentation
+
+```{r kmeansIterations, fig.cap='K-means iterations', out.width='90%', fig.asp=1.2, fig.align='center',echo=F}
+library(RColorBrewer)
+point_shapes <- c(17,19)
+point_colours <- brewer.pal(3,"Dark2")
+point_size = 4
+center_point_size = 8
+load("data/example_clusters/kmeans_iteration_demo.rda")
+# current_centers=initial_centroids
+
+plotList <- list(
+ ggplot(kmeans_demo_df, aes(V1,V2)) + geom_point(col="grey30", shape=15, size=point_size) + geom_point(data=initial_centroids, aes(V1,V2), shape=3, col="black", size=center_point_size) +theme_bw())
+
+plot_kmeans_result <- function(iterations,dat,centers) {
+  res <- suppressWarnings(kmeans(dat,centers=centers, iter.max=iterations, algorithm="Lloyd"))
+  current_centers <- as.data.frame(res$centers)
+  ggplot(kmeans_demo_df, aes(V1,V2)) + geom_point(col=point_colours[res$cluster], shape=point_shapes[res$cluster], size=point_size) + geom_point(data=current_centers, aes(V1,V2), shape=3, col="black", size=center_point_size) + theme_bw() + 
+    annotate("text", x=-7, y=7, label =paste("Iter.", iterations, sep=" "), size=8, col="black")
+}
+
+plotList <- c(plotList, lapply(c(1,3,2,4), plot_kmeans_result, dat=kmeans_demo_df, centers=initial_centroids))
+
+pm <- ggmatrix(
+  plotList, nrow=3, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F
+) + theme_bw()
+
+pm
+
+```
+
+
+
 
 ## DBSCAN
 Density-based spatial clustering of applications with noise
@@ -204,12 +239,22 @@ tissue types?
 
 ### Limitations
 
+<!--
+Not appropriate for phylogenetic analysis!!
+-->
 
 ## Exercises
+
+<!--
+1. Toy clusters
+2. mouse mammary time-course (kmeans and dbscan)
+3. dimensionality reduction before clustering (helpful for visualization if using a partitioning method) - possibly use parasite data?
+4. exercise involving heatmap
+
+-->
 
 
 Exercise solutions: \@ref(solutions-clustering)
 
-## Extended exercises
 
 

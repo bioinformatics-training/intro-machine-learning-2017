@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-08-25}
+  \date{2017-08-28}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -144,8 +144,11 @@
 \newtheorem{proposition}{Proposition}[chapter]
 \theoremstyle{definition}
 \newtheorem{example}{Example}[chapter]
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}[chapter]
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
+\newtheorem*{solution}{Solution}
 \begin{document}
 \maketitle
 
@@ -353,6 +356,8 @@ priors}\label{gplvms-with-informative-priors}
 
 \section{Introduction}\label{introduction}
 
+Hierarchic (produce dendrogram) vs partitioning methods
+
 \section{Types of cluster}\label{types-of-cluster}
 
 \begin{figure}
@@ -373,12 +378,7 @@ priors}\label{gplvms-with-informative-priors}
   \label{eq:minkowski}
 \end{equation}
 
-\section{K-means}\label{k-means}
-
-Pseudocode
-
-to illustrate range of different types of data that can be clustered -
-image segmentation
+Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
 \subsection{Image segmentation}\label{image-segmentation}
 
@@ -434,9 +434,21 @@ A,B,C,D,E & 0 & 0 & 0\\
 \caption{Dendrograms for the example distance matrix using three different linkage methods. }\label{fig:linkageComparison}
 \end{figure}
 
-\subsection{Quality control}\label{quality-control}
+\section{K-means}\label{k-means}
 
-could save this example for exercises
+Pseudocode
+
+to illustrate range of different types of data that can be clustered -
+image segmentation
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{09-clustering_files/figure-latex/kmeansIterations-1} 
+
+}
+
+\caption{K-means iterations}\label{fig:kmeansIterations}
+\end{figure}
 
 \section{DBSCAN}\label{dbscan}
 
@@ -457,8 +469,6 @@ tissue types?
 \section{Exercises}\label{exercises}
 
 Exercise solutions: \ref{solutions-clustering}
-
-\section{Extended exercises}\label{extended-exercises}
 
 \appendix
 

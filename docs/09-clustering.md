@@ -6,16 +6,14 @@
 
 ## Introduction
 
+Hierarchic (produce dendrogram) vs partitioning methods
+
 ## Types of cluster
 
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/clusterTypes-1} 
-
-}
-
-\caption{Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.}(\#fig:clusterTypes)
-\end{figure}
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*." width="80%" />
+<p class="caption">(\#fig:clusterTypes)Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.</p>
+</div>
 
 ## Distance metrics
 
@@ -26,11 +24,8 @@
   (\#eq:minkowski)
 \end{equation}
 
-## K-means
+Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
-Pseudocode
-
-to illustrate range of different types of data that can be clustered - image segmentation
 
 ### Image segmentation
 
@@ -40,21 +35,15 @@ to illustrate range of different types of data that can be clustered - image seg
 
 
 
-\begin{table}
 
-\caption{(\#tab:distance-matrix)Example distance matrix}
-\centering
-\begin{tabular}[t]{lllll}
-\toprule
-  & A & B & C & D\\
-\midrule
-B & 2 &  &  & \\
-C & 6 & 5 &  & \\
-D & 10 & 10 & 5 & \\
-E & 9 & 8 & 3 & 4\\
-\bottomrule
-\end{tabular}
-\end{table}
+Table: (\#tab:distance-matrix)Example distance matrix
+
+     A    B    C    D  
+---  ---  ---  ---  ---
+B    2                 
+C    6    5            
+D    10   10   5       
+E    9    8    3    4  
 
 ### Linkage algorithms
 Make one section
@@ -69,36 +58,38 @@ Average linkage - UPGMA (Unweighted Pair Group Method with Arithmetic Mean)
 
 
 
-\begin{table}
 
-\caption{(\#tab:distance-merge)Merge distances for objects in the example distance matrix using three different linkage methods.}
-\centering
-\begin{tabular}[t]{llll}
-\toprule
-Groups & Single & Complete & Average\\
-\midrule
-A,B,C,D,E & 0 & 0 & 0\\
-(A,B),C,D,E & 2 & 2 & 2\\
-(A,B),(C,E),D & 3 & 3 & 3\\
-(A,B)(C,D,E) & 4 & 5 & 4.5\\
-(A,B,C,D,E) & 5 & 10 & 8\\
-\bottomrule
-\end{tabular}
-\end{table}
+Table: (\#tab:distance-merge)Merge distances for objects in the example distance matrix using three different linkage methods.
 
-\begin{figure}
+Groups          Single   Complete   Average 
+--------------  -------  ---------  --------
+A,B,C,D,E       0        0          0       
+(A,B),C,D,E     2        2          2       
+(A,B),(C,E),D   3        3          3       
+(A,B)(C,D,E)    4        5          4.5     
+(A,B,C,D,E)     5        10         8       
 
-{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-1} \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-2} \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-3} 
-
-}
-
-\caption{Dendrograms for the example distance matrix using three different linkage methods. }(\#fig:linkageComparison)
-\end{figure}
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/linkageComparison-1.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-2.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-3.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" />
+<p class="caption">(\#fig:linkageComparison)Dendrograms for the example distance matrix using three different linkage methods. </p>
+</div>
 
 
 
-### Quality control
-could save this example for exercises
+
+## K-means
+
+Pseudocode
+
+to illustrate range of different types of data that can be clustered - image segmentation
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/kmeansIterations-1.png" alt="K-means iterations" width="90%" />
+<p class="caption">(\#fig:kmeansIterations)K-means iterations</p>
+</div>
+
+
+
 
 ## DBSCAN
 Density-based spatial clustering of applications with noise
@@ -115,12 +106,22 @@ tissue types?
 
 ### Limitations
 
+<!--
+Not appropriate for phylogenetic analysis!!
+-->
 
 ## Exercises
+
+<!--
+1. Toy clusters
+2. mouse mammary time-course (kmeans and dbscan)
+3. dimensionality reduction before clustering (helpful for visualization if using a partitioning method) - possibly use parasite data?
+4. exercise involving heatmap
+
+-->
 
 
 Exercise solutions: \@ref(solutions-clustering)
 
-## Extended exercises
 
 
