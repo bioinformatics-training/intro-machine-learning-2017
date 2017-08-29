@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-08-28}
+  \date{2017-08-29}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -358,8 +358,6 @@ priors}\label{gplvms-with-informative-priors}
 
 Hierarchic (produce dendrogram) vs partitioning methods
 
-\section{Types of cluster}\label{types-of-cluster}
-
 \begin{figure}
 
 {\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/clusterTypes-1} 
@@ -434,7 +432,212 @@ A,B,C,D,E & 0 & 0 & 0\\
 \caption{Dendrograms for the example distance matrix using three different linkage methods. }\label{fig:linkageComparison}
 \end{figure}
 
-\section{K-means}\label{k-means}
+\subsection{Example: gene expression profiling of human
+tissues}\label{example-gene-expression-profiling-of-human-tissues}
+
+Load required libraries
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(RColorBrewer)}
+\KeywordTok{library}\NormalTok{(dendextend)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## ---------------------
+## Welcome to dendextend version 1.5.2
+## Type citation('dendextend') for how to cite the package.
+## 
+## Type browseVignettes(package = 'dendextend') for the package vignette.
+## The github page is: https://github.com/talgalili/dendextend/
+## 
+## Suggestions and bug-reports can be submitted at: https://github.com/talgalili/dendextend/issues
+## Or contact: <tal.galili@gmail.com>
+## 
+##  To suppress this message use:  suppressPackageStartupMessages(library(dendextend))
+## ---------------------
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dendextend'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:ggdendro':
+## 
+##     theme_dendro
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:stats':
+## 
+##     cutree
+\end{verbatim}
+
+Load data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{load}\NormalTok{(}\StringTok{"data/tissues_gene_expression/tissuesGeneExpression.rda"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Inspect data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{table}\NormalTok{(tissue)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## tissue
+##  cerebellum       colon endometrium hippocampus      kidney       liver 
+##          38          34          15          31          39          26 
+##    placenta 
+##           6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(e)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 22215   189
+\end{verbatim}
+
+Compute distance between each sample
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{d <-}\StringTok{ }\KeywordTok{dist}\NormalTok{(}\KeywordTok{t}\NormalTok{(e))}
+\end{Highlighting}
+\end{Shaded}
+
+perform hierarchical clustering
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hc <-}\StringTok{ }\KeywordTok{hclust}\NormalTok{(d, }\DataTypeTok{method=}\StringTok{"average"}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(hc, }\DataTypeTok{labels=}\NormalTok{tissue, }\DataTypeTok{cex=}\FloatTok{0.5}\NormalTok{, }\DataTypeTok{hang=}\NormalTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{xlab=}\StringTok{""}\NormalTok{, }\DataTypeTok{sub=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogram-1} 
+
+}
+
+\caption{Clustering of tissue samples based on gene expression profiles. }\label{fig:tissueDendrogram}
+\end{figure}
+
+use dendextend library to plot dendrogram with colour labels
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tissue_type <-}\StringTok{ }\KeywordTok{unique}\NormalTok{(tissue)}
+\NormalTok{dend <-}\StringTok{ }\KeywordTok{as.dendrogram}\NormalTok{(hc)}
+\NormalTok{dend_colours <-}\StringTok{ }\KeywordTok{brewer.pal}\NormalTok{(}\KeywordTok{length}\NormalTok{(}\KeywordTok{unique}\NormalTok{(tissue)),}\StringTok{"Dark2"}\NormalTok{)}
+\KeywordTok{names}\NormalTok{(dend_colours) <-}\StringTok{ }\NormalTok{tissue_type}
+\KeywordTok{labels}\NormalTok{(dend) <-}\StringTok{ }\NormalTok{tissue[}\KeywordTok{order.dendrogram}\NormalTok{(dend)]}
+\KeywordTok{labels_colors}\NormalTok{(dend) <-}\StringTok{ }\NormalTok{dend_colours[tissue][}\KeywordTok{order.dendrogram}\NormalTok{(dend)]}
+\KeywordTok{labels_cex}\NormalTok{(dend) =}\StringTok{ }\FloatTok{0.5}
+\KeywordTok{plot}\NormalTok{(dend, }\DataTypeTok{horiz=}\NormalTok{T)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramColour-1} 
+
+}
+
+\caption{Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. }\label{fig:tissueDendrogramColour}
+\end{figure}
+
+Define clusters by cutting tree at a specific height
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(dend, }\DataTypeTok{horiz=}\NormalTok{T)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{v=}\DecValTok{125}\NormalTok{, }\DataTypeTok{lwd=}\DecValTok{2}\NormalTok{, }\DataTypeTok{lty=}\DecValTok{2}\NormalTok{, }\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramCutHeight-1} 
+
+}
+
+\caption{Clusters found by cutting tree at a height of 125}\label{fig:tissueDendrogramCutHeight}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hclusters <-}\StringTok{ }\KeywordTok{cutree}\NormalTok{(dend, }\DataTypeTok{h=}\DecValTok{125}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(tissue, }\DataTypeTok{cluster=}\NormalTok{hclusters)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              cluster
+## tissue         1  2  3  4  5  6
+##   cerebellum   0 36  0  0  2  0
+##   colon        0  0 34  0  0  0
+##   endometrium 15  0  0  0  0  0
+##   hippocampus  0 31  0  0  0  0
+##   kidney      37  0  0  0  2  0
+##   liver        0  0  0 24  2  0
+##   placenta     0  0  0  0  0  6
+\end{verbatim}
+
+Select a specific number of clusters.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(dend, }\DataTypeTok{horiz=}\NormalTok{T)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{v =} \KeywordTok{heights_per_k.dendrogram}\NormalTok{(dend)[}\StringTok{"8"}\NormalTok{], }\DataTypeTok{lwd =} \DecValTok{2}\NormalTok{, }\DataTypeTok{lty =} \DecValTok{2}\NormalTok{, }\DataTypeTok{col =} \StringTok{"blue"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramEightClusters-1} 
+
+}
+
+\caption{Selection of eight clusters from the dendogram}\label{fig:tissueDendrogramEightClusters}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hclusters <-}\StringTok{ }\KeywordTok{cutree}\NormalTok{(dend, }\DataTypeTok{k=}\DecValTok{8}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(tissue, }\DataTypeTok{cluster=}\NormalTok{hclusters)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              cluster
+## tissue         1  2  3  4  5  6  7  8
+##   cerebellum   0 31  0  0  2  0  5  0
+##   colon        0  0 34  0  0  0  0  0
+##   endometrium  0  0  0  0  0 15  0  0
+##   hippocampus  0 31  0  0  0  0  0  0
+##   kidney      37  0  0  0  2  0  0  0
+##   liver        0  0  0 24  2  0  0  0
+##   placenta     0  0  0  0  0  0  0  6
+\end{verbatim}
+
+\section{Partitioning methods}\label{partitioning-methods}
+
+\subsection{K-means}\label{k-means}
 
 Pseudocode
 
@@ -447,10 +650,10 @@ image segmentation
 
 }
 
-\caption{K-means iterations}\label{fig:kmeansIterations}
+\caption{Iterations of the k-means algorithm}\label{fig:kmeansIterations}
 \end{figure}
 
-\section{DBSCAN}\label{dbscan}
+\subsection{DBSCAN}\label{dbscan}
 
 Density-based spatial clustering of applications with noise
 

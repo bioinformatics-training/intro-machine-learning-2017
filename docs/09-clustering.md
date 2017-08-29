@@ -8,12 +8,15 @@
 
 Hierarchic (produce dendrogram) vs partitioning methods
 
-## Types of cluster
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*." width="80%" />
-<p class="caption">(\#fig:clusterTypes)Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.</p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/clusterTypes-1} 
+
+}
+
+\caption{Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.}(\#fig:clusterTypes)
+\end{figure}
 
 ## Distance metrics
 
@@ -35,15 +38,21 @@ Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
 
 
+\begin{table}
 
-Table: (\#tab:distance-matrix)Example distance matrix
-
-     A    B    C    D  
----  ---  ---  ---  ---
-B    2                 
-C    6    5            
-D    10   10   5       
-E    9    8    3    4  
+\caption{(\#tab:distance-matrix)Example distance matrix}
+\centering
+\begin{tabular}[t]{lllll}
+\toprule
+  & A & B & C & D\\
+\midrule
+B & 2 &  &  & \\
+C & 6 & 5 &  & \\
+D & 10 & 10 & 5 & \\
+E & 9 & 8 & 3 & 4\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 ### Linkage algorithms
 Make one section
@@ -58,21 +67,31 @@ Average linkage - UPGMA (Unweighted Pair Group Method with Arithmetic Mean)
 
 
 
+\begin{table}
 
-Table: (\#tab:distance-merge)Merge distances for objects in the example distance matrix using three different linkage methods.
+\caption{(\#tab:distance-merge)Merge distances for objects in the example distance matrix using three different linkage methods.}
+\centering
+\begin{tabular}[t]{llll}
+\toprule
+Groups & Single & Complete & Average\\
+\midrule
+A,B,C,D,E & 0 & 0 & 0\\
+(A,B),C,D,E & 2 & 2 & 2\\
+(A,B),(C,E),D & 3 & 3 & 3\\
+(A,B)(C,D,E) & 4 & 5 & 4.5\\
+(A,B,C,D,E) & 5 & 10 & 8\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-Groups          Single   Complete   Average 
---------------  -------  ---------  --------
-A,B,C,D,E       0        0          0       
-(A,B),C,D,E     2        2          2       
-(A,B),(C,E),D   3        3          3       
-(A,B)(C,D,E)    4        5          4.5     
-(A,B,C,D,E)     5        10         8       
+\begin{figure}
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/linkageComparison-1.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-2.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-3.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" />
-<p class="caption">(\#fig:linkageComparison)Dendrograms for the example distance matrix using three different linkage methods. </p>
-</div>
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-1} \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-2} \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-3} 
+
+}
+
+\caption{Dendrograms for the example distance matrix using three different linkage methods. }(\#fig:linkageComparison)
+\end{figure}
 
 ### Example: gene expression profiling of human tissues
 Load required libraries
@@ -156,10 +175,14 @@ hc <- hclust(d, method="average")
 plot(hc, labels=tissue, cex=0.5, hang=-1, xlab="", sub="")
 ```
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/tissueDendrogram-1.png" alt="Clustering of tissue samples based on gene expression profiles. " width="100%" />
-<p class="caption">(\#fig:tissueDendrogram)Clustering of tissue samples based on gene expression profiles. </p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogram-1} 
+
+}
+
+\caption{Clustering of tissue samples based on gene expression profiles. }(\#fig:tissueDendrogram)
+\end{figure}
 
 use dendextend library to plot dendrogram with colour labels
 
@@ -174,11 +197,80 @@ labels_cex(dend) = 0.5
 plot(dend, horiz=T)
 ```
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/tissueDendrogramColour-1.png" alt="Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. " width="100%" />
-<p class="caption">(\#fig:tissueDendrogramColour)Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. </p>
-</div>
+\begin{figure}
 
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramColour-1} 
+
+}
+
+\caption{Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. }(\#fig:tissueDendrogramColour)
+\end{figure}
+
+Define clusters by cutting tree at a specific height
+
+```r
+plot(dend, horiz=T)
+abline(v=125, lwd=2, lty=2, col="blue")
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramCutHeight-1} 
+
+}
+
+\caption{Clusters found by cutting tree at a height of 125}(\#fig:tissueDendrogramCutHeight)
+\end{figure}
+
+```r
+hclusters <- cutree(dend, h=125)
+table(tissue, cluster=hclusters)
+```
+
+```
+##              cluster
+## tissue         1  2  3  4  5  6
+##   cerebellum   0 36  0  0  2  0
+##   colon        0  0 34  0  0  0
+##   endometrium 15  0  0  0  0  0
+##   hippocampus  0 31  0  0  0  0
+##   kidney      37  0  0  0  2  0
+##   liver        0  0  0 24  2  0
+##   placenta     0  0  0  0  0  6
+```
+
+Select a specific number of clusters.
+
+```r
+plot(dend, horiz=T)
+abline(v = heights_per_k.dendrogram(dend)["8"], lwd = 2, lty = 2, col = "blue")
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramEightClusters-1} 
+
+}
+
+\caption{Selection of eight clusters from the dendogram}(\#fig:tissueDendrogramEightClusters)
+\end{figure}
+
+```r
+hclusters <- cutree(dend, k=8)
+table(tissue, cluster=hclusters)
+```
+
+```
+##              cluster
+## tissue         1  2  3  4  5  6  7  8
+##   cerebellum   0 31  0  0  2  0  5  0
+##   colon        0  0 34  0  0  0  0  0
+##   endometrium  0  0  0  0  0 15  0  0
+##   hippocampus  0 31  0  0  0  0  0  0
+##   kidney      37  0  0  0  2  0  0  0
+##   liver        0  0  0 24  2  0  0  0
+##   placenta     0  0  0  0  0  0  0  6
+```
 
 ## Partitioning methods
 
@@ -188,10 +280,14 @@ Pseudocode
 
 to illustrate range of different types of data that can be clustered - image segmentation
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/kmeansIterations-1.png" alt="K-means iterations" width="90%" />
-<p class="caption">(\#fig:kmeansIterations)K-means iterations</p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{09-clustering_files/figure-latex/kmeansIterations-1} 
+
+}
+
+\caption{Iterations of the k-means algorithm}(\#fig:kmeansIterations)
+\end{figure}
 
 
 

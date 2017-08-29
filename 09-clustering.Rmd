@@ -8,7 +8,6 @@
 
 Hierarchic (produce dendrogram) vs partitioning methods
 
-## Types of cluster
 
 ```{r clusterTypes, fig.cap='Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.', out.width='80%', fig.asp=.9, fig.align='center', echo=F}
 library(ggplot2)
@@ -224,6 +223,21 @@ labels_cex(dend) = 0.5
 plot(dend, horiz=T)
 ```
 
+Define clusters by cutting tree at a specific height
+```{r tissueDendrogramCutHeight, fig.cap='Clusters found by cutting tree at a height of 125', out.width='100%', fig.asp=3, fig.align='center', echo=T}
+plot(dend, horiz=T)
+abline(v=125, lwd=2, lty=2, col="blue")
+hclusters <- cutree(dend, h=125)
+table(tissue, cluster=hclusters)
+```
+
+Select a specific number of clusters.
+```{r tissueDendrogramEightClusters, fig.cap='Selection of eight clusters from the dendogram', out.width='100%', fig.asp=3, fig.align='center', echo=T}
+plot(dend, horiz=T)
+abline(v = heights_per_k.dendrogram(dend)["8"], lwd = 2, lty = 2, col = "blue")
+hclusters <- cutree(dend, k=8)
+table(tissue, cluster=hclusters)
+```
 
 ## Partitioning methods
 
@@ -233,7 +247,7 @@ Pseudocode
 
 to illustrate range of different types of data that can be clustered - image segmentation
 
-```{r kmeansIterations, fig.cap='K-means iterations', out.width='90%', fig.asp=1.2, fig.align='center',echo=F}
+```{r kmeansIterations, fig.cap='Iterations of the k-means algorithm', out.width='90%', fig.asp=1.2, fig.align='center',echo=F}
 library(RColorBrewer)
 point_shapes <- c(17,19)
 point_colours <- brewer.pal(3,"Dark2")
