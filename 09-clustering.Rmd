@@ -183,10 +183,51 @@ p_average
 
 ```
 
+### Example: gene expression profiling of human tissues
+Load required libraries
+```{r echo=T}
+library(RColorBrewer)
+library(dendextend)
+```
+
+Load data
+```{r echo=T}
+load("data/tissues_gene_expression/tissuesGeneExpression.rda")
+```
+
+Inspect data
+```{r echo=T}
+table(tissue)
+dim(e)
+```
+
+Compute distance between each sample
+```{r echo=T} 
+d <- dist(t(e))
+```
+
+perform hierarchical clustering
+```{r tissueDendrogram, fig.cap='Clustering of tissue samples based on gene expression profiles. ', out.width='100%', fig.asp=0.7, fig.align='center', echo=T}
+hc <- hclust(d, method="average")
+plot(hc, labels=tissue, cex=0.5, hang=-1, xlab="", sub="")
+```
+
+use dendextend library to plot dendrogram with colour labels
+```{r tissueDendrogramColour, fig.cap='Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. ', out.width='100%', fig.asp=3, fig.align='center', echo=T}
+tissue_type <- unique(tissue)
+dend <- as.dendrogram(hc)
+dend_colours <- brewer.pal(length(unique(tissue)),"Dark2")
+names(dend_colours) <- tissue_type
+labels(dend) <- tissue[order.dendrogram(dend)]
+labels_colors(dend) <- dend_colours[tissue][order.dendrogram(dend)]
+labels_cex(dend) = 0.5
+plot(dend, horiz=T)
+```
 
 
+## Partitioning methods
 
-## K-means
+### K-means
 
 Pseudocode
 
@@ -224,7 +265,7 @@ pm
 
 
 
-## DBSCAN
+### DBSCAN
 Density-based spatial clustering of applications with noise
 
 ### Gene expression

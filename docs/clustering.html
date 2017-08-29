@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-08-28">
+<meta name="date" content="2017-08-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -141,17 +141,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="10.4" data-path="clustering.html"><a href="clustering.html#hierarchic-methods"><i class="fa fa-check"></i><b>10.4</b> Hierarchic methods</a><ul>
 <li class="chapter" data-level="10.4.1" data-path="clustering.html"><a href="clustering.html#linkage-algorithms"><i class="fa fa-check"></i><b>10.4.1</b> Linkage algorithms</a></li>
+<li class="chapter" data-level="10.4.2" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues"><i class="fa fa-check"></i><b>10.4.2</b> Example: gene expression profiling of human tissues</a></li>
 </ul></li>
-<li class="chapter" data-level="10.5" data-path="clustering.html"><a href="clustering.html#k-means"><i class="fa fa-check"></i><b>10.5</b> K-means</a></li>
-<li class="chapter" data-level="10.6" data-path="clustering.html"><a href="clustering.html#dbscan"><i class="fa fa-check"></i><b>10.6</b> DBSCAN</a><ul>
-<li class="chapter" data-level="10.6.1" data-path="clustering.html"><a href="clustering.html#gene-expression"><i class="fa fa-check"></i><b>10.6.1</b> Gene expression</a></li>
+<li class="chapter" data-level="10.5" data-path="clustering.html"><a href="clustering.html#partitioning-methods"><i class="fa fa-check"></i><b>10.5</b> Partitioning methods</a><ul>
+<li class="chapter" data-level="10.5.1" data-path="clustering.html"><a href="clustering.html#k-means"><i class="fa fa-check"></i><b>10.5.1</b> K-means</a></li>
+<li class="chapter" data-level="10.5.2" data-path="clustering.html"><a href="clustering.html#dbscan"><i class="fa fa-check"></i><b>10.5.2</b> DBSCAN</a></li>
+<li class="chapter" data-level="10.5.3" data-path="clustering.html"><a href="clustering.html#gene-expression"><i class="fa fa-check"></i><b>10.5.3</b> Gene expression</a></li>
 </ul></li>
-<li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#summary"><i class="fa fa-check"></i><b>10.7</b> Summary</a><ul>
-<li class="chapter" data-level="10.7.1" data-path="clustering.html"><a href="clustering.html#applications"><i class="fa fa-check"></i><b>10.7.1</b> Applications</a></li>
-<li class="chapter" data-level="10.7.2" data-path="clustering.html"><a href="clustering.html#strengths"><i class="fa fa-check"></i><b>10.7.2</b> Strengths</a></li>
-<li class="chapter" data-level="10.7.3" data-path="clustering.html"><a href="clustering.html#limitations"><i class="fa fa-check"></i><b>10.7.3</b> Limitations</a></li>
+<li class="chapter" data-level="10.6" data-path="clustering.html"><a href="clustering.html#summary"><i class="fa fa-check"></i><b>10.6</b> Summary</a><ul>
+<li class="chapter" data-level="10.6.1" data-path="clustering.html"><a href="clustering.html#applications"><i class="fa fa-check"></i><b>10.6.1</b> Applications</a></li>
+<li class="chapter" data-level="10.6.2" data-path="clustering.html"><a href="clustering.html#strengths"><i class="fa fa-check"></i><b>10.6.2</b> Strengths</a></li>
+<li class="chapter" data-level="10.6.3" data-path="clustering.html"><a href="clustering.html#limitations"><i class="fa fa-check"></i><b>10.6.3</b> Limitations</a></li>
 </ul></li>
-<li class="chapter" data-level="10.8" data-path="clustering.html"><a href="clustering.html#exercises"><i class="fa fa-check"></i><b>10.8</b> Exercises</a></li>
+<li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#exercises"><i class="fa fa-check"></i><b>10.7</b> Exercises</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="resources.html"><a href="resources.html"><i class="fa fa-check"></i><b>A</b> Resources</a><ul>
@@ -316,43 +318,110 @@ Figure 10.2: Dendrograms for the example distance matrix using three different l
 </p>
 </div>
 </div>
+<div id="example-gene-expression-profiling-of-human-tissues" class="section level3">
+<h3><span class="header-section-number">10.4.2</span> Example: gene expression profiling of human tissues</h3>
+<p>Load required libraries</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(RColorBrewer)
+<span class="kw">library</span>(dendextend)</code></pre></div>
+<pre><code>## 
+## ---------------------
+## Welcome to dendextend version 1.5.2
+## Type citation(&#39;dendextend&#39;) for how to cite the package.
+## 
+## Type browseVignettes(package = &#39;dendextend&#39;) for the package vignette.
+## The github page is: https://github.com/talgalili/dendextend/
+## 
+## Suggestions and bug-reports can be submitted at: https://github.com/talgalili/dendextend/issues
+## Or contact: &lt;tal.galili@gmail.com&gt;
+## 
+##  To suppress this message use:  suppressPackageStartupMessages(library(dendextend))
+## ---------------------</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dendextend&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggdendro&#39;:
+## 
+##     theme_dendro</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     cutree</code></pre>
+<p>Load data</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;data/tissues_gene_expression/tissuesGeneExpression.rda&quot;</span>)</code></pre></div>
+<p>Inspect data</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(tissue)</code></pre></div>
+<pre><code>## tissue
+##  cerebellum       colon endometrium hippocampus      kidney       liver 
+##          38          34          15          31          39          26 
+##    placenta 
+##           6</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(e)</code></pre></div>
+<pre><code>## [1] 22215   189</code></pre>
+<p>Compute distance between each sample</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span><span class="kw">dist</span>(<span class="kw">t</span>(e))</code></pre></div>
+<p>perform hierarchical clustering</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">hc &lt;-<span class="st"> </span><span class="kw">hclust</span>(d, <span class="dt">method=</span><span class="st">&quot;average&quot;</span>)
+<span class="kw">plot</span>(hc, <span class="dt">labels=</span>tissue, <span class="dt">cex=</span><span class="fl">0.5</span>, <span class="dt">hang=</span>-<span class="dv">1</span>, <span class="dt">xlab=</span><span class="st">&quot;&quot;</span>, <span class="dt">sub=</span><span class="st">&quot;&quot;</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:tissueDendrogram"></span>
+<img src="09-clustering_files/figure-html/tissueDendrogram-1.png" alt="Clustering of tissue samples based on gene expression profiles. " width="100%" />
+<p class="caption">
+Figure 10.3: Clustering of tissue samples based on gene expression profiles.
+</p>
 </div>
-<div id="k-means" class="section level2">
-<h2><span class="header-section-number">10.5</span> K-means</h2>
+<p>use dendextend library to plot dendrogram with colour labels</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tissue_type &lt;-<span class="st"> </span><span class="kw">unique</span>(tissue)
+dend &lt;-<span class="st"> </span><span class="kw">as.dendrogram</span>(hc)
+dend_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="kw">length</span>(<span class="kw">unique</span>(tissue)),<span class="st">&quot;Dark2&quot;</span>)
+<span class="kw">names</span>(dend_colours) &lt;-<span class="st"> </span>tissue_type
+<span class="kw">labels</span>(dend) &lt;-<span class="st"> </span>tissue[<span class="kw">order.dendrogram</span>(dend)]
+<span class="kw">labels_colors</span>(dend) &lt;-<span class="st"> </span>dend_colours[tissue][<span class="kw">order.dendrogram</span>(dend)]
+<span class="kw">labels_cex</span>(dend) =<span class="st"> </span><span class="fl">0.5</span>
+<span class="kw">plot</span>(dend, <span class="dt">horiz=</span>T)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:tissueDendrogramColour"></span>
+<img src="09-clustering_files/figure-html/tissueDendrogramColour-1.png" alt="Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. " width="100%" />
+<p class="caption">
+Figure 10.4: Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type.
+</p>
+</div>
+</div>
+</div>
+<div id="partitioning-methods" class="section level2">
+<h2><span class="header-section-number">10.5</span> Partitioning methods</h2>
+<div id="k-means" class="section level3">
+<h3><span class="header-section-number">10.5.1</span> K-means</h3>
 <p>Pseudocode</p>
 <p>to illustrate range of different types of data that can be clustered - image segmentation</p>
 <div class="figure" style="text-align: center"><span id="fig:kmeansIterations"></span>
 <img src="09-clustering_files/figure-html/kmeansIterations-1.png" alt="K-means iterations" width="90%" />
 <p class="caption">
-Figure 10.3: K-means iterations
+Figure 10.5: K-means iterations
 </p>
 </div>
 </div>
-<div id="dbscan" class="section level2">
-<h2><span class="header-section-number">10.6</span> DBSCAN</h2>
+<div id="dbscan" class="section level3">
+<h3><span class="header-section-number">10.5.2</span> DBSCAN</h3>
 <p>Density-based spatial clustering of applications with noise</p>
+</div>
 <div id="gene-expression" class="section level3">
-<h3><span class="header-section-number">10.6.1</span> Gene expression</h3>
+<h3><span class="header-section-number">10.5.3</span> Gene expression</h3>
 <p>tissue types?</p>
 </div>
 </div>
 <div id="summary" class="section level2">
-<h2><span class="header-section-number">10.7</span> Summary</h2>
+<h2><span class="header-section-number">10.6</span> Summary</h2>
 <div id="applications" class="section level3">
-<h3><span class="header-section-number">10.7.1</span> Applications</h3>
+<h3><span class="header-section-number">10.6.1</span> Applications</h3>
 </div>
 <div id="strengths" class="section level3">
-<h3><span class="header-section-number">10.7.2</span> Strengths</h3>
+<h3><span class="header-section-number">10.6.2</span> Strengths</h3>
 </div>
 <div id="limitations" class="section level3">
-<h3><span class="header-section-number">10.7.3</span> Limitations</h3>
+<h3><span class="header-section-number">10.6.3</span> Limitations</h3>
 <!--
 Not appropriate for phylogenetic analysis!!
 -->
 </div>
 </div>
 <div id="exercises" class="section level2">
-<h2><span class="header-section-number">10.8</span> Exercises</h2>
+<h2><span class="header-section-number">10.7</span> Exercises</h2>
 <!--
 1. Toy clusters
 2. mouse mammary time-course (kmeans and dbscan)

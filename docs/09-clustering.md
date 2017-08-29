@@ -74,10 +74,115 @@ A,B,C,D,E       0        0          0
 <p class="caption">(\#fig:linkageComparison)Dendrograms for the example distance matrix using three different linkage methods. </p>
 </div>
 
+### Example: gene expression profiling of human tissues
+Load required libraries
+
+```r
+library(RColorBrewer)
+library(dendextend)
+```
+
+```
+## 
+## ---------------------
+## Welcome to dendextend version 1.5.2
+## Type citation('dendextend') for how to cite the package.
+## 
+## Type browseVignettes(package = 'dendextend') for the package vignette.
+## The github page is: https://github.com/talgalili/dendextend/
+## 
+## Suggestions and bug-reports can be submitted at: https://github.com/talgalili/dendextend/issues
+## Or contact: <tal.galili@gmail.com>
+## 
+## 	To suppress this message use:  suppressPackageStartupMessages(library(dendextend))
+## ---------------------
+```
+
+```
+## 
+## Attaching package: 'dendextend'
+```
+
+```
+## The following object is masked from 'package:ggdendro':
+## 
+##     theme_dendro
+```
+
+```
+## The following object is masked from 'package:stats':
+## 
+##     cutree
+```
+
+Load data
+
+```r
+load("data/tissues_gene_expression/tissuesGeneExpression.rda")
+```
+
+Inspect data
+
+```r
+table(tissue)
+```
+
+```
+## tissue
+##  cerebellum       colon endometrium hippocampus      kidney       liver 
+##          38          34          15          31          39          26 
+##    placenta 
+##           6
+```
+
+```r
+dim(e)
+```
+
+```
+## [1] 22215   189
+```
+
+Compute distance between each sample
+
+```r
+d <- dist(t(e))
+```
+
+perform hierarchical clustering
+
+```r
+hc <- hclust(d, method="average")
+plot(hc, labels=tissue, cex=0.5, hang=-1, xlab="", sub="")
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/tissueDendrogram-1.png" alt="Clustering of tissue samples based on gene expression profiles. " width="100%" />
+<p class="caption">(\#fig:tissueDendrogram)Clustering of tissue samples based on gene expression profiles. </p>
+</div>
+
+use dendextend library to plot dendrogram with colour labels
+
+```r
+tissue_type <- unique(tissue)
+dend <- as.dendrogram(hc)
+dend_colours <- brewer.pal(length(unique(tissue)),"Dark2")
+names(dend_colours) <- tissue_type
+labels(dend) <- tissue[order.dendrogram(dend)]
+labels_colors(dend) <- dend_colours[tissue][order.dendrogram(dend)]
+labels_cex(dend) = 0.5
+plot(dend, horiz=T)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/tissueDendrogramColour-1.png" alt="Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. " width="100%" />
+<p class="caption">(\#fig:tissueDendrogramColour)Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. </p>
+</div>
 
 
+## Partitioning methods
 
-## K-means
+### K-means
 
 Pseudocode
 
@@ -91,7 +196,7 @@ to illustrate range of different types of data that can be clustered - image seg
 
 
 
-## DBSCAN
+### DBSCAN
 Density-based spatial clustering of applications with noise
 
 ### Gene expression
