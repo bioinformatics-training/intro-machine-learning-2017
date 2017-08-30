@@ -297,6 +297,8 @@ table(tissue, cluster=hclusters)
 
 ### K-means
 
+#### Algorithm
+
 Pseudocode
 
 to illustrate range of different types of data that can be clustered - image segmentation
@@ -306,11 +308,55 @@ to illustrate range of different types of data that can be clustered - image seg
 <p class="caption">(\#fig:kmeansIterations)Iterations of the k-means algorithm</p>
 </div>
 
+#### Choosing initial cluster centres
 
+```r
+library(RColorBrewer)
+point_shapes <- c(15,17,19)
+point_colours <- brewer.pal(3,"Dark2")
+point_size = 1.5
+center_point_size = 8
+
+blobs <- as.data.frame(read.csv("data/example_clusters/blobs.csv", header=F))
+
+good_centres <- as.data.frame(matrix(c(2,8,7,3,12,7), ncol=2, byrow=T))
+bad_centres <- as.data.frame(matrix(c(13,13,8,12,2,2), ncol=2, byrow=T))
+
+good_result <- kmeans(blobs[,1:2], centers=good_centres)
+bad_result <- kmeans(blobs[,1:2], centers=bad_centres)
+
+plotList <- list(
+ggplot(blobs, aes(V1,V2)) + geom_point(col=point_colours[good_result$cluster], shape=point_shapes[good_result$cluster], size=point_size) + geom_point(data=good_centres, aes(V1,V2), shape=3, col="black", size=center_point_size) + theme_bw(),
+ggplot(blobs, aes(V1,V2)) + geom_point(col=point_colours[bad_result$cluster], shape=point_shapes[bad_result$cluster], size=point_size) + geom_point(data=bad_centres, aes(V1,V2), shape=3, col="black", size=center_point_size) + theme_bw()
+)
+
+pm <- ggmatrix(
+  plotList, nrow=1, ncol=2, showXAxisPlotLabels = T, showYAxisPlotLabels = T, xAxisLabels=c("A", "B")
+) + theme_bw()
+
+pm
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/kmeansCentreChoice-1.png" alt="Initial centres determine clusters. The starting centres are shown as crosses. **A**, real clusters found; **B**, convergence to a local minimum." width="100%" />
+<p class="caption">(\#fig:kmeansCentreChoice)Initial centres determine clusters. The starting centres are shown as crosses. **A**, real clusters found; **B**, convergence to a local minimum.</p>
+</div>
+Convergence to a local minimum can be avoided by starting the algorithm multiple times, with different random centres. The **nstart** argument to the **k-means** function can be used to specify the number of random sets.
+
+
+#### Choosing k
+nstart=50
 
 
 ### DBSCAN
 Density-based spatial clustering of applications with noise
+
+#### Algorithm
+
+
+#### Choosing parameters
+
+
 
 ### Gene expression
 tissue types?

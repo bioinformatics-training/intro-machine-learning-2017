@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-08-30">
+<meta name="date" content="2017-08-31">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -506,6 +506,8 @@ Figure 10.7: Selection of eight clusters from the dendogram
 <h2><span class="header-section-number">10.4</span> Partitioning methods</h2>
 <div id="k-means" class="section level3">
 <h3><span class="header-section-number">10.4.1</span> K-means</h3>
+<div id="algorithm" class="section level4">
+<h4><span class="header-section-number">10.4.1.1</span> Algorithm</h4>
 <p>Pseudocode</p>
 <p>to illustrate range of different types of data that can be clustered - image segmentation</p>
 <div class="figure" style="text-align: center"><span id="fig:kmeansIterations"></span>
@@ -515,9 +517,54 @@ Figure 10.8: Iterations of the k-means algorithm
 </p>
 </div>
 </div>
+<div id="choosing-initial-cluster-centres" class="section level4">
+<h4><span class="header-section-number">10.4.1.2</span> Choosing initial cluster centres</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(RColorBrewer)
+point_shapes &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">15</span>,<span class="dv">17</span>,<span class="dv">19</span>)
+point_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">3</span>,<span class="st">&quot;Dark2&quot;</span>)
+point_size =<span class="st"> </span><span class="fl">1.5</span>
+center_point_size =<span class="st"> </span><span class="dv">8</span>
+
+blobs &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/blobs.csv&quot;</span>, <span class="dt">header=</span>F))
+
+good_centres &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">8</span>,<span class="dv">7</span>,<span class="dv">3</span>,<span class="dv">12</span>,<span class="dv">7</span>), <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">byrow=</span>T))
+bad_centres &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">13</span>,<span class="dv">13</span>,<span class="dv">8</span>,<span class="dv">12</span>,<span class="dv">2</span>,<span class="dv">2</span>), <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">byrow=</span>T))
+
+good_result &lt;-<span class="st"> </span><span class="kw">kmeans</span>(blobs[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">centers=</span>good_centres)
+bad_result &lt;-<span class="st"> </span><span class="kw">kmeans</span>(blobs[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">centers=</span>bad_centres)
+
+plotList &lt;-<span class="st"> </span><span class="kw">list</span>(
+<span class="kw">ggplot</span>(blobs, <span class="kw">aes</span>(V1,V2)) +<span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[good_result$cluster], <span class="dt">shape=</span>point_shapes[good_result$cluster], <span class="dt">size=</span>point_size) +<span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">data=</span>good_centres, <span class="kw">aes</span>(V1,V2), <span class="dt">shape=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&quot;black&quot;</span>, <span class="dt">size=</span>center_point_size) +<span class="st"> </span><span class="kw">theme_bw</span>(),
+<span class="kw">ggplot</span>(blobs, <span class="kw">aes</span>(V1,V2)) +<span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[bad_result$cluster], <span class="dt">shape=</span>point_shapes[bad_result$cluster], <span class="dt">size=</span>point_size) +<span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">data=</span>bad_centres, <span class="kw">aes</span>(V1,V2), <span class="dt">shape=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&quot;black&quot;</span>, <span class="dt">size=</span>center_point_size) +<span class="st"> </span><span class="kw">theme_bw</span>()
+)
+
+pm &lt;-<span class="st"> </span><span class="kw">ggmatrix</span>(
+  plotList, <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">showXAxisPlotLabels =</span> T, <span class="dt">showYAxisPlotLabels =</span> T, <span class="dt">xAxisLabels=</span><span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>)
+) +<span class="st"> </span><span class="kw">theme_bw</span>()
+
+pm</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:kmeansCentreChoice"></span>
+<img src="09-clustering_files/figure-html/kmeansCentreChoice-1.png" alt="Initial centres determine clusters. The starting centres are shown as crosses. **A**, real clusters found; **B**, convergence to a local minimum." width="100%" />
+<p class="caption">
+Figure 10.9: Initial centres determine clusters. The starting centres are shown as crosses. <strong>A</strong>, real clusters found; <strong>B</strong>, convergence to a local minimum.
+</p>
+</div>
+<p>Convergence to a local minimum can be avoided by starting the algorithm multiple times, with different random centres. The <strong>nstart</strong> argument to the <strong>k-means</strong> function can be used to specify the number of random sets.</p>
+</div>
+<div id="choosing-k" class="section level4">
+<h4><span class="header-section-number">10.4.1.3</span> Choosing k</h4>
+<p>nstart=50</p>
+</div>
+</div>
 <div id="dbscan" class="section level3">
 <h3><span class="header-section-number">10.4.2</span> DBSCAN</h3>
 <p>Density-based spatial clustering of applications with noise</p>
+<div id="algorithm-1" class="section level4">
+<h4><span class="header-section-number">10.4.2.1</span> Algorithm</h4>
+</div>
+<div id="choosing-parameters" class="section level4">
+<h4><span class="header-section-number">10.4.2.2</span> Choosing parameters</h4>
+</div>
 </div>
 <div id="gene-expression" class="section level3">
 <h3><span class="header-section-number">10.4.3</span> Gene expression</h3>
