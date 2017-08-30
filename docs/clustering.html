@@ -407,12 +407,12 @@ plotList &lt;-<span class="st"> </span><span class="kw">c</span>(
 )
 
 pm &lt;-<span class="st"> </span><span class="kw">ggmatrix</span>(
-  plotList, <span class="dt">nrow=</span><span class="dv">4</span>, <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">showXAxisPlotLabels =</span> F, <span class="dt">showYAxisPlotLabels =</span> F
+  plotList, <span class="dt">nrow=</span><span class="dv">4</span>, <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">showXAxisPlotLabels =</span> F, <span class="dt">showYAxisPlotLabels =</span> F, <span class="dt">xAxisLabels=</span><span class="kw">c</span>(<span class="st">&quot;dendrogram&quot;</span>, <span class="st">&quot;scatter plot&quot;</span>), <span class="dt">yAxisLabels=</span><span class="kw">c</span>(<span class="st">&quot;aggregation&quot;</span>, <span class="st">&quot;noisy moons&quot;</span>, <span class="st">&quot;noisy circles&quot;</span>, <span class="st">&quot;no structure&quot;</span>)
 ) +<span class="st"> </span><span class="kw">theme_bw</span>()
 
 pm</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:hclustToyData"></span>
-<img src="09-clustering_files/figure-html/hclustToyData-1.png" alt="Hierarchical clustering of toy data-sets. " width="80%" />
+<img src="09-clustering_files/figure-html/hclustToyData-1.png" alt="Hierarchical clustering of toy data-sets. " width="75%" />
 <p class="caption">
 Figure 10.3: Hierarchical clustering of toy data-sets.
 </p>

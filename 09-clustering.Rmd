@@ -9,7 +9,7 @@
 Hierarchic (produce dendrogram) vs partitioning methods
 
 
-```{r clusterTypes, fig.cap='Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.', out.width='80%', fig.asp=.9, fig.align='center', echo=F}
+```{r clusterTypes, fig.cap='Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.', out.width='80%', fig.asp=1.2, fig.align='center', echo=F}
 library(ggplot2)
 library(GGally)
 
@@ -192,7 +192,7 @@ blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
 
 ```
 
-```{r hclustToyData, fig.cap='Hierarchical clustering of toy data-sets. ', out.width='80%', fig.asp=0.9, fig.align='center',echo=T}
+```{r hclustToyData, fig.cap='Hierarchical clustering of toy data-sets. ', out.width='75%', fig.asp=1.5, fig.align='center',echo=T}
 
 aggregation <- read.table("data/example_clusters/aggregation.txt")
 noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
@@ -221,7 +221,7 @@ plotList <- c(
 )
 
 pm <- ggmatrix(
-  plotList, nrow=4, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F
+  plotList, nrow=4, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F, xAxisLabels=c("dendrogram", "scatter plot"), yAxisLabels=c("aggregation", "noisy moons", "noisy circles", "no structure")
 ) + theme_bw()
 
 pm

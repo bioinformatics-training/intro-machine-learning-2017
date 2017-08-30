@@ -9,14 +9,10 @@
 Hierarchic (produce dendrogram) vs partitioning methods
 
 
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/clusterTypes-1} 
-
-}
-
-\caption{Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.}(\#fig:clusterTypes)
-\end{figure}
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*." width="80%" />
+<p class="caption">(\#fig:clusterTypes)Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.</p>
+</div>
 
 ## Distance metrics
 
@@ -38,21 +34,15 @@ Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
 
 
-\begin{table}
 
-\caption{(\#tab:distance-matrix)Example distance matrix}
-\centering
-\begin{tabular}[t]{lllll}
-\toprule
-  & A & B & C & D\\
-\midrule
-B & 2 &  &  & \\
-C & 6 & 5 &  & \\
-D & 10 & 10 & 5 & \\
-E & 9 & 8 & 3 & 4\\
-\bottomrule
-\end{tabular}
-\end{table}
+Table: (\#tab:distance-matrix)Example distance matrix
+
+     A    B    C    D  
+---  ---  ---  ---  ---
+B    2                 
+C    6    5            
+D    10   10   5       
+E    9    8    3    4  
 
 ### Linkage algorithms
 Make one section
@@ -67,31 +57,21 @@ Average linkage - UPGMA (Unweighted Pair Group Method with Arithmetic Mean)
 
 
 
-\begin{table}
 
-\caption{(\#tab:distance-merge)Merge distances for objects in the example distance matrix using three different linkage methods.}
-\centering
-\begin{tabular}[t]{llll}
-\toprule
-Groups & Single & Complete & Average\\
-\midrule
-A,B,C,D,E & 0 & 0 & 0\\
-(A,B),C,D,E & 2 & 2 & 2\\
-(A,B),(C,E),D & 3 & 3 & 3\\
-(A,B)(C,D,E) & 4 & 5 & 4.5\\
-(A,B,C,D,E) & 5 & 10 & 8\\
-\bottomrule
-\end{tabular}
-\end{table}
+Table: (\#tab:distance-merge)Merge distances for objects in the example distance matrix using three different linkage methods.
 
-\begin{figure}
+Groups          Single   Complete   Average 
+--------------  -------  ---------  --------
+A,B,C,D,E       0        0          0       
+(A,B),C,D,E     2        2          2       
+(A,B),(C,E),D   3        3          3       
+(A,B)(C,D,E)    4        5          4.5     
+(A,B,C,D,E)     5        10         8       
 
-{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-1} \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-2} \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-3} 
-
-}
-
-\caption{Dendrograms for the example distance matrix using three different linkage methods. }(\#fig:linkageComparison)
-\end{figure}
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/linkageComparison-1.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-2.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-3.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" />
+<p class="caption">(\#fig:linkageComparison)Dendrograms for the example distance matrix using three different linkage methods. </p>
+</div>
 
 ### Example: clustering toy data sets
 
@@ -172,20 +152,16 @@ plotList <- c(
 )
 
 pm <- ggmatrix(
-  plotList, nrow=4, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F
+  plotList, nrow=4, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F, xAxisLabels=c("dendrogram", "scatter plot"), yAxisLabels=c("aggregation", "noisy moons", "noisy circles", "no structure")
 ) + theme_bw()
 
 pm
 ```
 
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/hclustToyData-1} 
-
-}
-
-\caption{Hierarchical clustering of toy data-sets. }(\#fig:hclustToyData)
-\end{figure}
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/hclustToyData-1.png" alt="Hierarchical clustering of toy data-sets. " width="75%" />
+<p class="caption">(\#fig:hclustToyData)Hierarchical clustering of toy data-sets. </p>
+</div>
 
 ### Example: gene expression profiling of human tissues
 Load required libraries
@@ -236,14 +212,10 @@ hc <- hclust(d, method="average")
 plot(hc, labels=tissue, cex=0.5, hang=-1, xlab="", sub="")
 ```
 
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogram-1} 
-
-}
-
-\caption{Clustering of tissue samples based on gene expression profiles. }(\#fig:tissueDendrogram)
-\end{figure}
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/tissueDendrogram-1.png" alt="Clustering of tissue samples based on gene expression profiles. " width="100%" />
+<p class="caption">(\#fig:tissueDendrogram)Clustering of tissue samples based on gene expression profiles. </p>
+</div>
 
 use dendextend library to plot dendrogram with colour labels
 
@@ -258,14 +230,10 @@ labels_cex(dend) = 0.5
 plot(dend, horiz=T)
 ```
 
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramColour-1} 
-
-}
-
-\caption{Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. }(\#fig:tissueDendrogramColour)
-\end{figure}
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/tissueDendrogramColour-1.png" alt="Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. " width="100%" />
+<p class="caption">(\#fig:tissueDendrogramColour)Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. </p>
+</div>
 
 Define clusters by cutting tree at a specific height
 
@@ -274,14 +242,10 @@ plot(dend, horiz=T)
 abline(v=125, lwd=2, lty=2, col="blue")
 ```
 
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramCutHeight-1} 
-
-}
-
-\caption{Clusters found by cutting tree at a height of 125}(\#fig:tissueDendrogramCutHeight)
-\end{figure}
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/tissueDendrogramCutHeight-1.png" alt="Clusters found by cutting tree at a height of 125" width="100%" />
+<p class="caption">(\#fig:tissueDendrogramCutHeight)Clusters found by cutting tree at a height of 125</p>
+</div>
 
 ```r
 hclusters <- cutree(dend, h=125)
@@ -307,14 +271,10 @@ plot(dend, horiz=T)
 abline(v = heights_per_k.dendrogram(dend)["8"], lwd = 2, lty = 2, col = "blue")
 ```
 
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramEightClusters-1} 
-
-}
-
-\caption{Selection of eight clusters from the dendogram}(\#fig:tissueDendrogramEightClusters)
-\end{figure}
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/tissueDendrogramEightClusters-1.png" alt="Selection of eight clusters from the dendogram" width="100%" />
+<p class="caption">(\#fig:tissueDendrogramEightClusters)Selection of eight clusters from the dendogram</p>
+</div>
 
 ```r
 hclusters <- cutree(dend, k=8)
@@ -341,14 +301,10 @@ Pseudocode
 
 to illustrate range of different types of data that can be clustered - image segmentation
 
-\begin{figure}
-
-{\centering \includegraphics[width=0.9\linewidth]{09-clustering_files/figure-latex/kmeansIterations-1} 
-
-}
-
-\caption{Iterations of the k-means algorithm}(\#fig:kmeansIterations)
-\end{figure}
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/kmeansIterations-1.png" alt="Iterations of the k-means algorithm" width="90%" />
+<p class="caption">(\#fig:kmeansIterations)Iterations of the k-means algorithm</p>
+</div>
 
 
 
