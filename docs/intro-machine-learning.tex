@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-08-29}
+  \date{2017-08-30}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -432,10 +432,8 @@ A,B,C,D,E & 0 & 0 & 0\\
 \caption{Dendrograms for the example distance matrix using three different linkage methods. }\label{fig:linkageComparison}
 \end{figure}
 
-\subsection{Example: gene expression profiling of human
-tissues}\label{example-gene-expression-profiling-of-human-tissues}
-
-Load required libraries
+\subsection{Example: clustering toy data
+sets}\label{example-clustering-toy-data-sets}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -476,6 +474,74 @@ Load required libraries
 ## 
 ##     cutree
 \end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(GGally)}
+
+\NormalTok{cluster_colours <-}\StringTok{ }\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{8}\NormalTok{,}\StringTok{"Dark2"}\NormalTok{)}
+
+\NormalTok{blobs <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/blobs.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{aggregation <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{"data/example_clusters/aggregation.txt"}\NormalTok{)}
+\NormalTok{noisy_moons <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/noisy_moons.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
+\NormalTok{noisy_circles <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/noisy_circles.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
+\NormalTok{no_structure <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/no_structure.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
+
+\NormalTok{hclust_plots <-}\StringTok{ }\NormalTok{function(data_set, n)\{}
+  \NormalTok{d <-}\StringTok{ }\KeywordTok{dist}\NormalTok{(data_set[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{])}
+  \NormalTok{dend <-}\StringTok{ }\KeywordTok{as.dendrogram}\NormalTok{(}\KeywordTok{hclust}\NormalTok{(d, }\DataTypeTok{method=}\StringTok{"average"}\NormalTok{))}
+  \NormalTok{clusters <-}\StringTok{ }\KeywordTok{cutree}\NormalTok{(dend,n,}\DataTypeTok{order_clusters_as_data=}\NormalTok{F)}
+  \NormalTok{dend <-}\StringTok{ }\KeywordTok{color_branches}\NormalTok{(dend, }\DataTypeTok{clusters=}\NormalTok{clusters, }\DataTypeTok{col=}\NormalTok{cluster_colours[}\DecValTok{1}\NormalTok{:n])}
+  \NormalTok{clusters <-}\StringTok{ }\NormalTok{clusters[}\KeywordTok{order}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{names}\NormalTok{(clusters)))]}
+  \KeywordTok{labels}\NormalTok{(dend) <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\StringTok{""}\NormalTok{, }\KeywordTok{length}\NormalTok{(data_set[,}\DecValTok{1}\NormalTok{]))}
+  \NormalTok{ggd <-}\StringTok{ }\KeywordTok{as.ggdend}\NormalTok{(dend)}
+  \NormalTok{ggd$nodes <-}\StringTok{ }\NormalTok{ggd$nodes[!(}\DecValTok{1}\NormalTok{:}\KeywordTok{length}\NormalTok{(ggd$nodes[,}\DecValTok{1}\NormalTok{])),]}
+  \NormalTok{plotPair <-}\StringTok{ }\KeywordTok{list}\NormalTok{(}\KeywordTok{ggplot}\NormalTok{(ggd),}
+    \KeywordTok{ggplot}\NormalTok{(data_set, }\KeywordTok{aes}\NormalTok{(V1,V2)) +}\StringTok{ }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\NormalTok{cluster_colours[clusters], }\DataTypeTok{size=}\FloatTok{0.2}\NormalTok{))}
+  \KeywordTok{return}\NormalTok{(plotPair)}
+\NormalTok{\}}
+
+\NormalTok{plotList <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \KeywordTok{hclust_plots}\NormalTok{(aggregation, }\DecValTok{7}\NormalTok{),}
+  \KeywordTok{hclust_plots}\NormalTok{(noisy_moons, }\DecValTok{2}\NormalTok{),}
+  \KeywordTok{hclust_plots}\NormalTok{(noisy_circles, }\DecValTok{2}\NormalTok{),}
+  \KeywordTok{hclust_plots}\NormalTok{(no_structure, }\DecValTok{3}\NormalTok{)}
+\NormalTok{)}
+
+\NormalTok{pm <-}\StringTok{ }\KeywordTok{ggmatrix}\NormalTok{(}
+  \NormalTok{plotList, }\DataTypeTok{nrow=}\DecValTok{4}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{showXAxisPlotLabels =} \NormalTok{F, }\DataTypeTok{showYAxisPlotLabels =} \NormalTok{F}
+\NormalTok{) +}\StringTok{ }\KeywordTok{theme_bw}\NormalTok{()}
+
+\NormalTok{pm}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/hclustToyData-1} 
+
+}
+
+\caption{Hierarchical clustering of toy data-sets. }\label{fig:hclustToyData}
+\end{figure}
+
+\subsection{Example: gene expression profiling of human
+tissues}\label{example-gene-expression-profiling-of-human-tissues}
+
+Load required libraries
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(RColorBrewer)}
+\KeywordTok{library}\NormalTok{(dendextend)}
+\end{Highlighting}
+\end{Shaded}
 
 Load data
 

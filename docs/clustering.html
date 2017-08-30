@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-08-29">
+<meta name="date" content="2017-08-30">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -140,7 +140,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="10.3" data-path="clustering.html"><a href="clustering.html#hierarchic-methods"><i class="fa fa-check"></i><b>10.3</b> Hierarchic methods</a><ul>
 <li class="chapter" data-level="10.3.1" data-path="clustering.html"><a href="clustering.html#linkage-algorithms"><i class="fa fa-check"></i><b>10.3.1</b> Linkage algorithms</a></li>
-<li class="chapter" data-level="10.3.2" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues"><i class="fa fa-check"></i><b>10.3.2</b> Example: gene expression profiling of human tissues</a></li>
+<li class="chapter" data-level="10.3.2" data-path="clustering.html"><a href="clustering.html#example-clustering-toy-data-sets"><i class="fa fa-check"></i><b>10.3.2</b> Example: clustering toy data sets</a></li>
+<li class="chapter" data-level="10.3.3" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues"><i class="fa fa-check"></i><b>10.3.3</b> Example: gene expression profiling of human tissues</a></li>
 </ul></li>
 <li class="chapter" data-level="10.4" data-path="clustering.html"><a href="clustering.html#partitioning-methods"><i class="fa fa-check"></i><b>10.4</b> Partitioning methods</a><ul>
 <li class="chapter" data-level="10.4.1" data-path="clustering.html"><a href="clustering.html#k-means"><i class="fa fa-check"></i><b>10.4.1</b> K-means</a></li>
@@ -314,9 +315,8 @@ Figure 10.2: Dendrograms for the example distance matrix using three different l
 </p>
 </div>
 </div>
-<div id="example-gene-expression-profiling-of-human-tissues" class="section level3">
-<h3><span class="header-section-number">10.3.2</span> Example: gene expression profiling of human tissues</h3>
-<p>Load required libraries</p>
+<div id="example-clustering-toy-data-sets" class="section level3">
+<h3><span class="header-section-number">10.3.2</span> Example: clustering toy data sets</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(RColorBrewer)
 <span class="kw">library</span>(dendextend)</code></pre></div>
 <pre><code>## 
@@ -340,6 +340,55 @@ Figure 10.2: Dendrograms for the example distance matrix using three different l
 <pre><code>## The following object is masked from &#39;package:stats&#39;:
 ## 
 ##     cutree</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(GGally)
+
+cluster_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">8</span>,<span class="st">&quot;Dark2&quot;</span>)
+
+blobs &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/blobs.csv&quot;</span>, <span class="dt">header=</span>F)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aggregation &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;data/example_clusters/aggregation.txt&quot;</span>)
+noisy_moons &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/noisy_moons.csv&quot;</span>, <span class="dt">header=</span>F)
+noisy_circles &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/noisy_circles.csv&quot;</span>, <span class="dt">header=</span>F)
+no_structure &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/no_structure.csv&quot;</span>, <span class="dt">header=</span>F)
+
+hclust_plots &lt;-<span class="st"> </span>function(data_set, n){
+  d &lt;-<span class="st"> </span><span class="kw">dist</span>(data_set[,<span class="dv">1</span>:<span class="dv">2</span>])
+  dend &lt;-<span class="st"> </span><span class="kw">as.dendrogram</span>(<span class="kw">hclust</span>(d, <span class="dt">method=</span><span class="st">&quot;average&quot;</span>))
+  clusters &lt;-<span class="st"> </span><span class="kw">cutree</span>(dend,n,<span class="dt">order_clusters_as_data=</span>F)
+  dend &lt;-<span class="st"> </span><span class="kw">color_branches</span>(dend, <span class="dt">clusters=</span>clusters, <span class="dt">col=</span>cluster_colours[<span class="dv">1</span>:n])
+  clusters &lt;-<span class="st"> </span>clusters[<span class="kw">order</span>(<span class="kw">as.numeric</span>(<span class="kw">names</span>(clusters)))]
+  <span class="kw">labels</span>(dend) &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="st">&quot;&quot;</span>, <span class="kw">length</span>(data_set[,<span class="dv">1</span>]))
+  ggd &lt;-<span class="st"> </span><span class="kw">as.ggdend</span>(dend)
+  ggd$nodes &lt;-<span class="st"> </span>ggd$nodes[!(<span class="dv">1</span>:<span class="kw">length</span>(ggd$nodes[,<span class="dv">1</span>])),]
+  plotPair &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">ggplot</span>(ggd),
+    <span class="kw">ggplot</span>(data_set, <span class="kw">aes</span>(V1,V2)) +<span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">col=</span>cluster_colours[clusters], <span class="dt">size=</span><span class="fl">0.2</span>))
+  <span class="kw">return</span>(plotPair)
+}
+
+plotList &lt;-<span class="st"> </span><span class="kw">c</span>(
+  <span class="kw">hclust_plots</span>(aggregation, <span class="dv">7</span>),
+  <span class="kw">hclust_plots</span>(noisy_moons, <span class="dv">2</span>),
+  <span class="kw">hclust_plots</span>(noisy_circles, <span class="dv">2</span>),
+  <span class="kw">hclust_plots</span>(no_structure, <span class="dv">3</span>)
+)
+
+pm &lt;-<span class="st"> </span><span class="kw">ggmatrix</span>(
+  plotList, <span class="dt">nrow=</span><span class="dv">4</span>, <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">showXAxisPlotLabels =</span> F, <span class="dt">showYAxisPlotLabels =</span> F
+) +<span class="st"> </span><span class="kw">theme_bw</span>()
+
+pm</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:hclustToyData"></span>
+<img src="09-clustering_files/figure-html/hclustToyData-1.png" alt="Hierarchical clustering of toy data-sets. " width="80%" />
+<p class="caption">
+Figure 10.3: Hierarchical clustering of toy data-sets.
+</p>
+</div>
+</div>
+<div id="example-gene-expression-profiling-of-human-tissues" class="section level3">
+<h3><span class="header-section-number">10.3.3</span> Example: gene expression profiling of human tissues</h3>
+<p>Load required libraries</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(RColorBrewer)
+<span class="kw">library</span>(dendextend)</code></pre></div>
 <p>Load data</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;data/tissues_gene_expression/tissuesGeneExpression.rda&quot;</span>)</code></pre></div>
 <p>Inspect data</p>
@@ -359,7 +408,7 @@ Figure 10.2: Dendrograms for the example distance matrix using three different l
 <div class="figure" style="text-align: center"><span id="fig:tissueDendrogram"></span>
 <img src="09-clustering_files/figure-html/tissueDendrogram-1.png" alt="Clustering of tissue samples based on gene expression profiles. " width="100%" />
 <p class="caption">
-Figure 10.3: Clustering of tissue samples based on gene expression profiles.
+Figure 10.4: Clustering of tissue samples based on gene expression profiles.
 </p>
 </div>
 <p>use dendextend library to plot dendrogram with colour labels</p>
@@ -374,7 +423,7 @@ dend_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<s
 <div class="figure" style="text-align: center"><span id="fig:tissueDendrogramColour"></span>
 <img src="09-clustering_files/figure-html/tissueDendrogramColour-1.png" alt="Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. " width="100%" />
 <p class="caption">
-Figure 10.4: Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type.
+Figure 10.5: Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type.
 </p>
 </div>
 <p>Define clusters by cutting tree at a specific height</p>
@@ -383,7 +432,7 @@ Figure 10.4: Clustering of tissue samples based on gene expression profiles with
 <div class="figure" style="text-align: center"><span id="fig:tissueDendrogramCutHeight"></span>
 <img src="09-clustering_files/figure-html/tissueDendrogramCutHeight-1.png" alt="Clusters found by cutting tree at a height of 125" width="100%" />
 <p class="caption">
-Figure 10.5: Clusters found by cutting tree at a height of 125
+Figure 10.6: Clusters found by cutting tree at a height of 125
 </p>
 </div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">hclusters &lt;-<span class="st"> </span><span class="kw">cutree</span>(dend, <span class="dt">h=</span><span class="dv">125</span>)
@@ -403,7 +452,7 @@ Figure 10.5: Clusters found by cutting tree at a height of 125
 <div class="figure" style="text-align: center"><span id="fig:tissueDendrogramEightClusters"></span>
 <img src="09-clustering_files/figure-html/tissueDendrogramEightClusters-1.png" alt="Selection of eight clusters from the dendogram" width="100%" />
 <p class="caption">
-Figure 10.6: Selection of eight clusters from the dendogram
+Figure 10.7: Selection of eight clusters from the dendogram
 </p>
 </div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">hclusters &lt;-<span class="st"> </span><span class="kw">cutree</span>(dend, <span class="dt">k=</span><span class="dv">8</span>)
@@ -428,7 +477,7 @@ Figure 10.6: Selection of eight clusters from the dendogram
 <div class="figure" style="text-align: center"><span id="fig:kmeansIterations"></span>
 <img src="09-clustering_files/figure-html/kmeansIterations-1.png" alt="Iterations of the k-means algorithm" width="90%" />
 <p class="caption">
-Figure 10.7: Iterations of the k-means algorithm
+Figure 10.8: Iterations of the k-means algorithm
 </p>
 </div>
 </div>

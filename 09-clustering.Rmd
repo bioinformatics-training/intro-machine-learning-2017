@@ -15,8 +15,8 @@ library(GGally)
 
 blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
 aggregation <- read.table("data/example_clusters/aggregation.txt")
-noisyMoons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
-noisyCircles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
 d31 <- read.table("data/example_clusters/D31.txt")
 noStructure <- read.csv("data/example_clusters/no_structure.csv", header=F)
 
@@ -29,13 +29,13 @@ qplot(x=V1, y=V2, data=aggregation, geom="point", size=I(0.2)) + annotate("text"
                                                                           x=(0.01 * (max(aggregation$V1)-min(aggregation$V1))) + min(aggregation$V1), 
                                                                           y=(0.9 * (max(aggregation$V2)-min(aggregation$V2))) + min(aggregation$V2), 
                                                                           label="B", size=8, col="blue"),
-qplot(x=V1, y=V2, data=noisyMoons, geom="point", size=I(0.2)) + annotate("text",
-                                                                         x=(0.01 * (max(noisyMoons$V1)-min(noisyMoons$V1))) + min(noisyMoons$V1),
-                                                                         y=(0.9 * (max(noisyMoons$V2)-min(noisyMoons$V2))) + min(noisyMoons$V2),
+qplot(x=V1, y=V2, data=noisy_moons, geom="point", size=I(0.2)) + annotate("text",
+                                                                         x=(0.01 * (max(noisy_moons$V1)-min(noisy_moons$V1))) + min(noisy_moons$V1),
+                                                                         y=(0.9 * (max(noisy_moons$V2)-min(noisy_moons$V2))) + min(noisy_moons$V2),
                                                                          label="C", size=8, col="blue"),
-qplot(x=V1, y=V2, data=noisyCircles, geom="point", size=I(0.2)) + annotate("text",
-                                                                           x=(0.01 * (max(noisyCircles$V1)-min(noisyCircles$V1))) + min(noisyCircles$V1),
-                                                                           y=(0.9 * (max(noisyCircles$V2)-min(noisyCircles$V2))) + min(noisyCircles$V2),
+qplot(x=V1, y=V2, data=noisy_circles, geom="point", size=I(0.2)) + annotate("text",
+                                                                           x=(0.01 * (max(noisy_circles$V1)-min(noisy_circles$V1))) + min(noisy_circles$V1),
+                                                                           y=(0.9 * (max(noisy_circles$V2)-min(noisy_circles$V2))) + min(noisy_circles$V2),
                                                                            label="D", size=8, col="blue"),
 qplot(x=V1, y=V2, data=d31, geom="point", size=I(0.2)) + annotate("text",
                                                                   x=(0.01 * (max(d31$V1)-min(d31$V1))) + min(d31$V1),
@@ -176,9 +176,55 @@ p_average <- ggplot(segment(dd_average)) +
         axis.ticks.y=element_blank())
 p_average
 
+```
 
+### Example: clustering toy data sets
 
+```{r, echo=T}
+library(RColorBrewer)
+library(dendextend)
+library(ggplot2)
+library(GGally)
 
+cluster_colours <- brewer.pal(8,"Dark2")
+
+blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
+
+```
+
+```{r hclustToyData, fig.cap='Hierarchical clustering of toy data-sets. ', out.width='80%', fig.asp=0.9, fig.align='center',echo=T}
+
+aggregation <- read.table("data/example_clusters/aggregation.txt")
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
+
+hclust_plots <- function(data_set, n){
+  d <- dist(data_set[,1:2])
+  dend <- as.dendrogram(hclust(d, method="average"))
+  clusters <- cutree(dend,n,order_clusters_as_data=F)
+  dend <- color_branches(dend, clusters=clusters, col=cluster_colours[1:n])
+  clusters <- clusters[order(as.numeric(names(clusters)))]
+  labels(dend) <- rep("", length(data_set[,1]))
+  ggd <- as.ggdend(dend)
+  ggd$nodes <- ggd$nodes[!(1:length(ggd$nodes[,1])),]
+  plotPair <- list(ggplot(ggd),
+    ggplot(data_set, aes(V1,V2)) + geom_point(col=cluster_colours[clusters], size=0.2))
+  return(plotPair)
+}
+
+plotList <- c(
+  hclust_plots(aggregation, 7),
+  hclust_plots(noisy_moons, 2),
+  hclust_plots(noisy_circles, 2),
+  hclust_plots(no_structure, 3)
+)
+
+pm <- ggmatrix(
+  plotList, nrow=4, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F
+) + theme_bw()
+
+pm
 
 ```
 

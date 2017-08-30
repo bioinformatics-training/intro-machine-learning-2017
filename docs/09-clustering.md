@@ -93,8 +93,8 @@ A,B,C,D,E & 0 & 0 & 0\\
 \caption{Dendrograms for the example distance matrix using three different linkage methods. }(\#fig:linkageComparison)
 \end{figure}
 
-### Example: gene expression profiling of human tissues
-Load required libraries
+### Example: clustering toy data sets
+
 
 ```r
 library(RColorBrewer)
@@ -132,6 +132,67 @@ library(dendextend)
 ## The following object is masked from 'package:stats':
 ## 
 ##     cutree
+```
+
+```r
+library(ggplot2)
+library(GGally)
+
+cluster_colours <- brewer.pal(8,"Dark2")
+
+blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
+```
+
+
+```r
+aggregation <- read.table("data/example_clusters/aggregation.txt")
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
+
+hclust_plots <- function(data_set, n){
+  d <- dist(data_set[,1:2])
+  dend <- as.dendrogram(hclust(d, method="average"))
+  clusters <- cutree(dend,n,order_clusters_as_data=F)
+  dend <- color_branches(dend, clusters=clusters, col=cluster_colours[1:n])
+  clusters <- clusters[order(as.numeric(names(clusters)))]
+  labels(dend) <- rep("", length(data_set[,1]))
+  ggd <- as.ggdend(dend)
+  ggd$nodes <- ggd$nodes[!(1:length(ggd$nodes[,1])),]
+  plotPair <- list(ggplot(ggd),
+    ggplot(data_set, aes(V1,V2)) + geom_point(col=cluster_colours[clusters], size=0.2))
+  return(plotPair)
+}
+
+plotList <- c(
+  hclust_plots(aggregation, 7),
+  hclust_plots(noisy_moons, 2),
+  hclust_plots(noisy_circles, 2),
+  hclust_plots(no_structure, 3)
+)
+
+pm <- ggmatrix(
+  plotList, nrow=4, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F
+) + theme_bw()
+
+pm
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/hclustToyData-1} 
+
+}
+
+\caption{Hierarchical clustering of toy data-sets. }(\#fig:hclustToyData)
+\end{figure}
+
+### Example: gene expression profiling of human tissues
+Load required libraries
+
+```r
+library(RColorBrewer)
+library(dendextend)
 ```
 
 Load data
