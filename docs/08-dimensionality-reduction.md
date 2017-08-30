@@ -1,4 +1,4 @@
-# Dimensionality reduction
+# Dimensionality reduction {#dimensionality-reduction}
 
 <!-- Chris -->
 
@@ -15,3 +15,8 @@
 ### Gaussian Process Latent Variable Models
 
 ### GPLVMs with informative priors
+
+
+## Exercises
+
+Solutions to exercises can be found in appendix \@ref(solutions-dimensionality-reduction).

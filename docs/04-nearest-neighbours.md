@@ -1,4 +1,4 @@
-# Nearest neighbours
+# Nearest neighbours {#nearest-neighbours}
 
 <!-- Matt -->
 
@@ -18,3 +18,7 @@ filter methods  /  wrapper methods / genetic algorithms
 ## Example one
 
 ## Example two
+
+## Exercises
+
+Solutions to exercises can be found in appendix \@ref(solutions-nearest-neighbours).

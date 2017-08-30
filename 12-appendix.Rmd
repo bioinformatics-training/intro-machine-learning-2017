@@ -1,6 +1,6 @@
 # (APPENDIX) Appendix {-} 
 
-# Resources
+# Resources {#resources}
 
 ## Python
 [scikit-learn](http://scikit-learn.org)

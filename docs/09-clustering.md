@@ -1,4 +1,4 @@
-# Clustering
+# Clustering {#clustering}
 
 <!-- Matt -->
 
@@ -385,5 +385,6 @@ Not appropriate for phylogenetic analysis!!
 
 Exercise solutions: \@ref(solutions-clustering)
 
+Solutions to exercises can be found in appendix \@ref(solutions-clustering).
 
 
