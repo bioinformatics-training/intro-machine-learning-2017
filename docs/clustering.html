@@ -557,7 +557,6 @@ Figure 10.9: Initial centres determine clusters. The starting centres are shown 
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cluster_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">9</span>,<span class="st">&quot;Set1&quot;</span>)
 k &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="dv">9</span>
 res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(blobs[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})
-tot_withinss &lt;-<span class="st"> </span><span class="kw">sapply</span>(k, function(i){res[[i]]$tot.withinss})
 
 plotList &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){
   <span class="kw">ggplot</span>(blobs, <span class="kw">aes</span>(V1, V2)) +<span class="st"> </span>
@@ -579,6 +578,14 @@ pm</code></pre></div>
 Figure 10.10: K-means clustering of the blobs data set using a range of values of k from 1-9. Cluster centres indicated with a cross.
 </p>
 </div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tot_withinss &lt;-<span class="st"> </span><span class="kw">sapply</span>(k, function(i){res[[i]]$tot.withinss})
+<span class="kw">qplot</span>(k, tot_withinss, <span class="dt">geom=</span><span class="kw">c</span>(<span class="st">&quot;point&quot;</span>, <span class="st">&quot;line&quot;</span>), <span class="dt">ylab=</span><span class="st">&quot;Total within-cluster sum of squares&quot;</span>) +<span class="st"> </span><span class="kw">theme_bw</span>()</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:choosingK"></span>
+<img src="09-clustering_files/figure-html/choosingK-1.png" alt="Variance within the clusters. Total within-cluster sum of squares plotted against k." width="50%" />
+<p class="caption">
+Figure 10.11: Variance within the clusters. Total within-cluster sum of squares plotted against k.
+</p>
+</div>
 <p><em>N.B.</em> we have set <code>nstart=50</code> so that the algorithm is started 50 times wi</p>
 </div>
 </div>
@@ -587,6 +594,18 @@ Figure 10.10: K-means clustering of the blobs data set using a range of values o
 <p>Density-based spatial clustering of applications with noise</p>
 <div id="algorithm-1" class="section level4">
 <h4><span class="header-section-number">10.4.2.1</span> Algorithm</h4>
+<p>Abstract DBSCAN algorithm in pseudocode <span class="citation">(Schubert et al. <a href="#ref-Schubert2017">2017</a>)</span>:</p>
+<pre><code>1 Compute neighbours of each point and identify core points   // Identify core points
+2 Join neighbouring core points into clusters                 // Assign core points
+3 foreach non-core point do
+      Add to a neighbouring core point if possible            // Assign border points
+      Otherwise, add to noise                                 // Assign noise points</code></pre>
+<div class="figure" style="text-align: center"><span id="fig:DBSCAN-illustration"></span>
+<img src="figures/DBSCAN-Illustration.svg" alt="Graphical representation of the DBSCAN algorithm." width="75%" />
+<p class="caption">
+Figure 10.12: Graphical representation of the DBSCAN algorithm.
+</p>
+</div>
 </div>
 <div id="choosing-parameters" class="section level4">
 <h4><span class="header-section-number">10.4.2.2</span> Choosing parameters</h4>
@@ -636,6 +655,9 @@ Not appropriate for phylogenetic analysis!!
 </div>
 <div id="ref-Veenman2002">
 <p>Veenman, C.J., M.J.T. Reinders, and E. Backer. 2002. “A maximum variance cluster algorithm.” <em>IEEE Trans. Pattern Analysis and Machine Intelligence</em> 24 (9): 1273–80.</p>
+</div>
+<div id="ref-Schubert2017">
+<p>Schubert, Erich, Jörg Sander, Martin Ester, Hans Peter Kriegel, and Xiaowei Xu. 2017. “DBSCAN Revisited, Revisited: Why and How You Should (Still) Use Dbscan.” <em>ACM Trans. Database Syst.</em> 42 (3). New York, NY, USA: ACM: 19:1–19:21. doi:<a href="https://doi.org/10.1145/3068335">10.1145/3068335</a>.</p>
 </div>
 </div>
             </section>

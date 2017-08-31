@@ -353,7 +353,6 @@ Convergence to a local minimum can be avoided by starting the algorithm multiple
 cluster_colours <- brewer.pal(9,"Set1")
 k <- 1:9
 res <- lapply(k, function(i){kmeans(blobs[,1:2], i, nstart=50)})
-tot_withinss <- sapply(k, function(i){res[[i]]$tot.withinss})
 
 plotList <- lapply(k, function(i){
   ggplot(blobs, aes(V1, V2)) + 
@@ -376,12 +375,38 @@ pm
 <p class="caption">(\#fig:kmeansRangeK)K-means clustering of the blobs data set using a range of values of k from 1-9. Cluster centres indicated with a cross.</p>
 </div>
 
+
+```r
+tot_withinss <- sapply(k, function(i){res[[i]]$tot.withinss})
+qplot(k, tot_withinss, geom=c("point", "line"), ylab="Total within-cluster sum of squares") + theme_bw()
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/choosingK-1.png" alt="Variance within the clusters. Total within-cluster sum of squares plotted against k." width="50%" />
+<p class="caption">(\#fig:choosingK)Variance within the clusters. Total within-cluster sum of squares plotted against k.</p>
+</div>
+
 *N.B.* we have set ```nstart=50``` so that the algorithm is started 50 times wi
 
 ### DBSCAN
 Density-based spatial clustering of applications with noise
 
 #### Algorithm
+
+Abstract DBSCAN algorithm in pseudocode [@Schubert2017]:
+```
+1 Compute neighbours of each point and identify core points   // Identify core points
+2 Join neighbouring core points into clusters                 // Assign core points
+3 foreach non-core point do
+      Add to a neighbouring core point if possible            // Assign border points
+      Otherwise, add to noise                                 // Assign noise points
+```
+
+
+<div class="figure" style="text-align: center">
+<img src="figures/DBSCAN-Illustration.svg" alt="Graphical representation of the DBSCAN algorithm." width="75%" />
+<p class="caption">(\#fig:DBSCAN-illustration)Graphical representation of the DBSCAN algorithm.</p>
+</div>
 
 
 #### Choosing parameters

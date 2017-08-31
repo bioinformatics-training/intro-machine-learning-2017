@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-08-30}
+  \date{2017-08-31}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -546,7 +546,7 @@ sets}\label{example-clustering-toy-data-sets}
 \NormalTok{)}
 
 \NormalTok{pm <-}\StringTok{ }\KeywordTok{ggmatrix}\NormalTok{(}
-  \NormalTok{plotList, }\DataTypeTok{nrow=}\DecValTok{4}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{showXAxisPlotLabels =} \NormalTok{F, }\DataTypeTok{showYAxisPlotLabels =} \NormalTok{F}
+  \NormalTok{plotList, }\DataTypeTok{nrow=}\DecValTok{4}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{showXAxisPlotLabels =} \NormalTok{F, }\DataTypeTok{showYAxisPlotLabels =} \NormalTok{F, }\DataTypeTok{xAxisLabels=}\KeywordTok{c}\NormalTok{(}\StringTok{"dendrogram"}\NormalTok{, }\StringTok{"scatter plot"}\NormalTok{), }\DataTypeTok{yAxisLabels=}\KeywordTok{c}\NormalTok{(}\StringTok{"aggregation"}\NormalTok{, }\StringTok{"noisy moons"}\NormalTok{, }\StringTok{"noisy circles"}\NormalTok{, }\StringTok{"no structure"}\NormalTok{)}
 \NormalTok{) +}\StringTok{ }\KeywordTok{theme_bw}\NormalTok{()}
 
 \NormalTok{pm}
@@ -555,7 +555,7 @@ sets}\label{example-clustering-toy-data-sets}
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/hclustToyData-1} 
+{\centering \includegraphics[width=0.75\linewidth]{09-clustering_files/figure-latex/hclustToyData-1} 
 
 }
 
@@ -736,6 +736,8 @@ Select a specific number of clusters.
 
 \subsection{K-means}\label{k-means}
 
+\subsubsection{Algorithm}\label{algorithm}
+
 Pseudocode
 
 to illustrate range of different types of data that can be clustered -
@@ -750,9 +752,137 @@ image segmentation
 \caption{Iterations of the k-means algorithm}\label{fig:kmeansIterations}
 \end{figure}
 
+The default setting of the \textbf{kmeans} function is to perform a
+maximum of 10 iterations and if the algorithm fails to converge a
+warning is issued. The maximum number of iterations is set with the
+argument \textbf{iter.max}.
+
+\subsubsection{Choosing initial cluster
+centres}\label{choosing-initial-cluster-centres}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(RColorBrewer)}
+\NormalTok{point_shapes <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{15}\NormalTok{,}\DecValTok{17}\NormalTok{,}\DecValTok{19}\NormalTok{)}
+\NormalTok{point_colours <-}\StringTok{ }\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{3}\NormalTok{,}\StringTok{"Dark2"}\NormalTok{)}
+\NormalTok{point_size =}\StringTok{ }\FloatTok{1.5}
+\NormalTok{center_point_size =}\StringTok{ }\DecValTok{8}
+
+\NormalTok{blobs <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/blobs.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F))}
+
+\NormalTok{good_centres <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{12}\NormalTok{,}\DecValTok{7}\NormalTok{), }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{byrow=}\NormalTok{T))}
+\NormalTok{bad_centres <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{13}\NormalTok{,}\DecValTok{13}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{12}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{byrow=}\NormalTok{T))}
+
+\NormalTok{good_result <-}\StringTok{ }\KeywordTok{kmeans}\NormalTok{(blobs[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{centers=}\NormalTok{good_centres)}
+\NormalTok{bad_result <-}\StringTok{ }\KeywordTok{kmeans}\NormalTok{(blobs[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{centers=}\NormalTok{bad_centres)}
+
+\NormalTok{plotList <-}\StringTok{ }\KeywordTok{list}\NormalTok{(}
+\KeywordTok{ggplot}\NormalTok{(blobs, }\KeywordTok{aes}\NormalTok{(V1,V2)) +}\StringTok{ }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\NormalTok{point_colours[good_result$cluster], }\DataTypeTok{shape=}\NormalTok{point_shapes[good_result$cluster], }\DataTypeTok{size=}\NormalTok{point_size) +}\StringTok{ }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{data=}\NormalTok{good_centres, }\KeywordTok{aes}\NormalTok{(V1,V2), }\DataTypeTok{shape=}\DecValTok{3}\NormalTok{, }\DataTypeTok{col=}\StringTok{"black"}\NormalTok{, }\DataTypeTok{size=}\NormalTok{center_point_size) +}\StringTok{ }\KeywordTok{theme_bw}\NormalTok{(),}
+\KeywordTok{ggplot}\NormalTok{(blobs, }\KeywordTok{aes}\NormalTok{(V1,V2)) +}\StringTok{ }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\NormalTok{point_colours[bad_result$cluster], }\DataTypeTok{shape=}\NormalTok{point_shapes[bad_result$cluster], }\DataTypeTok{size=}\NormalTok{point_size) +}\StringTok{ }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{data=}\NormalTok{bad_centres, }\KeywordTok{aes}\NormalTok{(V1,V2), }\DataTypeTok{shape=}\DecValTok{3}\NormalTok{, }\DataTypeTok{col=}\StringTok{"black"}\NormalTok{, }\DataTypeTok{size=}\NormalTok{center_point_size) +}\StringTok{ }\KeywordTok{theme_bw}\NormalTok{()}
+\NormalTok{)}
+
+\NormalTok{pm <-}\StringTok{ }\KeywordTok{ggmatrix}\NormalTok{(}
+  \NormalTok{plotList, }\DataTypeTok{nrow=}\DecValTok{1}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{showXAxisPlotLabels =} \NormalTok{T, }\DataTypeTok{showYAxisPlotLabels =} \NormalTok{T, }\DataTypeTok{xAxisLabels=}\KeywordTok{c}\NormalTok{(}\StringTok{"A"}\NormalTok{, }\StringTok{"B"}\NormalTok{)}
+\NormalTok{) +}\StringTok{ }\KeywordTok{theme_bw}\NormalTok{()}
+
+\NormalTok{pm}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/kmeansCentreChoice-1} 
+
+}
+
+\caption{Initial centres determine clusters. The starting centres are shown as crosses. **A**, real clusters found; **B**, convergence to a local minimum.}\label{fig:kmeansCentreChoice}
+\end{figure}
+
+Convergence to a local minimum can be avoided by starting the algorithm
+multiple times, with different random centres. The \textbf{nstart}
+argument to the \textbf{k-means} function can be used to specify the
+number of random sets and optimal solution will be selected
+automatically.
+
+\subsubsection{Choosing k}\label{choosing-k}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cluster_colours <-}\StringTok{ }\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{9}\NormalTok{,}\StringTok{"Set1"}\NormalTok{)}
+\NormalTok{k <-}\StringTok{ }\DecValTok{1}\NormalTok{:}\DecValTok{9}
+\NormalTok{res <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(k, function(i)\{}\KeywordTok{kmeans}\NormalTok{(blobs[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], i, }\DataTypeTok{nstart=}\DecValTok{50}\NormalTok{)\})}
+
+\NormalTok{plotList <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(k, function(i)\{}
+  \KeywordTok{ggplot}\NormalTok{(blobs, }\KeywordTok{aes}\NormalTok{(V1, V2)) +}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\NormalTok{cluster_colours[res[[i]]$cluster], }\DataTypeTok{size=}\DecValTok{1}\NormalTok{) +}
+\StringTok{    }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{data=}\KeywordTok{as.data.frame}\NormalTok{(res[[i]]$centers), }\KeywordTok{aes}\NormalTok{(V1,V2), }\DataTypeTok{shape=}\DecValTok{3}\NormalTok{, }\DataTypeTok{col=}\StringTok{"black"}\NormalTok{, }\DataTypeTok{size=}\DecValTok{5}\NormalTok{) +}
+\StringTok{    }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{, }\DataTypeTok{x=}\DecValTok{2}\NormalTok{, }\DataTypeTok{y=}\DecValTok{13}\NormalTok{, }\DataTypeTok{label=}\KeywordTok{paste}\NormalTok{(}\StringTok{"k="}\NormalTok{, i, }\DataTypeTok{sep=}\StringTok{""}\NormalTok{), }\DataTypeTok{size=}\DecValTok{8}\NormalTok{, }\DataTypeTok{col=}\StringTok{"black"}\NormalTok{) +}
+\StringTok{    }\KeywordTok{theme_bw}\NormalTok{()}
+\NormalTok{\}}
+\NormalTok{)}
+
+\NormalTok{pm <-}\StringTok{ }\KeywordTok{ggmatrix}\NormalTok{(}
+  \NormalTok{plotList, }\DataTypeTok{nrow=}\DecValTok{3}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{3}\NormalTok{, }\DataTypeTok{showXAxisPlotLabels =} \NormalTok{T, }\DataTypeTok{showYAxisPlotLabels =} \NormalTok{T}
+\NormalTok{) +}\StringTok{ }\KeywordTok{theme_bw}\NormalTok{()}
+
+\NormalTok{pm}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/kmeansRangeK-1} 
+
+}
+
+\caption{K-means clustering of the blobs data set using a range of values of k from 1-9. Cluster centres indicated with a cross.}\label{fig:kmeansRangeK}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tot_withinss <-}\StringTok{ }\KeywordTok{sapply}\NormalTok{(k, function(i)\{res[[i]]$tot.withinss\})}
+\KeywordTok{qplot}\NormalTok{(k, tot_withinss, }\DataTypeTok{geom=}\KeywordTok{c}\NormalTok{(}\StringTok{"point"}\NormalTok{, }\StringTok{"line"}\NormalTok{), }\DataTypeTok{ylab=}\StringTok{"Total within-cluster sum of squares"}\NormalTok{) +}\StringTok{ }\KeywordTok{theme_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/choosingK-1} 
+
+}
+
+\caption{Variance within the clusters. Total within-cluster sum of squares plotted against k.}\label{fig:choosingK}
+\end{figure}
+
+\emph{N.B.} we have set \texttt{nstart=50} so that the algorithm is
+started 50 times wi
+
 \subsection{DBSCAN}\label{dbscan}
 
 Density-based spatial clustering of applications with noise
+
+\subsubsection{Algorithm}\label{algorithm-1}
+
+Abstract DBSCAN algorithm in pseudocode \citep{Schubert2017}:
+
+\begin{verbatim}
+1 Compute neighbours of each point and identify core points   // Identify core points
+2 Join neighbouring core points into clusters                 // Assign core points
+3 foreach non-core point do
+      Add to a neighbouring core point if possible            // Assign border points
+      Otherwise, add to noise                                 // Assign noise points
+\end{verbatim}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.75\linewidth]{figures/DBSCAN-Illustration} 
+
+}
+
+\caption{Graphical representation of the DBSCAN algorithm.}\label{fig:DBSCAN-illustration}
+\end{figure}
+
+\subsubsection{Choosing parameters}\label{choosing-parameters}
 
 \subsection{Gene expression}\label{gene-expression}
 
