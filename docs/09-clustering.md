@@ -308,6 +308,8 @@ to illustrate range of different types of data that can be clustered - image seg
 <p class="caption">(\#fig:kmeansIterations)Iterations of the k-means algorithm</p>
 </div>
 
+The default setting of the **kmeans** function is to perform a maximum of 10 iterations and if the algorithm fails to converge a warning is issued. The maximum number of iterations is set with the argument **iter.max**.
+
 #### Choosing initial cluster centres
 
 ```r
@@ -341,12 +343,40 @@ pm
 <img src="09-clustering_files/figure-html/kmeansCentreChoice-1.png" alt="Initial centres determine clusters. The starting centres are shown as crosses. **A**, real clusters found; **B**, convergence to a local minimum." width="100%" />
 <p class="caption">(\#fig:kmeansCentreChoice)Initial centres determine clusters. The starting centres are shown as crosses. **A**, real clusters found; **B**, convergence to a local minimum.</p>
 </div>
-Convergence to a local minimum can be avoided by starting the algorithm multiple times, with different random centres. The **nstart** argument to the **k-means** function can be used to specify the number of random sets.
+Convergence to a local minimum can be avoided by starting the algorithm multiple times, with different random centres. The **nstart** argument to the **k-means** function can be used to specify the number of random sets and optimal solution will be selected automatically.
 
 
 #### Choosing k
-nstart=50
 
+
+```r
+cluster_colours <- brewer.pal(9,"Set1")
+k <- 1:9
+res <- lapply(k, function(i){kmeans(blobs[,1:2], i, nstart=50)})
+tot_withinss <- sapply(k, function(i){res[[i]]$tot.withinss})
+
+plotList <- lapply(k, function(i){
+  ggplot(blobs, aes(V1, V2)) + 
+    geom_point(col=cluster_colours[res[[i]]$cluster], size=1) +
+    geom_point(data=as.data.frame(res[[i]]$centers), aes(V1,V2), shape=3, col="black", size=5) +
+    annotate("text", x=2, y=13, label=paste("k=", i, sep=""), size=8, col="black") +
+    theme_bw()
+}
+)
+
+pm <- ggmatrix(
+  plotList, nrow=3, ncol=3, showXAxisPlotLabels = T, showYAxisPlotLabels = T
+) + theme_bw()
+
+pm
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/kmeansRangeK-1.png" alt="K-means clustering of the blobs data set using a range of values of k from 1-9. Cluster centres indicated with a cross." width="100%" />
+<p class="caption">(\#fig:kmeansRangeK)K-means clustering of the blobs data set using a range of values of k from 1-9. Cluster centres indicated with a cross.</p>
+</div>
+
+*N.B.* we have set ```nstart=50``` so that the algorithm is started 50 times wi
 
 ### DBSCAN
 Density-based spatial clustering of applications with noise

@@ -516,6 +516,7 @@ Figure 10.7: Selection of eight clusters from the dendogram
 Figure 10.8: Iterations of the k-means algorithm
 </p>
 </div>
+<p>The default setting of the <strong>kmeans</strong> function is to perform a maximum of 10 iterations and if the algorithm fails to converge a warning is issued. The maximum number of iterations is set with the argument <strong>iter.max</strong>.</p>
 </div>
 <div id="choosing-initial-cluster-centres" class="section level4">
 <h4><span class="header-section-number">10.4.1.2</span> Choosing initial cluster centres</h4>
@@ -549,11 +550,36 @@ pm</code></pre></div>
 Figure 10.9: Initial centres determine clusters. The starting centres are shown as crosses. <strong>A</strong>, real clusters found; <strong>B</strong>, convergence to a local minimum.
 </p>
 </div>
-<p>Convergence to a local minimum can be avoided by starting the algorithm multiple times, with different random centres. The <strong>nstart</strong> argument to the <strong>k-means</strong> function can be used to specify the number of random sets.</p>
+<p>Convergence to a local minimum can be avoided by starting the algorithm multiple times, with different random centres. The <strong>nstart</strong> argument to the <strong>k-means</strong> function can be used to specify the number of random sets and optimal solution will be selected automatically.</p>
 </div>
 <div id="choosing-k" class="section level4">
 <h4><span class="header-section-number">10.4.1.3</span> Choosing k</h4>
-<p>nstart=50</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cluster_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">9</span>,<span class="st">&quot;Set1&quot;</span>)
+k &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="dv">9</span>
+res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(blobs[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})
+tot_withinss &lt;-<span class="st"> </span><span class="kw">sapply</span>(k, function(i){res[[i]]$tot.withinss})
+
+plotList &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){
+  <span class="kw">ggplot</span>(blobs, <span class="kw">aes</span>(V1, V2)) +<span class="st"> </span>
+<span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">col=</span>cluster_colours[res[[i]]$cluster], <span class="dt">size=</span><span class="dv">1</span>) +
+<span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">data=</span><span class="kw">as.data.frame</span>(res[[i]]$centers), <span class="kw">aes</span>(V1,V2), <span class="dt">shape=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&quot;black&quot;</span>, <span class="dt">size=</span><span class="dv">5</span>) +
+<span class="st">    </span><span class="kw">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="dt">x=</span><span class="dv">2</span>, <span class="dt">y=</span><span class="dv">13</span>, <span class="dt">label=</span><span class="kw">paste</span>(<span class="st">&quot;k=&quot;</span>, i, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>), <span class="dt">size=</span><span class="dv">8</span>, <span class="dt">col=</span><span class="st">&quot;black&quot;</span>) +
+<span class="st">    </span><span class="kw">theme_bw</span>()
+}
+)
+
+pm &lt;-<span class="st"> </span><span class="kw">ggmatrix</span>(
+  plotList, <span class="dt">nrow=</span><span class="dv">3</span>, <span class="dt">ncol=</span><span class="dv">3</span>, <span class="dt">showXAxisPlotLabels =</span> T, <span class="dt">showYAxisPlotLabels =</span> T
+) +<span class="st"> </span><span class="kw">theme_bw</span>()
+
+pm</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:kmeansRangeK"></span>
+<img src="09-clustering_files/figure-html/kmeansRangeK-1.png" alt="K-means clustering of the blobs data set using a range of values of k from 1-9. Cluster centres indicated with a cross." width="100%" />
+<p class="caption">
+Figure 10.10: K-means clustering of the blobs data set using a range of values of k from 1-9. Cluster centres indicated with a cross.
+</p>
+</div>
+<p><em>N.B.</em> we have set <code>nstart=50</code> so that the algorithm is started 50 times wi</p>
 </div>
 </div>
 <div id="dbscan" class="section level3">
