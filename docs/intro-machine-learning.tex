@@ -400,6 +400,8 @@ Hierarchic (produce dendrogram) vs partitioning methods
 
 \section{Distance metrics}\label{distance-metrics}
 
+dist function cor as.dist(1-cor(x))
+
 \textbf{Minkowski distance:}
 
 \begin{equation}
@@ -466,6 +468,16 @@ A,B,C,D,E & 0 & 0 & 0\\
 \subsection{Example: clustering toy data
 sets}\label{example-clustering-toy-data-sets}
 
+\subsubsection{Step-by-step
+instructions}\label{step-by-step-instructions}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Load required packages.
+\end{enumerate}
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(RColorBrewer)}
@@ -510,12 +522,206 @@ sets}\label{example-clustering-toy-data-sets}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(ggplot2)}
 \KeywordTok{library}\NormalTok{(GGally)}
+\end{Highlighting}
+\end{Shaded}
 
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Retrieve a palette of eight colours.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \NormalTok{cluster_colours <-}\StringTok{ }\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{8}\NormalTok{,}\StringTok{"Dark2"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Read in data for \textbf{blobs} example.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \NormalTok{blobs <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/blobs.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Create distance matrix using Euclidean distance metric.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{d <-}\StringTok{ }\KeywordTok{dist}\NormalTok{(blobs[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  Perform hierarchical clustering using the \textbf{average}
+  agglomeration method and convert the result to an object of class
+  \textbf{dendrogram}. A \textbf{dendrogram} object can be edited using
+  the advanced features of the \textbf{dendextend} package.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dend <-}\StringTok{ }\KeywordTok{as.dendrogram}\NormalTok{(}\KeywordTok{hclust}\NormalTok{(d, }\DataTypeTok{method=}\StringTok{"average"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{5}
+\tightlist
+\item
+  Cut the tree into three clusters
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{clusters <-}\StringTok{ }\KeywordTok{cutree}\NormalTok{(dend,}\DecValTok{3}\NormalTok{,}\DataTypeTok{order_clusters_as_data=}\NormalTok{F)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{6}
+\tightlist
+\item
+  The vector \textbf{clusters} contains the cluster membership (in this
+  case \emph{1}, \emph{2} or \emph{3}) of each observation (data point)
+  in the order they appear on the dendrogram. We can use this vector to
+  colour the branches of the dendrogram by cluster.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dend <-}\StringTok{ }\KeywordTok{color_branches}\NormalTok{(dend, }\DataTypeTok{clusters=}\NormalTok{clusters, }\DataTypeTok{col=}\NormalTok{cluster_colours[}\DecValTok{1}\NormalTok{:}\DecValTok{3}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{7}
+\tightlist
+\item
+  We can use the \textbf{labels} function to annotate the leaves of the
+  dendrogram. However, it is not possible to create legible labels for
+  the 1,500 leaves in our example dendrogram, so we will set the label
+  for each leaf to an empty string.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{labels}\NormalTok{(dend) <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\StringTok{""}\NormalTok{, }\KeywordTok{length}\NormalTok{(blobs[,}\DecValTok{1}\NormalTok{]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{8}
+\tightlist
+\item
+  If we want to plot the dendrogram using \textbf{ggplot}, we must
+  convert it to an object of class \textbf{ggdend}.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ggd <-}\StringTok{ }\KeywordTok{as.ggdend}\NormalTok{(dend)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{9}
+\tightlist
+\item
+  The \textbf{nodes} attribute of \textbf{ggd} is a data.frame of
+  parameters related to the plotting of dendogram nodes. The
+  \textbf{nodes} data.frame contains some NAs which will generate
+  warning messages when \textbf{ggd} is processed by \textbf{ggplot}.
+  Since we are not interested in annotating dendrogram nodes, the
+  easiest option here is to delete all of the rows of \textbf{nodes}.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ggd$nodes <-}\StringTok{ }\NormalTok{ggd$nodes[!(}\DecValTok{1}\NormalTok{:}\KeywordTok{length}\NormalTok{(ggd$nodes[,}\DecValTok{1}\NormalTok{])),]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{10}
+\tightlist
+\item
+  We can use the cluster membership of each observation contained in the
+  vector \textbf{clusters} to assign colours to the data points of a
+  scatterplot. However, first we need to reorder the vector so that the
+  cluster memberships are in the same order that the observations appear
+  in the data.frame of observations. Fortunately the names of the
+  elements of the vector are the indices of the observations in the
+  data.frame and so reordering can be accomplished in one line.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{clusters <-}\StringTok{ }\NormalTok{clusters[}\KeywordTok{order}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{names}\NormalTok{(clusters)))]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{11}
+\tightlist
+\item
+  We are now ready to plot a dendrogram and scatterplot. We will use the
+  \textbf{ggmatrix} function from the \textbf{GGally} package to place
+  the plots side-by-side.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plotList <-}\StringTok{ }\KeywordTok{list}\NormalTok{(}\KeywordTok{ggplot}\NormalTok{(ggd),}
+                 \KeywordTok{ggplot}\NormalTok{(blobs, }\KeywordTok{aes}\NormalTok{(V1,V2)) +}\StringTok{ }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\NormalTok{cluster_colours[clusters], }\DataTypeTok{size=}\FloatTok{0.2}\NormalTok{)}
+                 \NormalTok{)}
+
+\NormalTok{pm <-}\StringTok{ }\KeywordTok{ggmatrix}\NormalTok{(}
+  \NormalTok{plotList, }\DataTypeTok{nrow=}\DecValTok{1}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{showXAxisPlotLabels =} \NormalTok{F, }\DataTypeTok{showYAxisPlotLabels =} \NormalTok{F, }
+  \DataTypeTok{xAxisLabels=}\KeywordTok{c}\NormalTok{(}\StringTok{"dendrogram"}\NormalTok{, }\StringTok{"scatter plot"}\NormalTok{)}
+\NormalTok{) +}\StringTok{ }\KeywordTok{theme_bw}\NormalTok{()}
+
+\NormalTok{pm}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/hclustBlobs-1} 
+
+}
+
+\caption{Hierarchical clustering of the blobs data set.}\label{fig:hclustBlobs}
+\end{figure}
+
+\subsubsection{Clustering of other toy data
+sets}\label{clustering-of-other-toy-data-sets}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -564,6 +770,8 @@ sets}\label{example-clustering-toy-data-sets}
 
 \subsection{Example: gene expression profiling of human
 tissues}\label{example-gene-expression-profiling-of-human-tissues}
+
+\subsubsection{Basics}\label{basics}
 
 Load required libraries
 
@@ -634,6 +842,8 @@ perform hierarchical clustering
 \caption{Clustering of tissue samples based on gene expression profiles. }\label{fig:tissueDendrogram}
 \end{figure}
 
+\subsubsection{Colour labels}\label{colour-labels}
+
 use dendextend library to plot dendrogram with colour labels
 
 \begin{Shaded}
@@ -657,6 +867,9 @@ use dendextend library to plot dendrogram with colour labels
 
 \caption{Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. }\label{fig:tissueDendrogramColour}
 \end{figure}
+
+\subsubsection{Defining clusters by cutting
+tree}\label{defining-clusters-by-cutting-tree}
 
 Define clusters by cutting tree at a specific height
 
@@ -731,6 +944,78 @@ Select a specific number of clusters.
 ##   liver        0  0  0 24  2  0  0  0
 ##   placenta     0  0  0  0  0  0  0  6
 \end{verbatim}
+
+\subsubsection{Heatmap}\label{heatmap}
+
+Base R provides a \textbf{heatmap} function, but we will use the more
+advanced \textbf{heatmap.2} from the \textbf{gplots} package.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(gplots)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'gplots'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:stats':
+## 
+##     lowess
+\end{verbatim}
+
+Define a colour palette (also known as a lookup table).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{heatmap_colours <-}\StringTok{ }\KeywordTok{colorRampPalette}\NormalTok{(}\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{9}\NormalTok{, }\StringTok{"PuBuGn"}\NormalTok{))(}\DecValTok{100}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Calculate the variance of each gene.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{geneVariance <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(e,}\DecValTok{1}\NormalTok{,var)}
+\end{Highlighting}
+\end{Shaded}
+
+Find the row numbers of the 40 genes with the highest variance.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{idxTop40 <-}\StringTok{ }\KeywordTok{order}\NormalTok{(-geneVariance)[}\DecValTok{1}\NormalTok{:}\DecValTok{40}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+Define colours for tissues.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tissueColours <-}\StringTok{ }\KeywordTok{palette}\NormalTok{(}\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{8}\NormalTok{, }\StringTok{"Dark2"}\NormalTok{))[}\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{as.factor}\NormalTok{(tissue))]}
+\end{Highlighting}
+\end{Shaded}
+
+Plot heatmap.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{heatmap.2}\NormalTok{(e[idxTop40,], }\DataTypeTok{labCol=}\NormalTok{tissue, }\DataTypeTok{trace=}\StringTok{"none"}\NormalTok{,}
+          \DataTypeTok{ColSideColors=}\NormalTok{tissueColours, }\DataTypeTok{col=}\NormalTok{heatmap_colours)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/heatmapTissueExpression-1} 
+
+}
+
+\caption{Heatmap of the expression of the 40 genes with the highest variance.}\label{fig:heatmapTissueExpression}
+\end{figure}
 
 \section{Partitioning methods}\label{partitioning-methods}
 

@@ -20,6 +20,8 @@ Hierarchic (produce dendrogram) vs partitioning methods
 
 ## Distance metrics
 
+dist function
+cor as.dist(1-cor(x))
 
 **Minkowski distance:**
 \begin{equation}
@@ -65,7 +67,9 @@ Average linkage - UPGMA (Unweighted Pair Group Method with Arithmetic Mean)
 
 
 
-
+<!--
+Explain anatomy of the dendrogram - branches, nodes and leaves.
+-->
 
 \begin{table}
 
@@ -95,6 +99,8 @@ A,B,C,D,E & 0 & 0 & 0\\
 
 ### Example: clustering toy data sets
 
+#### Step-by-step instructions
+1. Load required packages.
 
 ```r
 library(RColorBrewer)
@@ -137,11 +143,94 @@ library(dendextend)
 ```r
 library(ggplot2)
 library(GGally)
+```
 
+2. Retrieve a palette of eight colours.
+
+```r
 cluster_colours <- brewer.pal(8,"Dark2")
+```
 
+3. Read in data for **blobs** example.
+
+```r
 blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
 ```
+
+4. Create distance matrix using Euclidean distance metric.
+
+```r
+d <- dist(blobs[,1:2])
+```
+
+5. Perform hierarchical clustering using the **average** agglomeration method and convert the result to an object of class **dendrogram**. A **dendrogram** object can be edited using the advanced features of the **dendextend** package.
+
+```r
+dend <- as.dendrogram(hclust(d, method="average"))
+```
+
+6. Cut the tree into three clusters
+
+```r
+clusters <- cutree(dend,3,order_clusters_as_data=F)
+```
+
+7. The vector **clusters** contains the cluster membership (in this case *1*, *2* or *3*) of each observation (data point) in the order they appear on the dendrogram. We can use this vector to colour the branches of the dendrogram by cluster.
+
+```r
+dend <- color_branches(dend, clusters=clusters, col=cluster_colours[1:3])
+```
+
+8. We can use the **labels** function to annotate the leaves of the dendrogram. However, it is not possible to create legible labels for the 1,500 leaves in our example dendrogram, so we will set the label for each leaf to an empty string.
+
+```r
+labels(dend) <- rep("", length(blobs[,1]))
+```
+
+9. If we want to plot the dendrogram using **ggplot**, we must convert it to an object of class **ggdend**.
+
+```r
+ggd <- as.ggdend(dend)
+```
+
+10. The **nodes** attribute of **ggd** is a data.frame of parameters related to the plotting of dendogram nodes. The **nodes** data.frame contains some NAs which will generate warning messages when **ggd** is processed by **ggplot**. Since we are not interested in annotating dendrogram nodes, the easiest option here is to delete all of the rows of **nodes**.
+
+```r
+ggd$nodes <- ggd$nodes[!(1:length(ggd$nodes[,1])),]
+```
+
+11. We can use the cluster membership of each observation contained in the vector **clusters** to assign colours to the data points of a scatterplot. However, first we need to reorder the vector so that the cluster memberships are in the same order that the observations appear in the data.frame of observations. Fortunately the names of the elements of the vector are the indices of the observations in the data.frame and so reordering can be accomplished in one line.
+
+```r
+clusters <- clusters[order(as.numeric(names(clusters)))]
+```
+
+12. We are now ready to plot a dendrogram and scatterplot. We will use the **ggmatrix** function from the **GGally** package to place the plots side-by-side. 
+
+
+```r
+plotList <- list(ggplot(ggd),
+                 ggplot(blobs, aes(V1,V2)) + geom_point(col=cluster_colours[clusters], size=0.2)
+                 )
+
+pm <- ggmatrix(
+  plotList, nrow=1, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F, 
+  xAxisLabels=c("dendrogram", "scatter plot")
+) + theme_bw()
+
+pm
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/hclustBlobs-1} 
+
+}
+
+\caption{Hierarchical clustering of the blobs data set.}(\#fig:hclustBlobs)
+\end{figure}
+
+#### Clustering of other toy data sets
 
 
 ```r
@@ -188,6 +277,8 @@ pm
 \end{figure}
 
 ### Example: gene expression profiling of human tissues
+
+#### Basics
 Load required libraries
 
 ```r
@@ -245,6 +336,9 @@ plot(hc, labels=tissue, cex=0.5, hang=-1, xlab="", sub="")
 \caption{Clustering of tissue samples based on gene expression profiles. }(\#fig:tissueDendrogram)
 \end{figure}
 
+
+#### Colour labels
+
 use dendextend library to plot dendrogram with colour labels
 
 ```r
@@ -266,6 +360,8 @@ plot(dend, horiz=T)
 
 \caption{Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. }(\#fig:tissueDendrogramColour)
 \end{figure}
+
+#### Defining clusters by cutting tree
 
 Define clusters by cutting tree at a specific height
 
@@ -332,6 +428,65 @@ table(tissue, cluster=hclusters)
 ##   liver        0  0  0 24  2  0  0  0
 ##   placenta     0  0  0  0  0  0  0  6
 ```
+
+#### Heatmap
+Base R provides a **heatmap** function, but we will use the more advanced **heatmap.2** from the **gplots** package.
+
+```r
+library(gplots)
+```
+
+```
+## 
+## Attaching package: 'gplots'
+```
+
+```
+## The following object is masked from 'package:stats':
+## 
+##     lowess
+```
+
+Define a colour palette (also known as a lookup table).
+
+```r
+heatmap_colours <- colorRampPalette(brewer.pal(9, "PuBuGn"))(100)
+```
+
+Calculate the variance of each gene.
+
+```r
+geneVariance <- apply(e,1,var)
+```
+
+Find the row numbers of the 40 genes with the highest variance.
+
+```r
+idxTop40 <- order(-geneVariance)[1:40]
+```
+
+Define colours for tissues.
+
+```r
+tissueColours <- palette(brewer.pal(8, "Dark2"))[as.numeric(as.factor(tissue))]
+```
+
+Plot heatmap.
+
+```r
+heatmap.2(e[idxTop40,], labCol=tissue, trace="none",
+          ColSideColors=tissueColours, col=heatmap_colours)
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/heatmapTissueExpression-1} 
+
+}
+
+\caption{Heatmap of the expression of the 40 genes with the highest variance.}(\#fig:heatmapTissueExpression)
+\end{figure}
+
 
 ## Partitioning methods
 
