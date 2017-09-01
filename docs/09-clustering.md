@@ -9,10 +9,14 @@
 Hierarchic (produce dendrogram) vs partitioning methods
 
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*." width="80%" />
-<p class="caption">(\#fig:clusterTypes)Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.</p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{09-clustering_files/figure-latex/clusterTypes-1} 
+
+}
+
+\caption{Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.}(\#fig:clusterTypes)
+\end{figure}
 
 ## Distance metrics
 
@@ -34,15 +38,21 @@ Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
 
 
+\begin{table}
 
-Table: (\#tab:distance-matrix)Example distance matrix
-
-     A    B    C    D  
----  ---  ---  ---  ---
-B    2                 
-C    6    5            
-D    10   10   5       
-E    9    8    3    4  
+\caption{(\#tab:distance-matrix)Example distance matrix}
+\centering
+\begin{tabular}[t]{lllll}
+\toprule
+  & A & B & C & D\\
+\midrule
+B & 2 &  &  & \\
+C & 6 & 5 &  & \\
+D & 10 & 10 & 5 & \\
+E & 9 & 8 & 3 & 4\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 ### Linkage algorithms
 Make one section
@@ -57,21 +67,31 @@ Average linkage - UPGMA (Unweighted Pair Group Method with Arithmetic Mean)
 
 
 
+\begin{table}
 
-Table: (\#tab:distance-merge)Merge distances for objects in the example distance matrix using three different linkage methods.
+\caption{(\#tab:distance-merge)Merge distances for objects in the example distance matrix using three different linkage methods.}
+\centering
+\begin{tabular}[t]{llll}
+\toprule
+Groups & Single & Complete & Average\\
+\midrule
+A,B,C,D,E & 0 & 0 & 0\\
+(A,B),C,D,E & 2 & 2 & 2\\
+(A,B),(C,E),D & 3 & 3 & 3\\
+(A,B)(C,D,E) & 4 & 5 & 4.5\\
+(A,B,C,D,E) & 5 & 10 & 8\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-Groups          Single   Complete   Average 
---------------  -------  ---------  --------
-A,B,C,D,E       0        0          0       
-(A,B),C,D,E     2        2          2       
-(A,B),(C,E),D   3        3          3       
-(A,B)(C,D,E)    4        5          4.5     
-(A,B,C,D,E)     5        10         8       
+\begin{figure}
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/linkageComparison-1.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-2.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-3.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" />
-<p class="caption">(\#fig:linkageComparison)Dendrograms for the example distance matrix using three different linkage methods. </p>
-</div>
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-1} \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-2} \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/linkageComparison-3} 
+
+}
+
+\caption{Dendrograms for the example distance matrix using three different linkage methods. }(\#fig:linkageComparison)
+\end{figure}
 
 ### Example: clustering toy data sets
 
@@ -158,10 +178,14 @@ pm <- ggmatrix(
 pm
 ```
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/hclustToyData-1.png" alt="Hierarchical clustering of toy data-sets. " width="75%" />
-<p class="caption">(\#fig:hclustToyData)Hierarchical clustering of toy data-sets. </p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=0.75\linewidth]{09-clustering_files/figure-latex/hclustToyData-1} 
+
+}
+
+\caption{Hierarchical clustering of toy data-sets. }(\#fig:hclustToyData)
+\end{figure}
 
 ### Example: gene expression profiling of human tissues
 Load required libraries
@@ -212,10 +236,14 @@ hc <- hclust(d, method="average")
 plot(hc, labels=tissue, cex=0.5, hang=-1, xlab="", sub="")
 ```
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/tissueDendrogram-1.png" alt="Clustering of tissue samples based on gene expression profiles. " width="100%" />
-<p class="caption">(\#fig:tissueDendrogram)Clustering of tissue samples based on gene expression profiles. </p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogram-1} 
+
+}
+
+\caption{Clustering of tissue samples based on gene expression profiles. }(\#fig:tissueDendrogram)
+\end{figure}
 
 use dendextend library to plot dendrogram with colour labels
 
@@ -230,10 +258,14 @@ labels_cex(dend) = 0.5
 plot(dend, horiz=T)
 ```
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/tissueDendrogramColour-1.png" alt="Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. " width="100%" />
-<p class="caption">(\#fig:tissueDendrogramColour)Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. </p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramColour-1} 
+
+}
+
+\caption{Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. }(\#fig:tissueDendrogramColour)
+\end{figure}
 
 Define clusters by cutting tree at a specific height
 
@@ -242,10 +274,14 @@ plot(dend, horiz=T)
 abline(v=125, lwd=2, lty=2, col="blue")
 ```
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/tissueDendrogramCutHeight-1.png" alt="Clusters found by cutting tree at a height of 125" width="100%" />
-<p class="caption">(\#fig:tissueDendrogramCutHeight)Clusters found by cutting tree at a height of 125</p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramCutHeight-1} 
+
+}
+
+\caption{Clusters found by cutting tree at a height of 125}(\#fig:tissueDendrogramCutHeight)
+\end{figure}
 
 ```r
 hclusters <- cutree(dend, h=125)
@@ -271,10 +307,14 @@ plot(dend, horiz=T)
 abline(v = heights_per_k.dendrogram(dend)["8"], lwd = 2, lty = 2, col = "blue")
 ```
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/tissueDendrogramEightClusters-1.png" alt="Selection of eight clusters from the dendogram" width="100%" />
-<p class="caption">(\#fig:tissueDendrogramEightClusters)Selection of eight clusters from the dendogram</p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueDendrogramEightClusters-1} 
+
+}
+
+\caption{Selection of eight clusters from the dendogram}(\#fig:tissueDendrogramEightClusters)
+\end{figure}
 
 ```r
 hclusters <- cutree(dend, k=8)
@@ -303,10 +343,14 @@ Pseudocode
 
 to illustrate range of different types of data that can be clustered - image segmentation
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/kmeansIterations-1.png" alt="Iterations of the k-means algorithm" width="90%" />
-<p class="caption">(\#fig:kmeansIterations)Iterations of the k-means algorithm</p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{09-clustering_files/figure-latex/kmeansIterations-1} 
+
+}
+
+\caption{Iterations of the k-means algorithm}(\#fig:kmeansIterations)
+\end{figure}
 
 The default setting of the **kmeans** function is to perform a maximum of 10 iterations and if the algorithm fails to converge a warning is issued. The maximum number of iterations is set with the argument **iter.max**.
 
@@ -339,10 +383,14 @@ pm <- ggmatrix(
 pm
 ```
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/kmeansCentreChoice-1.png" alt="Initial centres determine clusters. The starting centres are shown as crosses. **A**, real clusters found; **B**, convergence to a local minimum." width="100%" />
-<p class="caption">(\#fig:kmeansCentreChoice)Initial centres determine clusters. The starting centres are shown as crosses. **A**, real clusters found; **B**, convergence to a local minimum.</p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/kmeansCentreChoice-1} 
+
+}
+
+\caption{Initial centres determine clusters. The starting centres are shown as crosses. **A**, real clusters found; **B**, convergence to a local minimum.}(\#fig:kmeansCentreChoice)
+\end{figure}
 Convergence to a local minimum can be avoided by starting the algorithm multiple times, with different random centres. The **nstart** argument to the **k-means** function can be used to specify the number of random sets and optimal solution will be selected automatically.
 
 
@@ -370,10 +418,14 @@ pm <- ggmatrix(
 pm
 ```
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/kmeansRangeK-1.png" alt="K-means clustering of the blobs data set using a range of values of k from 1-9. Cluster centres indicated with a cross." width="100%" />
-<p class="caption">(\#fig:kmeansRangeK)K-means clustering of the blobs data set using a range of values of k from 1-9. Cluster centres indicated with a cross.</p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/kmeansRangeK-1} 
+
+}
+
+\caption{K-means clustering of the blobs data set using a range of values of k from 1-9. Cluster centres indicated with a cross.}(\#fig:kmeansRangeK)
+\end{figure}
 
 
 ```r
@@ -381,10 +433,14 @@ tot_withinss <- sapply(k, function(i){res[[i]]$tot.withinss})
 qplot(k, tot_withinss, geom=c("point", "line"), ylab="Total within-cluster sum of squares") + theme_bw()
 ```
 
-<div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/choosingK-1.png" alt="Variance within the clusters. Total within-cluster sum of squares plotted against k." width="50%" />
-<p class="caption">(\#fig:choosingK)Variance within the clusters. Total within-cluster sum of squares plotted against k.</p>
-</div>
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/choosingK-1} 
+
+}
+
+\caption{Variance within the clusters. Total within-cluster sum of squares plotted against k.}(\#fig:choosingK)
+\end{figure}
 
 *N.B.* we have set ```nstart=50``` so that the algorithm is started 50 times wi
 
@@ -393,7 +449,9 @@ Density-based spatial clustering of applications with noise
 
 #### Algorithm
 
-Abstract DBSCAN algorithm in pseudocode [@Schubert2017]:
+
+Abstract DBSCAN algorithm in pseudocode [@Schubert2017]
+
 ```
 1 Compute neighbours of each point and identify core points   // Identify core points
 2 Join neighbouring core points into clusters                 // Assign core points
@@ -403,10 +461,16 @@ Abstract DBSCAN algorithm in pseudocode [@Schubert2017]:
 ```
 
 
-<div class="figure" style="text-align: center">
-<img src="figures/DBSCAN-Illustration.svg" alt="Graphical representation of the DBSCAN algorithm." width="75%" />
-<p class="caption">(\#fig:DBSCAN-illustration)Graphical representation of the DBSCAN algorithm.</p>
-</div>
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.75\linewidth]{images/DBSCAN_Illustration} 
+
+}
+
+\caption{Illustration of the DBSCAN algorithm.}(\#fig:dbscanIllustration)
+\end{figure}
+
 
 
 #### Choosing parameters

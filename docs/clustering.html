@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-08-31">
+<meta name="date" content="2017-09-01">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -594,16 +594,16 @@ Figure 10.11: Variance within the clusters. Total within-cluster sum of squares 
 <p>Density-based spatial clustering of applications with noise</p>
 <div id="algorithm-1" class="section level4">
 <h4><span class="header-section-number">10.4.2.1</span> Algorithm</h4>
-<p>Abstract DBSCAN algorithm in pseudocode <span class="citation">(Schubert et al. <a href="#ref-Schubert2017">2017</a>)</span>:</p>
+<p>Abstract DBSCAN algorithm in pseudocode <span class="citation">(Schubert et al. <a href="#ref-Schubert2017">2017</a>)</span></p>
 <pre><code>1 Compute neighbours of each point and identify core points   // Identify core points
 2 Join neighbouring core points into clusters                 // Assign core points
 3 foreach non-core point do
       Add to a neighbouring core point if possible            // Assign border points
       Otherwise, add to noise                                 // Assign noise points</code></pre>
-<div class="figure" style="text-align: center"><span id="fig:DBSCAN-illustration"></span>
-<img src="figures/DBSCAN-Illustration.svg" alt="Graphical representation of the DBSCAN algorithm." width="75%" />
+<div class="figure" style="text-align: center"><span id="fig:dbscanIllustration"></span>
+<img src="images/DBSCAN_Illustration.svg" alt="Illustration of the DBSCAN algorithm." width="75%" />
 <p class="caption">
-Figure 10.12: Graphical representation of the DBSCAN algorithm.
+Figure 10.12: Illustration of the DBSCAN algorithm.
 </p>
 </div>
 </div>
@@ -657,7 +657,7 @@ Not appropriate for phylogenetic analysis!!
 <p>Veenman, C.J., M.J.T. Reinders, and E. Backer. 2002. “A maximum variance cluster algorithm.” <em>IEEE Trans. Pattern Analysis and Machine Intelligence</em> 24 (9): 1273–80.</p>
 </div>
 <div id="ref-Schubert2017">
-<p>Schubert, Erich, Jörg Sander, Martin Ester, Hans Peter Kriegel, and Xiaowei Xu. 2017. “DBSCAN Revisited, Revisited: Why and How You Should (Still) Use Dbscan.” <em>ACM Trans. Database Syst.</em> 42 (3). New York, NY, USA: ACM: 19:1–19:21. doi:<a href="https://doi.org/10.1145/3068335">10.1145/3068335</a>.</p>
+<p>Schubert, Erich, Jörg Sander, Martin Ester, Hans Peter Kriegel, and Xiaowei Xu. 2017. “DBSCAN Revisited, Revisited: Why and How You Should (Still) Use Dbscan.” <em>ACM Trans. Database Syst.</em> 42 (3): 19:1–19:21. doi:<a href="https://doi.org/10.1145/3068335">10.1145/3068335</a>.</p>
 </div>
 </div>
             </section>

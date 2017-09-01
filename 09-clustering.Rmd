@@ -391,7 +391,9 @@ Density-based spatial clustering of applications with noise
 
 #### Algorithm
 
-Abstract DBSCAN algorithm in pseudocode [@Schubert2017]:
+
+Abstract DBSCAN algorithm in pseudocode [@Schubert2017]
+
 ```
 1 Compute neighbours of each point and identify core points   // Identify core points
 2 Join neighbouring core points into clusters                 // Assign core points
@@ -401,9 +403,11 @@ Abstract DBSCAN algorithm in pseudocode [@Schubert2017]:
 ```
 
 
-```{r DBSCAN-illustration, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Graphical representation of the DBSCAN algorithm."}
-knitr::include_graphics("figures/DBSCAN-Illustration.svg")
+
+```{r dbscanIllustration, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Illustration of the DBSCAN algorithm."}
+knitr::include_graphics("images/DBSCAN_Illustration.svg")
 ```
+
 
 
 #### Choosing parameters
