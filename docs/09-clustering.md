@@ -8,6 +8,9 @@
 
 Hierarchic (produce dendrogram) vs partitioning methods
 
+* Hierarchic agglomerative
+* k-means
+* DBSCAN
 
 \begin{figure}
 
@@ -15,7 +18,7 @@ Hierarchic (produce dendrogram) vs partitioning methods
 
 }
 
-\caption{Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *D31* [@Veenman2002]; **F**, *no structure*.}(\#fig:clusterTypes)
+\caption{Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *anisotropic distributions*; **F**, *no structure*.}(\#fig:clusterTypes)
 \end{figure}
 
 ## Distance metrics
@@ -36,7 +39,7 @@ Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
 
 
-## Hierarchic methods
+## Hierarchic agglomerative
 
 
 
@@ -97,7 +100,7 @@ A,B,C,D,E & 0 & 0 & 0\\
 \caption{Dendrograms for the example distance matrix using three different linkage methods. }(\#fig:linkageComparison)
 \end{figure}
 
-### Example: clustering toy data sets
+### Example: clustering synthetic data sets
 
 #### Step-by-step instructions
 1. Load required packages.
@@ -210,7 +213,8 @@ clusters <- clusters[order(as.numeric(names(clusters)))]
 
 ```r
 plotList <- list(ggplot(ggd),
-                 ggplot(blobs, aes(V1,V2)) + geom_point(col=cluster_colours[clusters], size=0.2)
+                 ggplot(blobs, aes(V1,V2)) + 
+                   geom_point(col=cluster_colours[clusters], size=0.2)
                  )
 
 pm <- ggmatrix(
@@ -230,13 +234,14 @@ pm
 \caption{Hierarchical clustering of the blobs data set.}(\#fig:hclustBlobs)
 \end{figure}
 
-#### Clustering of other toy data sets
+#### Clustering of other synthetic data sets
 
 
 ```r
 aggregation <- read.table("data/example_clusters/aggregation.txt")
 noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
 noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
 no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
 
 hclust_plots <- function(data_set, n){
@@ -249,7 +254,8 @@ hclust_plots <- function(data_set, n){
   ggd <- as.ggdend(dend)
   ggd$nodes <- ggd$nodes[!(1:length(ggd$nodes[,1])),]
   plotPair <- list(ggplot(ggd),
-    ggplot(data_set, aes(V1,V2)) + geom_point(col=cluster_colours[clusters], size=0.2))
+    ggplot(data_set, aes(V1,V2)) + 
+      geom_point(col=cluster_colours[clusters], size=0.2))
   return(plotPair)
 }
 
@@ -257,11 +263,14 @@ plotList <- c(
   hclust_plots(aggregation, 7),
   hclust_plots(noisy_moons, 2),
   hclust_plots(noisy_circles, 2),
+  hclust_plots(aniso, 3),
   hclust_plots(no_structure, 3)
 )
 
 pm <- ggmatrix(
-  plotList, nrow=4, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F, xAxisLabels=c("dendrogram", "scatter plot"), yAxisLabels=c("aggregation", "noisy moons", "noisy circles", "no structure")
+  plotList, nrow=5, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F,
+  xAxisLabels=c("dendrogram", "scatter plot"), 
+  yAxisLabels=c("aggregation", "noisy moons", "noisy circles", "anisotropic", "no structure")
 ) + theme_bw()
 
 pm
@@ -273,7 +282,7 @@ pm
 
 }
 
-\caption{Hierarchical clustering of toy data-sets. }(\#fig:hclustToyData)
+\caption{Hierarchical clustering of synthetic data-sets. }(\#fig:hclustToyData)
 \end{figure}
 
 ### Example: gene expression profiling of human tissues
@@ -488,11 +497,9 @@ heatmap.2(e[idxTop40,], labCol=tissue, trace="none",
 \end{figure}
 
 
-## Partitioning methods
+## K-means
 
-### K-means
-
-#### Algorithm
+### Algorithm
 
 Pseudocode
 
@@ -509,7 +516,7 @@ to illustrate range of different types of data that can be clustered - image seg
 
 The default setting of the **kmeans** function is to perform a maximum of 10 iterations and if the algorithm fails to converge a warning is issued. The maximum number of iterations is set with the argument **iter.max**.
 
-#### Choosing initial cluster centres
+### Choosing initial cluster centres
 
 ```r
 library(RColorBrewer)
@@ -527,12 +534,21 @@ good_result <- kmeans(blobs[,1:2], centers=good_centres)
 bad_result <- kmeans(blobs[,1:2], centers=bad_centres)
 
 plotList <- list(
-ggplot(blobs, aes(V1,V2)) + geom_point(col=point_colours[good_result$cluster], shape=point_shapes[good_result$cluster], size=point_size) + geom_point(data=good_centres, aes(V1,V2), shape=3, col="black", size=center_point_size) + theme_bw(),
-ggplot(blobs, aes(V1,V2)) + geom_point(col=point_colours[bad_result$cluster], shape=point_shapes[bad_result$cluster], size=point_size) + geom_point(data=bad_centres, aes(V1,V2), shape=3, col="black", size=center_point_size) + theme_bw()
+ggplot(blobs, aes(V1,V2)) + 
+  geom_point(col=point_colours[good_result$cluster], shape=point_shapes[good_result$cluster], 
+             size=point_size) + 
+  geom_point(data=good_centres, aes(V1,V2), shape=3, col="black", size=center_point_size) + 
+  theme_bw(),
+ggplot(blobs, aes(V1,V2)) + 
+  geom_point(col=point_colours[bad_result$cluster], shape=point_shapes[bad_result$cluster], 
+             size=point_size) + 
+  geom_point(data=bad_centres, aes(V1,V2), shape=3, col="black", size=center_point_size) + 
+  theme_bw()
 )
 
 pm <- ggmatrix(
-  plotList, nrow=1, ncol=2, showXAxisPlotLabels = T, showYAxisPlotLabels = T, xAxisLabels=c("A", "B")
+  plotList, nrow=1, ncol=2, showXAxisPlotLabels = T, showYAxisPlotLabels = T, 
+  xAxisLabels=c("A", "B")
 ) + theme_bw()
 
 pm
@@ -549,17 +565,17 @@ pm
 Convergence to a local minimum can be avoided by starting the algorithm multiple times, with different random centres. The **nstart** argument to the **k-means** function can be used to specify the number of random sets and optimal solution will be selected automatically.
 
 
-#### Choosing k
+### Choosing k
 
 
 ```r
-cluster_colours <- brewer.pal(9,"Set1")
+point_colours <- brewer.pal(9,"Set1")
 k <- 1:9
 res <- lapply(k, function(i){kmeans(blobs[,1:2], i, nstart=50)})
 
 plotList <- lapply(k, function(i){
   ggplot(blobs, aes(V1, V2)) + 
-    geom_point(col=cluster_colours[res[[i]]$cluster], size=1) +
+    geom_point(col=point_colours[res[[i]]$cluster], size=1) +
     geom_point(data=as.data.frame(res[[i]]$centers), aes(V1,V2), shape=3, col="black", size=5) +
     annotate("text", x=2, y=13, label=paste("k=", i, sep=""), size=8, col="black") +
     theme_bw()
@@ -585,7 +601,8 @@ pm
 
 ```r
 tot_withinss <- sapply(k, function(i){res[[i]]$tot.withinss})
-qplot(k, tot_withinss, geom=c("point", "line"), ylab="Total within-cluster sum of squares") + theme_bw()
+qplot(k, tot_withinss, geom=c("point", "line"), 
+      ylab="Total within-cluster sum of squares") + theme_bw()
 ```
 
 \begin{figure}
@@ -597,12 +614,221 @@ qplot(k, tot_withinss, geom=c("point", "line"), ylab="Total within-cluster sum o
 \caption{Variance within the clusters. Total within-cluster sum of squares plotted against k.}(\#fig:choosingK)
 \end{figure}
 
-*N.B.* we have set ```nstart=50``` so that the algorithm is started 50 times wi
+*N.B.* we have set ```nstart=50``` to run the algorithm 50 times, starting from different, random sets of centroids.
 
-### DBSCAN
+
+### Example: clustering synthetic data sets
+Let's see how k-means performs on the other toy data sets. First we will define some variables and functions we will use in the analysis of all data sets.
+
+```r
+k=1:9
+point_shapes <- c(15,17,19,5,6,0,1)
+point_colours <- brewer.pal(7,"Dark2")
+point_size = 1.5
+center_point_size = 8
+
+plot_tot_withinss <- function(kmeans_output){
+  tot_withinss <- sapply(k, function(i){kmeans_output[[i]]$tot.withinss})
+  qplot(k, tot_withinss, geom=c("point", "line"), 
+        ylab="Total within-cluster sum of squares") + theme_bw()
+}
+
+plot_clusters <- function(data_set, kmeans_output, num_clusters){
+    ggplot(data_set, aes(V1,V2)) + 
+    geom_point(col=point_colours[kmeans_output[[num_clusters]]$cluster],
+               shape=point_shapes[kmeans_output[[num_clusters]]$cluster], 
+               size=point_size) +
+    geom_point(data=as.data.frame(kmeans_output[[num_clusters]]$centers), aes(V1,V2),
+               shape=3,col="black",size=center_point_size) + 
+    theme_bw()
+}
+```
+
+#### Aggregation
+
+```r
+aggregation <- as.data.frame(read.table("data/example_clusters/aggregation.txt"))
+res <- lapply(k, function(i){kmeans(aggregation[,1:2], i, nstart=50)})
+plot_tot_withinss(res)
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/kmeansAggregationElbow-1} 
+
+}
+
+\caption{K-means clustering of the aggregation data set: variance within clusters.}(\#fig:kmeansAggregationElbow)
+\end{figure}
+
+
+```r
+plotList <- list(
+  plot_clusters(aggregation, res, 3),
+  plot_clusters(aggregation, res, 7)
+)
+pm <- ggmatrix(
+  plotList, nrow=1, ncol=2, showXAxisPlotLabels = T, showYAxisPlotLabels = T, 
+  xAxisLabels=c("k=3", "k=7")
+) + theme_bw()
+pm
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/kmeansAggregationScatter-1} 
+
+}
+
+\caption{K-means clustering of the aggregation data set: scatterplots of clusters for k=3 and k=7. Cluster centres indicated with a cross.}(\#fig:kmeansAggregationScatter)
+\end{figure}
+
+#### Noisy moons
+
+```r
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+res <- lapply(k, function(i){kmeans(noisy_moons[,1:2], i, nstart=50)})
+plot_tot_withinss(res)
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/kmeansNoisyMoonsElbow-1} 
+
+}
+
+\caption{K-means clustering of the noisy moons data set: variance within clusters.}(\#fig:kmeansNoisyMoonsElbow)
+\end{figure}
+
+
+```r
+plot_clusters(noisy_moons, res, 2)
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/kmeansNoisyMoonsScatter-1} 
+
+}
+
+\caption{K-means clustering of the noisy moons data set: scatterplot of clusters for k=2. Cluster centres indicated with a cross.}(\#fig:kmeansNoisyMoonsScatter)
+\end{figure}
+
+#### Noisy circles
+
+```r
+noisy_circles <- as.data.frame(read.csv("data/example_clusters/noisy_circles.csv", header=F))
+res <- lapply(k, function(i){kmeans(noisy_circles[,1:2], i, nstart=50)})
+plot_tot_withinss(res)
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/kmeansNoisyCirclesElbow-1} 
+
+}
+
+\caption{K-means clustering of the noisy circles data set: variance within clusters.}(\#fig:kmeansNoisyCirclesElbow)
+\end{figure}
+
+
+```r
+plotList <- list(
+  plot_clusters(noisy_circles, res, 2),
+  plot_clusters(noisy_circles, res, 3)
+)
+pm <- ggmatrix(
+  plotList, nrow=1, ncol=2, showXAxisPlotLabels = T, 
+  showYAxisPlotLabels = T, xAxisLabels=c("k=2", "k=3")
+) + theme_bw()
+pm
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/kmeansNoisyCirclesScatter-1} 
+
+}
+
+\caption{K-means clustering of the noisy circles data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross.}(\#fig:kmeansNoisyCirclesScatter)
+\end{figure}
+
+#### Anisotropic distributions
+
+```r
+aniso <- as.data.frame(read.csv("data/example_clusters/aniso.csv", header=F))
+res <- lapply(k, function(i){kmeans(aniso[,1:2], i, nstart=50)})
+plot_tot_withinss(res)
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/kmeansAnisoElbow-1} 
+
+}
+
+\caption{K-means clustering  of the anisotropic distributions data set: variance within clusters.}(\#fig:kmeansAnisoElbow)
+\end{figure}
+
+
+```r
+plotList <- list(
+  plot_clusters(aniso, res, 2),
+  plot_clusters(aniso, res, 3)
+)
+pm <- ggmatrix(
+  plotList, nrow=1, ncol=2, showXAxisPlotLabels = T, 
+  showYAxisPlotLabels = T, xAxisLabels=c("k=2", "k=3")
+) + theme_bw()
+pm
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/kmeansAnisoScatter-1} 
+
+}
+
+\caption{K-means clustering of the anisotropic distributions data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross.}(\#fig:kmeansAnisoScatter)
+\end{figure}
+
+#### No structure
+
+```r
+no_structure <- as.data.frame(read.csv("data/example_clusters/no_structure.csv", header=F))
+res <- lapply(k, function(i){kmeans(no_structure[,1:2], i, nstart=50)})
+plot_tot_withinss(res)
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/noStructureElbow-1} 
+
+}
+
+\caption{K-means clustering of the data set with no structure: variance within clusters.}(\#fig:noStructureElbow)
+\end{figure}
+
+
+```r
+plot_clusters(no_structure, res, 4)
+```
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/noStructureScatter-1} 
+
+}
+
+\caption{K-means clustering of the data set with no structure: scatterplot of clusters for k=4. Cluster centres indicated with a cross.}(\#fig:noStructureScatter)
+\end{figure}
+
+
+
+## DBSCAN
 Density-based spatial clustering of applications with noise
 
-#### Algorithm
+### Algorithm
 
 
 Abstract DBSCAN algorithm in pseudocode [@Schubert2017]
@@ -628,8 +854,10 @@ Abstract DBSCAN algorithm in pseudocode [@Schubert2017]
 
 
 
-#### Choosing parameters
+### Choosing parameters
 
+
+### Example: clustering synthetic data sets
 
 
 ### Gene expression
@@ -651,7 +879,7 @@ Not appropriate for phylogenetic analysis!!
 ## Exercises
 
 <!--
-1. Toy clusters
+1. Toy/synthetic clusters
 2. mouse mammary time-course (kmeans and dbscan)
 3. dimensionality reduction before clustering (helpful for visualization if using a partitioning method) - possibly use parasite data?
 4. exercise involving heatmap
