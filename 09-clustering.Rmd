@@ -619,7 +619,45 @@ plot_tot_withinss(res)
 plot_clusters(no_structure, res, 4)
 ```
 
+### Example: gene expression profiling of human tissues
+Let's return to the data on gene expression of human tissues.
+Load data
+```{r echo=T}
+load("data/tissues_gene_expression/tissuesGeneExpression.rda")
+```
 
+As we saw earlier, the data set contains expression levels for over 22,000 transcripts in seven tissues.
+```{r echo=T}
+table(tissue)
+dim(e)
+```
+
+First we will examine the total intra-cluster variance with different values of *k*. In practice we would set **nstart** to a large value (e.g. 50), but in the interests of speed for this demonstration we will set it to one. We use **set.seed** to make this example reproducible, but in practice you would allow **R** to generate a random seed.
+
+```{r tissueExpressionElbow, fig.cap='K-means clustering of human tissue gene expression: variance within clusters.', out.width='100%', fig.asp=0.5, fig.align='center', echo=T}
+k<-1:15
+set.seed(42)
+res_k_15 <- lapply(k, function(i){kmeans(t(e), i, nstart=1)})
+plot_tot_withinss(res_k_15)
+```
+If we had set **nstart** to a higher value we would have obtained a smoother curve in figure \@ref(fig:tissueExpressionElbow). There is no obvious elbow, but the rate of decrease in the total-within sum of squares appears to slow after k=5. Since we know that there are seven tissues in the data set we will try k=7. 
+
+```{r echo=T}
+set.seed(42)
+res <- kmeans(t(e), 7, nstart=10)
+table(tissue, res$cluster)
+```
+The analysis has found a distinct cluster for each tissue and therefore performed slightly better than the earlier hierarchical clustering analysis, which placed endometrium and kidney observations in the same cluster.
+
+To visualize the result in a 2D scatter plot we first need to apply dimensionality reduction. We will use principal component analysis (PCA), which was described in chapter \@ref(dimensionality-reduction).
+
+```{r tissueExpressionPCA, fig.cap='K-means clustering of human gene expression (k=7): scatterplot of first two principal components.', out.width='50%', fig.asp=1, fig.align='center', echo=T}
+pca <- prcomp(t(e))
+ggplot(data=as.data.frame(pca$x), aes(PC1,PC2)) + 
+  geom_point(col=brewer.pal(7,"Dark2")[res$cluster], 
+             shape=c(49:55)[res$cluster], size=5) + 
+  theme_bw()
+```
 
 ## DBSCAN
 Density-based spatial clustering of applications with noise

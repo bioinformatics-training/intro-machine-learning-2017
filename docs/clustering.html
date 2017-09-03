@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-03">
+<meta name="date" content="2017-09-04">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -160,6 +160,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.4.2" data-path="clustering.html"><a href="clustering.html#choosing-initial-cluster-centres"><i class="fa fa-check"></i><b>10.4.2</b> Choosing initial cluster centres</a></li>
 <li class="chapter" data-level="10.4.3" data-path="clustering.html"><a href="clustering.html#choosing-k"><i class="fa fa-check"></i><b>10.4.3</b> Choosing k</a></li>
 <li class="chapter" data-level="10.4.4" data-path="clustering.html"><a href="clustering.html#example-clustering-synthetic-data-sets-1"><i class="fa fa-check"></i><b>10.4.4</b> Example: clustering synthetic data sets</a></li>
+<li class="chapter" data-level="10.4.5" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues-1"><i class="fa fa-check"></i><b>10.4.5</b> Example: gene expression profiling of human tissues</a></li>
 </ul></li>
 <li class="chapter" data-level="10.5" data-path="clustering.html"><a href="clustering.html#dbscan"><i class="fa fa-check"></i><b>10.5</b> DBSCAN</a><ul>
 <li class="chapter" data-level="10.5.1" data-path="clustering.html"><a href="clustering.html#algorithm-1"><i class="fa fa-check"></i><b>10.5.1</b> Algorithm</a></li>
@@ -656,17 +657,20 @@ bad_result &lt;-<span class="st"> </span><span class="kw">kmeans</span>(blobs[,<
 
 plotList &lt;-<span class="st"> </span><span class="kw">list</span>(
 <span class="kw">ggplot</span>(blobs, <span class="kw">aes</span>(V1,V2)) +<span class="st"> </span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[good_result$cluster], <span class="dt">shape=</span>point_shapes[good_result$cluster], <span class="dt">size=</span>point_size) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[good_result$cluster], <span class="dt">shape=</span>point_shapes[good_result$cluster], 
+             <span class="dt">size=</span>point_size) +<span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>good_centres, <span class="kw">aes</span>(V1,V2), <span class="dt">shape=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&quot;black&quot;</span>, <span class="dt">size=</span>center_point_size) +<span class="st"> </span>
 <span class="st">  </span><span class="kw">theme_bw</span>(),
 <span class="kw">ggplot</span>(blobs, <span class="kw">aes</span>(V1,V2)) +<span class="st"> </span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[bad_result$cluster], <span class="dt">shape=</span>point_shapes[bad_result$cluster], <span class="dt">size=</span>point_size) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[bad_result$cluster], <span class="dt">shape=</span>point_shapes[bad_result$cluster], 
+             <span class="dt">size=</span>point_size) +<span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>bad_centres, <span class="kw">aes</span>(V1,V2), <span class="dt">shape=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&quot;black&quot;</span>, <span class="dt">size=</span>center_point_size) +<span class="st"> </span>
 <span class="st">  </span><span class="kw">theme_bw</span>()
 )
 
 pm &lt;-<span class="st"> </span><span class="kw">ggmatrix</span>(
-  plotList, <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">showXAxisPlotLabels =</span> T, <span class="dt">showYAxisPlotLabels =</span> T, <span class="dt">xAxisLabels=</span><span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>)
+  plotList, <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">showXAxisPlotLabels =</span> T, <span class="dt">showYAxisPlotLabels =</span> T, 
+  <span class="dt">xAxisLabels=</span><span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>)
 ) +<span class="st"> </span><span class="kw">theme_bw</span>()
 
 pm</code></pre></div>
@@ -755,7 +759,8 @@ Figure 10.14: K-means clustering of the aggregation data set: variance within cl
   <span class="kw">plot_clusters</span>(aggregation, res, <span class="dv">7</span>)
 )
 pm &lt;-<span class="st"> </span><span class="kw">ggmatrix</span>(
-  plotList, <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">showXAxisPlotLabels =</span> T, <span class="dt">showYAxisPlotLabels =</span> T, <span class="dt">xAxisLabels=</span><span class="kw">c</span>(<span class="st">&quot;k=3&quot;</span>, <span class="st">&quot;k=7&quot;</span>)
+  plotList, <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">showXAxisPlotLabels =</span> T, <span class="dt">showYAxisPlotLabels =</span> T, 
+  <span class="dt">xAxisLabels=</span><span class="kw">c</span>(<span class="st">&quot;k=3&quot;</span>, <span class="st">&quot;k=7&quot;</span>)
 ) +<span class="st"> </span><span class="kw">theme_bw</span>()
 pm</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:kmeansAggregationScatter"></span>
@@ -858,6 +863,57 @@ Figure 10.23: K-means clustering of the data set with no structure: scatterplot 
 </div>
 </div>
 </div>
+<div id="example-gene-expression-profiling-of-human-tissues-1" class="section level3">
+<h3><span class="header-section-number">10.4.5</span> Example: gene expression profiling of human tissues</h3>
+<p>Let’s return to the data on gene expression of human tissues. Load data</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;data/tissues_gene_expression/tissuesGeneExpression.rda&quot;</span>)</code></pre></div>
+<p>As we saw earlier, the data set contains expression levels for over 22,000 transcripts in seven tissues.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(tissue)</code></pre></div>
+<pre><code>## tissue
+##  cerebellum       colon endometrium hippocampus      kidney       liver 
+##          38          34          15          31          39          26 
+##    placenta 
+##           6</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(e)</code></pre></div>
+<pre><code>## [1] 22215   189</code></pre>
+<p>First we will examine the total intra-cluster variance with different values of <em>k</em>. In practice we would set <strong>nstart</strong> to a large value (e.g. 50), but in the interests of speed for this demonstration we will set it to one. We use <strong>set.seed</strong> to make this example reproducible, but in practice you would allow <strong>R</strong> to generate a random seed.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k&lt;-<span class="dv">1</span>:<span class="dv">15</span>
+<span class="kw">set.seed</span>(<span class="dv">42</span>)
+res_k_15 &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(<span class="kw">t</span>(e), i, <span class="dt">nstart=</span><span class="dv">1</span>)})
+<span class="kw">plot_tot_withinss</span>(res_k_15)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:tissueExpressionElbow"></span>
+<img src="09-clustering_files/figure-html/tissueExpressionElbow-1.png" alt="K-means clustering of human tissue gene expression: variance within clusters." width="100%" />
+<p class="caption">
+Figure 10.24: K-means clustering of human tissue gene expression: variance within clusters.
+</p>
+</div>
+<p>If we had set <strong>nstart</strong> to a higher value we would have obtained a smoother curve in figure <a href="clustering.html#fig:tissueExpressionElbow">10.24</a>. There is no obvious elbow, but the rate of decrease in the total-within sum of squares appears to slow after k=5. Since we know that there are seven tissues in the data set we will try k=7.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">42</span>)
+res &lt;-<span class="st"> </span><span class="kw">kmeans</span>(<span class="kw">t</span>(e), <span class="dv">7</span>, <span class="dt">nstart=</span><span class="dv">10</span>)
+<span class="kw">table</span>(tissue, res$cluster)</code></pre></div>
+<pre><code>##              
+## tissue         1  2  3  4  5  6  7
+##   cerebellum   0  0  0 33  0  0  5
+##   colon        0  0  0  0  0 34  0
+##   endometrium  0  0  0  0 15  0  0
+##   hippocampus  0  0  0  0  0  0 31
+##   kidney       0  0 39  0  0  0  0
+##   liver       26  0  0  0  0  0  0
+##   placenta     0  6  0  0  0  0  0</code></pre>
+<p>The analysis has found a distinct cluster for each tissue and therefore performed slightly better than the earlier hierarchical clustering analysis, which placed endometrium and kidney observations in the same cluster.</p>
+<p>To visualize the result in a 2D scatter plot we first need to apply dimensionality reduction. We will use principal component analysis (PCA), which was described in chapter <a href="dimensionality-reduction.html#dimensionality-reduction">9</a>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pca &lt;-<span class="st"> </span><span class="kw">prcomp</span>(<span class="kw">t</span>(e))
+<span class="kw">ggplot</span>(<span class="dt">data=</span><span class="kw">as.data.frame</span>(pca$x), <span class="kw">aes</span>(PC1,PC2)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span><span class="kw">brewer.pal</span>(<span class="dv">7</span>,<span class="st">&quot;Dark2&quot;</span>)[res$cluster], 
+             <span class="dt">shape=</span><span class="kw">c</span>(<span class="dv">49</span>:<span class="dv">55</span>)[res$cluster], <span class="dt">size=</span><span class="dv">5</span>) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:tissueExpressionPCA"></span>
+<img src="09-clustering_files/figure-html/tissueExpressionPCA-1.png" alt="K-means clustering of human gene expression (k=7): scatterplot of first two principal components" width="50%" />
+<p class="caption">
+Figure 10.25: K-means clustering of human gene expression (k=7): scatterplot of first two principal components
+</p>
+</div>
+</div>
 </div>
 <div id="dbscan" class="section level2">
 <h2><span class="header-section-number">10.5</span> DBSCAN</h2>
@@ -873,7 +929,7 @@ Figure 10.23: K-means clustering of the data set with no structure: scatterplot 
 <div class="figure" style="text-align: center"><span id="fig:dbscanIllustration"></span>
 <img src="images/DBSCAN_Illustration.svg" alt="Illustration of the DBSCAN algorithm." width="75%" />
 <p class="caption">
-Figure 10.24: Illustration of the DBSCAN algorithm.
+Figure 10.26: Illustration of the DBSCAN algorithm.
 </p>
 </div>
 </div>
