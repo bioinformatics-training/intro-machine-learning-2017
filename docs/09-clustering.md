@@ -6,6 +6,11 @@
 
 ## Introduction
 
+What is clustering - add figure showing idea of minimizing intra-cluster variation and maximizing inter-cluster variation.
+
+
+
+
 Hierarchic (produce dendrogram) vs partitioning methods
 
 * Hierarchic agglomerative
@@ -13,8 +18,8 @@ Hierarchic (produce dendrogram) vs partitioning methods
 * DBSCAN
 
 <div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *anisotropic distributions*; **F**, *no structure*." width="80%" />
-<p class="caption">(\#fig:clusterTypes)Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *anisotropic distributions*; **F**, *no structure*.</p>
+<img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *different density*; **E**, *anisotropic distributions*; **F**, *no structure*." width="80%" />
+<p class="caption">(\#fig:clusterTypes)Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *different density*; **E**, *anisotropic distributions*; **F**, *no structure*.</p>
 </div>
 
 ## Distance metrics
@@ -216,7 +221,7 @@ pm
 ```r
 aggregation <- read.table("data/example_clusters/aggregation.txt")
 noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
-noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+diff_density <- read.csv("data/example_clusters/different_density.csv", header=F)
 aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
 no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
 
@@ -238,7 +243,7 @@ hclust_plots <- function(data_set, n){
 plotList <- c(
   hclust_plots(aggregation, 7),
   hclust_plots(noisy_moons, 2),
-  hclust_plots(noisy_circles, 2),
+  hclust_plots(diff_density, 2),
   hclust_plots(aniso, 3),
   hclust_plots(no_structure, 3)
 )
@@ -246,7 +251,7 @@ plotList <- c(
 pm <- ggmatrix(
   plotList, nrow=5, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F,
   xAxisLabels=c("dendrogram", "scatter plot"), 
-  yAxisLabels=c("aggregation", "noisy moons", "noisy circles", "anisotropic", "no structure")
+  yAxisLabels=c("aggregation", "noisy moons", "diff. density", "anisotropic", "no structure")
 ) + theme_bw()
 
 pm
@@ -634,35 +639,40 @@ plot_clusters(noisy_moons, res, 2)
 <p class="caption">(\#fig:kmeansNoisyMoonsScatter)K-means clustering of the noisy moons data set: scatterplot of clusters for k=2. Cluster centres indicated with a cross.</p>
 </div>
 
-#### Noisy circles
+#### Different density
 
 ```r
-noisy_circles <- as.data.frame(read.csv("data/example_clusters/noisy_circles.csv", header=F))
-res <- lapply(k, function(i){kmeans(noisy_circles[,1:2], i, nstart=50)})
+diff_density <- as.data.frame(read.csv("data/example_clusters/different_density.csv", header=F))
+res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
+```
+
+```
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+```
+
+```r
 plot_tot_withinss(res)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/kmeansNoisyCirclesElbow-1.png" alt="K-means clustering of the noisy circles data set: variance within clusters." width="50%" />
-<p class="caption">(\#fig:kmeansNoisyCirclesElbow)K-means clustering of the noisy circles data set: variance within clusters.</p>
+<img src="09-clustering_files/figure-html/kmeansDiffDensityElbow-1.png" alt="K-means clustering of the different density distributions data set: variance within clusters." width="50%" />
+<p class="caption">(\#fig:kmeansDiffDensityElbow)K-means clustering of the different density distributions data set: variance within clusters.</p>
 </div>
 
 
 ```r
-plotList <- list(
-  plot_clusters(noisy_circles, res, 2),
-  plot_clusters(noisy_circles, res, 3)
-)
-pm <- ggmatrix(
-  plotList, nrow=1, ncol=2, showXAxisPlotLabels = T, 
-  showYAxisPlotLabels = T, xAxisLabels=c("k=2", "k=3")
-) + theme_bw()
-pm
+plot_clusters(diff_density, res, 2)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/kmeansNoisyCirclesScatter-1.png" alt="K-means clustering of the noisy circles data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross." width="100%" />
-<p class="caption">(\#fig:kmeansNoisyCirclesScatter)K-means clustering of the noisy circles data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross.</p>
+<img src="09-clustering_files/figure-html/kmeansDiffDensityScatter-1.png" alt="K-means clustering of the different density distributions data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross." width="50%" />
+<p class="caption">(\#fig:kmeansDiffDensityScatter)K-means clustering of the different density distributions data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross.</p>
 </div>
 
 #### Anisotropic distributions
@@ -797,8 +807,8 @@ ggplot(data=as.data.frame(pca$x), aes(PC1,PC2)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="09-clustering_files/figure-html/tissueExpressionPCA-1.png" alt="K-means clustering of human gene expression (k=7): scatterplot of first two principal components" width="50%" />
-<p class="caption">(\#fig:tissueExpressionPCA)K-means clustering of human gene expression (k=7): scatterplot of first two principal components</p>
+<img src="09-clustering_files/figure-html/tissueExpressionPCA-1.png" alt="K-means clustering of human gene expression (k=7): scatterplot of first two principal components." width="50%" />
+<p class="caption">(\#fig:tissueExpressionPCA)K-means clustering of human gene expression (k=7): scatterplot of first two principal components.</p>
 </div>
 
 ## DBSCAN
@@ -827,6 +837,29 @@ Abstract DBSCAN algorithm in pseudocode [@Schubert2017]
 
 
 ### Choosing parameters
+The algorithm only needs parameteres **eps** and **minPts**.
+
+
+
+
+```r
+library(dbscan)
+```
+
+
+```r
+blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
+dist2knn <- kNNdist(blobs, 3)
+```
+
+<!--
+?dbscan::dbscan
+aggregation <- read.table("data/example_clusters/aggregation.txt")
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
+no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
+-->
 
 
 ### Example: clustering synthetic data sets

@@ -6,44 +6,53 @@
 
 ## Introduction
 
+What is clustering - add figure showing idea of minimizing intra-cluster variation and maximizing inter-cluster variation.
+
+
+
+
 Hierarchic (produce dendrogram) vs partitioning methods
 
 * Hierarchic agglomerative
 * k-means
 * DBSCAN
 
-```{r clusterTypes, fig.cap='Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *anisotropic distributions*; **F**, *no structure*.', out.width='80%', fig.asp=1.2, fig.align='center', echo=F}
+```{r clusterTypes, fig.cap='Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *different density*; **E**, *anisotropic distributions*; **F**, *no structure*.', out.width='80%', fig.asp=1.2, fig.align='center', echo=F}
 library(ggplot2)
 library(GGally)
 
 blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
 aggregation <- read.table("data/example_clusters/aggregation.txt")
 noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
-noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+diff_density <- read.csv("data/example_clusters/different_density.csv", header=F)
 aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
 no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
 
 plotList <- list(
-qplot(x=V1, y=V2, data=blobs, geom="point", size=I(0.2)) + annotate("text",
-                                                                    x=(0.01 * (max(blobs$V1)-min(blobs$V1))) + min(blobs$V1), 
-                                                                    y=(0.9 * (max(blobs$V2)-min(blobs$V2))) + min(blobs$V2), 
-                                                                    label ="A", size=8, col="blue"),
-qplot(x=V1, y=V2, data=aggregation, geom="point", size=I(0.2)) + annotate("text",
-                                                                          x=(0.01 * (max(aggregation$V1)-min(aggregation$V1))) + min(aggregation$V1), 
-                                                                          y=(0.9 * (max(aggregation$V2)-min(aggregation$V2))) + min(aggregation$V2), 
-                                                                          label="B", size=8, col="blue"),
-qplot(x=V1, y=V2, data=noisy_moons, geom="point", size=I(0.2)) + annotate("text",
-                                                                         x=(0.01 * (max(noisy_moons$V1)-min(noisy_moons$V1))) + min(noisy_moons$V1),
-                                                                         y=(0.9 * (max(noisy_moons$V2)-min(noisy_moons$V2))) + min(noisy_moons$V2),
-                                                                         label="C", size=8, col="blue"),
-qplot(x=V1, y=V2, data=noisy_circles, geom="point", size=I(0.2)) + annotate("text",
-                                                                           x=(0.01 * (max(noisy_circles$V1)-min(noisy_circles$V1))) + min(noisy_circles$V1),
-                                                                           y=(0.9 * (max(noisy_circles$V2)-min(noisy_circles$V2))) + min(noisy_circles$V2),
-                                                                           label="D", size=8, col="blue"),
-qplot(x=V1, y=V2, data=no_structure, geom="point", size=I(0.2)) + annotate("text",
-                                                                         x=(0.01 * (max(no_structure$V1)-min(no_structure$V1))) + min(no_structure$V1),
-                                                                         y=(0.9 * (max(no_structure$V2)-min(no_structure$V2))) + min(no_structure$V2),
-                                                                         label="F", size=8, col="blue")
+qplot(x=V1, y=V2, data=blobs, geom="point", size=I(0.2)) + 
+  annotate("text", x=(0.01 * (max(blobs$V1)-min(blobs$V1))) + min(blobs$V1), 
+           y=(0.9 * (max(blobs$V2)-min(blobs$V2))) + min(blobs$V2), 
+           label ="A", size=8, col="blue"),
+qplot(x=V1, y=V2, data=aggregation, geom="point", size=I(0.2)) + 
+  annotate("text", x=(0.01 * (max(aggregation$V1)-min(aggregation$V1))) + min(aggregation$V1), 
+           y=(0.9 * (max(aggregation$V2)-min(aggregation$V2))) + min(aggregation$V2), 
+           label="B", size=8, col="blue"),
+qplot(x=V1, y=V2, data=noisy_moons, geom="point", size=I(0.2)) + 
+  annotate("text", x=(0.01 * (max(noisy_moons$V1)-min(noisy_moons$V1))) + min(noisy_moons$V1),
+           y=(0.9 * (max(noisy_moons$V2)-min(noisy_moons$V2))) + min(noisy_moons$V2),
+           label="D", size=8, col="blue"),
+qplot(x=V1, y=V2, data=diff_density, geom="point", size=I(0.2)) + 
+  annotate("text", x=(0.01 * (max(diff_density$V1)-min(diff_density$V1))) + min(diff_density$V1),
+           y=(0.9 * (max(diff_density$V2)-min(diff_density$V2))) + min(diff_density$V2),
+           label="C", size=8, col="blue"),
+qplot(x=V1, y=V2, data=aniso, geom="point", size=I(0.2)) + 
+  annotate("text", x=(0.01 * (max(aniso$V1)-min(aniso$V1))) + min(aniso$V1),
+           y=(0.9 * (max(aniso$V2)-min(aniso$V2))) + min(aniso$V2),
+           label="E", size=8, col="blue"),
+qplot(x=V1, y=V2, data=no_structure, geom="point", size=I(0.2)) + 
+  annotate("text", x=(0.01 * (max(no_structure$V1)-min(no_structure$V1))) + min(no_structure$V1),
+           y=(0.9 * (max(no_structure$V2)-min(no_structure$V2))) + min(no_structure$V2),
+           label="F", size=8, col="blue")
 )
 
 pm <- ggmatrix(
@@ -264,7 +273,7 @@ pm
 
 aggregation <- read.table("data/example_clusters/aggregation.txt")
 noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
-noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+diff_density <- read.csv("data/example_clusters/different_density.csv", header=F)
 aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
 no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
 
@@ -286,7 +295,7 @@ hclust_plots <- function(data_set, n){
 plotList <- c(
   hclust_plots(aggregation, 7),
   hclust_plots(noisy_moons, 2),
-  hclust_plots(noisy_circles, 2),
+  hclust_plots(diff_density, 2),
   hclust_plots(aniso, 3),
   hclust_plots(no_structure, 3)
 )
@@ -294,7 +303,7 @@ plotList <- c(
 pm <- ggmatrix(
   plotList, nrow=5, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F,
   xAxisLabels=c("dendrogram", "scatter plot"), 
-  yAxisLabels=c("aggregation", "noisy moons", "noisy circles", "anisotropic", "no structure")
+  yAxisLabels=c("aggregation", "noisy moons", "different density", "anisotropic", "no structure")
 ) + theme_bw()
 
 pm
@@ -570,23 +579,15 @@ plot_tot_withinss(res)
 plot_clusters(noisy_moons, res, 2)
 ```
 
-#### Noisy circles
-```{r kmeansNoisyCirclesElbow, fig.cap='K-means clustering of the noisy circles data set: variance within clusters.', out.width='50%', fig.asp=1, fig.align='center', echo=T}
-noisy_circles <- as.data.frame(read.csv("data/example_clusters/noisy_circles.csv", header=F))
-res <- lapply(k, function(i){kmeans(noisy_circles[,1:2], i, nstart=50)})
+#### Different density
+```{r kmeansDiffDensityElbow, fig.cap='K-means clustering of the different density distributions data set: variance within clusters.', out.width='50%', fig.asp=1, fig.align='center', echo=T}
+diff_density <- as.data.frame(read.csv("data/example_clusters/different_density.csv", header=F))
+res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 plot_tot_withinss(res)
 ```
 
-```{r kmeansNoisyCirclesScatter, fig.cap='K-means clustering of the noisy circles data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross.', out.width='100%', fig.asp=0.5, fig.align='center', echo=T}
-plotList <- list(
-  plot_clusters(noisy_circles, res, 2),
-  plot_clusters(noisy_circles, res, 3)
-)
-pm <- ggmatrix(
-  plotList, nrow=1, ncol=2, showXAxisPlotLabels = T, 
-  showYAxisPlotLabels = T, xAxisLabels=c("k=2", "k=3")
-) + theme_bw()
-pm
+```{r kmeansDiffDensityScatter, fig.cap='K-means clustering of the different density distributions data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross.', out.width='50%', fig.asp=1, fig.align='center', echo=T}
+plot_clusters(diff_density, res, 2)
 ```
 
 #### Anisotropic distributions
@@ -684,6 +685,28 @@ knitr::include_graphics("images/DBSCAN_Illustration.svg")
 
 
 ### Choosing parameters
+The algorithm only needs parameteres **eps** and **minPts**.
+
+
+
+```{r echo=T}
+library(dbscan)
+
+```
+
+```{r echo=T}
+blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
+dist2knn <- kNNdist(blobs, 3)
+```
+
+<!--
+?dbscan::dbscan
+aggregation <- read.table("data/example_clusters/aggregation.txt")
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
+no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
+-->
 
 
 ### Example: clustering synthetic data sets

@@ -239,6 +239,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <!-- http://www.madgroup.path.cam.ac.uk/microarraysummary.shtml -->
 <div id="introduction" class="section level2">
 <h2><span class="header-section-number">10.1</span> Introduction</h2>
+<p>What is clustering - add figure showing idea of minimizing intra-cluster variation and maximizing inter-cluster variation.</p>
 <p>Hierarchic (produce dendrogram) vs partitioning methods</p>
 <ul>
 <li>Hierarchic agglomerative</li>
@@ -246,9 +247,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>DBSCAN</li>
 </ul>
 <div class="figure" style="text-align: center"><span id="fig:clusterTypes"></span>
-<img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *anisotropic distributions*; **F**, *no structure*." width="80%" />
+<img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *different density*; **E**, *anisotropic distributions*; **F**, *no structure*." width="80%" />
 <p class="caption">
-Figure 10.1: Example clusters. <strong>A</strong>, <em>blobs</em>; <strong>B</strong>, <em>aggregation</em> <span class="citation">(Gionis, Mannila, and Tsaparas <a href="#ref-Gionis2007">2007</a>)</span>; <strong>C</strong>, <em>noisy moons</em>; <strong>D</strong>, <em>noisy circles</em>; <strong>E</strong>, <em>anisotropic distributions</em>; <strong>F</strong>, <em>no structure</em>.
+Figure 10.1: Example clusters. <strong>A</strong>, <em>blobs</em>; <strong>B</strong>, <em>aggregation</em> <span class="citation">(Gionis, Mannila, and Tsaparas <a href="#ref-Gionis2007">2007</a>)</span>; <strong>C</strong>, <em>noisy moons</em>; <strong>D</strong>, <em>different density</em>; <strong>E</strong>, <em>anisotropic distributions</em>; <strong>F</strong>, <em>no structure</em>.
 </p>
 </div>
 </div>
@@ -463,7 +464,7 @@ Figure 10.3: Hierarchical clustering of the blobs data set.
 <h4><span class="header-section-number">10.3.2.2</span> Clustering of other synthetic data sets</h4>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aggregation &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;data/example_clusters/aggregation.txt&quot;</span>)
 noisy_moons &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/noisy_moons.csv&quot;</span>, <span class="dt">header=</span>F)
-noisy_circles &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/noisy_circles.csv&quot;</span>, <span class="dt">header=</span>F)
+diff_density &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/different_density.csv&quot;</span>, <span class="dt">header=</span>F)
 aniso &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/aniso.csv&quot;</span>, <span class="dt">header=</span>F)
 no_structure &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/no_structure.csv&quot;</span>, <span class="dt">header=</span>F)
 
@@ -485,7 +486,7 @@ hclust_plots &lt;-<span class="st"> </span>function(data_set, n){
 plotList &lt;-<span class="st"> </span><span class="kw">c</span>(
   <span class="kw">hclust_plots</span>(aggregation, <span class="dv">7</span>),
   <span class="kw">hclust_plots</span>(noisy_moons, <span class="dv">2</span>),
-  <span class="kw">hclust_plots</span>(noisy_circles, <span class="dv">2</span>),
+  <span class="kw">hclust_plots</span>(diff_density, <span class="dv">2</span>),
   <span class="kw">hclust_plots</span>(aniso, <span class="dv">3</span>),
   <span class="kw">hclust_plots</span>(no_structure, <span class="dv">3</span>)
 )
@@ -493,7 +494,7 @@ plotList &lt;-<span class="st"> </span><span class="kw">c</span>(
 pm &lt;-<span class="st"> </span><span class="kw">ggmatrix</span>(
   plotList, <span class="dt">nrow=</span><span class="dv">5</span>, <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">showXAxisPlotLabels =</span> F, <span class="dt">showYAxisPlotLabels =</span> F,
   <span class="dt">xAxisLabels=</span><span class="kw">c</span>(<span class="st">&quot;dendrogram&quot;</span>, <span class="st">&quot;scatter plot&quot;</span>), 
-  <span class="dt">yAxisLabels=</span><span class="kw">c</span>(<span class="st">&quot;aggregation&quot;</span>, <span class="st">&quot;noisy moons&quot;</span>, <span class="st">&quot;noisy circles&quot;</span>, <span class="st">&quot;anisotropic&quot;</span>, <span class="st">&quot;no structure&quot;</span>)
+  <span class="dt">yAxisLabels=</span><span class="kw">c</span>(<span class="st">&quot;aggregation&quot;</span>, <span class="st">&quot;noisy moons&quot;</span>, <span class="st">&quot;diff. density&quot;</span>, <span class="st">&quot;anisotropic&quot;</span>, <span class="st">&quot;no structure&quot;</span>)
 ) +<span class="st"> </span><span class="kw">theme_bw</span>()
 
 pm</code></pre></div>
@@ -789,30 +790,29 @@ Figure 10.17: K-means clustering of the noisy moons data set: scatterplot of clu
 </p>
 </div>
 </div>
-<div id="noisy-circles" class="section level4">
-<h4><span class="header-section-number">10.4.4.3</span> Noisy circles</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">noisy_circles &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/noisy_circles.csv&quot;</span>, <span class="dt">header=</span>F))
-res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(noisy_circles[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})
-<span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
-<div class="figure" style="text-align: center"><span id="fig:kmeansNoisyCirclesElbow"></span>
-<img src="09-clustering_files/figure-html/kmeansNoisyCirclesElbow-1.png" alt="K-means clustering of the noisy circles data set: variance within clusters." width="50%" />
+<div id="different-density" class="section level4">
+<h4><span class="header-section-number">10.4.4.3</span> Different density</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">diff_density &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/different_density.csv&quot;</span>, <span class="dt">header=</span>F))
+res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})</code></pre></div>
+<pre><code>## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:kmeansDiffDensityElbow"></span>
+<img src="09-clustering_files/figure-html/kmeansDiffDensityElbow-1.png" alt="K-means clustering of the different density distributions data set: variance within clusters." width="50%" />
 <p class="caption">
-Figure 10.18: K-means clustering of the noisy circles data set: variance within clusters.
+Figure 10.18: K-means clustering of the different density distributions data set: variance within clusters.
 </p>
 </div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plotList &lt;-<span class="st"> </span><span class="kw">list</span>(
-  <span class="kw">plot_clusters</span>(noisy_circles, res, <span class="dv">2</span>),
-  <span class="kw">plot_clusters</span>(noisy_circles, res, <span class="dv">3</span>)
-)
-pm &lt;-<span class="st"> </span><span class="kw">ggmatrix</span>(
-  plotList, <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">showXAxisPlotLabels =</span> T, 
-  <span class="dt">showYAxisPlotLabels =</span> T, <span class="dt">xAxisLabels=</span><span class="kw">c</span>(<span class="st">&quot;k=2&quot;</span>, <span class="st">&quot;k=3&quot;</span>)
-) +<span class="st"> </span><span class="kw">theme_bw</span>()
-pm</code></pre></div>
-<div class="figure" style="text-align: center"><span id="fig:kmeansNoisyCirclesScatter"></span>
-<img src="09-clustering_files/figure-html/kmeansNoisyCirclesScatter-1.png" alt="K-means clustering of the noisy circles data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross." width="100%" />
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_clusters</span>(diff_density, res, <span class="dv">2</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:kmeansDiffDensityScatter"></span>
+<img src="09-clustering_files/figure-html/kmeansDiffDensityScatter-1.png" alt="K-means clustering of the different density distributions data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross." width="50%" />
 <p class="caption">
-Figure 10.19: K-means clustering of the noisy circles data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross.
+Figure 10.19: K-means clustering of the different density distributions data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross.
 </p>
 </div>
 </div>
@@ -908,9 +908,9 @@ res &lt;-<span class="st"> </span><span class="kw">kmeans</span>(<span class="kw
              <span class="dt">shape=</span><span class="kw">c</span>(<span class="dv">49</span>:<span class="dv">55</span>)[res$cluster], <span class="dt">size=</span><span class="dv">5</span>) +<span class="st"> </span>
 <span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:tissueExpressionPCA"></span>
-<img src="09-clustering_files/figure-html/tissueExpressionPCA-1.png" alt="K-means clustering of human gene expression (k=7): scatterplot of first two principal components" width="50%" />
+<img src="09-clustering_files/figure-html/tissueExpressionPCA-1.png" alt="K-means clustering of human gene expression (k=7): scatterplot of first two principal components." width="50%" />
 <p class="caption">
-Figure 10.25: K-means clustering of human gene expression (k=7): scatterplot of first two principal components
+Figure 10.25: K-means clustering of human gene expression (k=7): scatterplot of first two principal components.
 </p>
 </div>
 </div>
@@ -935,6 +935,18 @@ Figure 10.26: Illustration of the DBSCAN algorithm.
 </div>
 <div id="choosing-parameters" class="section level3">
 <h3><span class="header-section-number">10.5.2</span> Choosing parameters</h3>
+<p>The algorithm only needs parameteres <strong>eps</strong> and <strong>minPts</strong>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dbscan)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">blobs &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/blobs.csv&quot;</span>, <span class="dt">header=</span>F)
+dist2knn &lt;-<span class="st"> </span><span class="kw">kNNdist</span>(blobs, <span class="dv">3</span>)</code></pre></div>
+<!--
+?dbscan::dbscan
+aggregation <- read.table("data/example_clusters/aggregation.txt")
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
+no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
+-->
 </div>
 <div id="example-clustering-synthetic-data-sets-2" class="section level3">
 <h3><span class="header-section-number">10.5.3</span> Example: clustering synthetic data sets</h3>
