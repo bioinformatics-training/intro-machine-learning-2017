@@ -4,6 +4,10 @@
 
 <!-- http://www.madgroup.path.cam.ac.uk/microarraysummary.shtml -->
 
+<!--
+if variables are in same units - don't standardize, otherwise standardize
+-->
+
 ## Introduction
 
 What is clustering - add figure showing idea of minimizing intra-cluster variation and maximizing inter-cluster variation.
@@ -81,6 +85,16 @@ Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
 
 ## Hierarchic agglomerative
+
+
+```{r hierarchicClusteringDemo, echo = F, fig.cap = 'Building a dendrogram using hierarchic agglomerative clustering.', fig.align = 'center', fig.show='hold', out.width = '55%'}
+knitr::include_graphics(c("images/hclust_demo_0.png", "images/hclust_demo_1.png", "images/hclust_demo_2.png", "images/hclust_demo_3.png", "images/hclust_demo_4.png"))
+```
+
+
+Get to see clusters for all number of clusters k
+
+produce step by step figure to show how objects are linked
 
 ```{r echo=F}
 m <- matrix(c(rep(NA,5),

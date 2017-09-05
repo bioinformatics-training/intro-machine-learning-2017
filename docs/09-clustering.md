@@ -4,6 +4,10 @@
 
 <!-- http://www.madgroup.path.cam.ac.uk/microarraysummary.shtml -->
 
+<!--
+if variables are in same units - don't standardize, otherwise standardize
+-->
+
 ## Introduction
 
 What is clustering - add figure showing idea of minimizing intra-cluster variation and maximizing inter-cluster variation.
@@ -41,6 +45,17 @@ Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
 
 ## Hierarchic agglomerative
+
+
+<div class="figure" style="text-align: center">
+<img src="images/hclust_demo_0.png" alt="Building a dendrogram using hierarchic agglomerative clustering." width="55%" /><img src="images/hclust_demo_1.png" alt="Building a dendrogram using hierarchic agglomerative clustering." width="55%" /><img src="images/hclust_demo_2.png" alt="Building a dendrogram using hierarchic agglomerative clustering." width="55%" /><img src="images/hclust_demo_3.png" alt="Building a dendrogram using hierarchic agglomerative clustering." width="55%" /><img src="images/hclust_demo_4.png" alt="Building a dendrogram using hierarchic agglomerative clustering." width="55%" />
+<p class="caption">(\#fig:hierarchicClusteringDemo)Building a dendrogram using hierarchic agglomerative clustering.</p>
+</div>
+
+
+Get to see clusters for all number of clusters k
+
+produce step by step figure to show how objects are linked
 
 
 
@@ -251,7 +266,7 @@ plotList <- c(
 pm <- ggmatrix(
   plotList, nrow=5, ncol=2, showXAxisPlotLabels = F, showYAxisPlotLabels = F,
   xAxisLabels=c("dendrogram", "scatter plot"), 
-  yAxisLabels=c("aggregation", "noisy moons", "diff. density", "anisotropic", "no structure")
+  yAxisLabels=c("aggregation", "noisy moons", "different density", "anisotropic", "no structure")
 ) + theme_bw()
 
 pm
@@ -647,12 +662,6 @@ res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 ```
 
 ```
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-
 ## Warning: did not converge in 10 iterations
 ```
 

@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-09-03}
+  \date{2017-09-05}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -387,6 +387,9 @@ Solutions to exercises can be found in appendix
 
 \section{Introduction}\label{introduction}
 
+What is clustering - add figure showing idea of minimizing intra-cluster
+variation and maximizing inter-cluster variation.
+
 Hierarchic (produce dendrogram) vs partitioning methods
 
 \begin{itemize}
@@ -405,7 +408,7 @@ Hierarchic (produce dendrogram) vs partitioning methods
 
 }
 
-\caption{Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *noisy circles*; **E**, *anisotropic distributions*; **F**, *no structure*.}\label{fig:clusterTypes}
+\caption{Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *different density*; **E**, *anisotropic distributions*; **F**, *no structure*.}\label{fig:clusterTypes}
 \end{figure}
 
 \section{Distance metrics}\label{distance-metrics}
@@ -424,6 +427,19 @@ Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 \subsection{Image segmentation}\label{image-segmentation}
 
 \section{Hierarchic agglomerative}\label{hierarchic-agglomerative}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.55\linewidth]{images/hclust_demo_0} \includegraphics[width=0.55\linewidth]{images/hclust_demo_1} \includegraphics[width=0.55\linewidth]{images/hclust_demo_2} \includegraphics[width=0.55\linewidth]{images/hclust_demo_3} \includegraphics[width=0.55\linewidth]{images/hclust_demo_4} 
+
+}
+
+\caption{Building a dendrogram using hierarchic agglomerative clustering.}\label{fig:hierarchicClusteringDemo}
+\end{figure}
+
+Get to see clusters for all number of clusters k
+
+produce step by step figure to show how objects are linked
 
 \begin{table}
 
@@ -738,7 +754,7 @@ sets}\label{clustering-of-other-synthetic-data-sets}
 \begin{Highlighting}[]
 \NormalTok{aggregation <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{"data/example_clusters/aggregation.txt"}\NormalTok{)}
 \NormalTok{noisy_moons <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/noisy_moons.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
-\NormalTok{noisy_circles <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/noisy_circles.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
+\NormalTok{diff_density <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/different_density.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
 \NormalTok{aniso <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/aniso.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
 \NormalTok{no_structure <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/no_structure.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
 
@@ -760,7 +776,7 @@ sets}\label{clustering-of-other-synthetic-data-sets}
 \NormalTok{plotList <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}
   \KeywordTok{hclust_plots}\NormalTok{(aggregation, }\DecValTok{7}\NormalTok{),}
   \KeywordTok{hclust_plots}\NormalTok{(noisy_moons, }\DecValTok{2}\NormalTok{),}
-  \KeywordTok{hclust_plots}\NormalTok{(noisy_circles, }\DecValTok{2}\NormalTok{),}
+  \KeywordTok{hclust_plots}\NormalTok{(diff_density, }\DecValTok{2}\NormalTok{),}
   \KeywordTok{hclust_plots}\NormalTok{(aniso, }\DecValTok{3}\NormalTok{),}
   \KeywordTok{hclust_plots}\NormalTok{(no_structure, }\DecValTok{3}\NormalTok{)}
 \NormalTok{)}
@@ -768,7 +784,7 @@ sets}\label{clustering-of-other-synthetic-data-sets}
 \NormalTok{pm <-}\StringTok{ }\KeywordTok{ggmatrix}\NormalTok{(}
   \NormalTok{plotList, }\DataTypeTok{nrow=}\DecValTok{5}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{showXAxisPlotLabels =} \NormalTok{F, }\DataTypeTok{showYAxisPlotLabels =} \NormalTok{F,}
   \DataTypeTok{xAxisLabels=}\KeywordTok{c}\NormalTok{(}\StringTok{"dendrogram"}\NormalTok{, }\StringTok{"scatter plot"}\NormalTok{), }
-  \DataTypeTok{yAxisLabels=}\KeywordTok{c}\NormalTok{(}\StringTok{"aggregation"}\NormalTok{, }\StringTok{"noisy moons"}\NormalTok{, }\StringTok{"noisy circles"}\NormalTok{, }\StringTok{"anisotropic"}\NormalTok{, }\StringTok{"no structure"}\NormalTok{)}
+  \DataTypeTok{yAxisLabels=}\KeywordTok{c}\NormalTok{(}\StringTok{"aggregation"}\NormalTok{, }\StringTok{"noisy moons"}\NormalTok{, }\StringTok{"different density"}\NormalTok{, }\StringTok{"anisotropic"}\NormalTok{, }\StringTok{"no structure"}\NormalTok{)}
 \NormalTok{) +}\StringTok{ }\KeywordTok{theme_bw}\NormalTok{()}
 
 \NormalTok{pm}
@@ -1275,46 +1291,38 @@ data sets.
 \caption{K-means clustering of the noisy moons data set: scatterplot of clusters for k=2. Cluster centres indicated with a cross.}\label{fig:kmeansNoisyMoonsScatter}
 \end{figure}
 
-\subsubsection{Noisy circles}\label{noisy-circles}
+\subsubsection{Different density}\label{different-density}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{noisy_circles <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/noisy_circles.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F))}
-\NormalTok{res <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(k, function(i)\{}\KeywordTok{kmeans}\NormalTok{(noisy_circles[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], i, }\DataTypeTok{nstart=}\DecValTok{50}\NormalTok{)\})}
+\NormalTok{diff_density <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/different_density.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F))}
+\NormalTok{res <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(k, function(i)\{}\KeywordTok{kmeans}\NormalTok{(diff_density[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], i, }\DataTypeTok{nstart=}\DecValTok{50}\NormalTok{)\})}
 \KeywordTok{plot_tot_withinss}\NormalTok{(res)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/kmeansNoisyCirclesElbow-1} 
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/kmeansDiffDensityElbow-1} 
 
 }
 
-\caption{K-means clustering of the noisy circles data set: variance within clusters.}\label{fig:kmeansNoisyCirclesElbow}
+\caption{K-means clustering of the different density distributions data set: variance within clusters.}\label{fig:kmeansDiffDensityElbow}
 \end{figure}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{plotList <-}\StringTok{ }\KeywordTok{list}\NormalTok{(}
-  \KeywordTok{plot_clusters}\NormalTok{(noisy_circles, res, }\DecValTok{2}\NormalTok{),}
-  \KeywordTok{plot_clusters}\NormalTok{(noisy_circles, res, }\DecValTok{3}\NormalTok{)}
-\NormalTok{)}
-\NormalTok{pm <-}\StringTok{ }\KeywordTok{ggmatrix}\NormalTok{(}
-  \NormalTok{plotList, }\DataTypeTok{nrow=}\DecValTok{1}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{showXAxisPlotLabels =} \NormalTok{T, }
-  \DataTypeTok{showYAxisPlotLabels =} \NormalTok{T, }\DataTypeTok{xAxisLabels=}\KeywordTok{c}\NormalTok{(}\StringTok{"k=2"}\NormalTok{, }\StringTok{"k=3"}\NormalTok{)}
-\NormalTok{) +}\StringTok{ }\KeywordTok{theme_bw}\NormalTok{()}
-\NormalTok{pm}
+\KeywordTok{plot_clusters}\NormalTok{(diff_density, res, }\DecValTok{2}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/kmeansNoisyCirclesScatter-1} 
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/kmeansDiffDensityScatter-1} 
 
 }
 
-\caption{K-means clustering of the noisy circles data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross.}\label{fig:kmeansNoisyCirclesScatter}
+\caption{K-means clustering of the different density distributions data set: scatterplots of clusters for k=2 and k=3. Cluster centres indicated with a cross.}\label{fig:kmeansDiffDensityScatter}
 \end{figure}
 
 \subsubsection{Anisotropic
@@ -1394,6 +1402,123 @@ distributions}\label{anisotropic-distributions}
 \caption{K-means clustering of the data set with no structure: scatterplot of clusters for k=4. Cluster centres indicated with a cross.}\label{fig:noStructureScatter}
 \end{figure}
 
+\subsection{Example: gene expression profiling of human
+tissues}\label{example-gene-expression-profiling-of-human-tissues-1}
+
+Let's return to the data on gene expression of human tissues. Load data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{load}\NormalTok{(}\StringTok{"data/tissues_gene_expression/tissuesGeneExpression.rda"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+As we saw earlier, the data set contains expression levels for over
+22,000 transcripts in seven tissues.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{table}\NormalTok{(tissue)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## tissue
+##  cerebellum       colon endometrium hippocampus      kidney       liver 
+##          38          34          15          31          39          26 
+##    placenta 
+##           6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(e)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 22215   189
+\end{verbatim}
+
+First we will examine the total intra-cluster variance with different
+values of \emph{k}. In practice we would set \textbf{nstart} to a large
+value (e.g.~50), but in the interests of speed for this demonstration we
+will set it to one. We use \textbf{set.seed} to make this example
+reproducible, but in practice you would allow \textbf{R} to generate a
+random seed.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{k<-}\DecValTok{1}\NormalTok{:}\DecValTok{15}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{42}\NormalTok{)}
+\NormalTok{res_k_15 <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(k, function(i)\{}\KeywordTok{kmeans}\NormalTok{(}\KeywordTok{t}\NormalTok{(e), i, }\DataTypeTok{nstart=}\DecValTok{1}\NormalTok{)\})}
+\KeywordTok{plot_tot_withinss}\NormalTok{(res_k_15)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{09-clustering_files/figure-latex/tissueExpressionElbow-1} 
+
+}
+
+\caption{K-means clustering of human tissue gene expression: variance within clusters.}\label{fig:tissueExpressionElbow}
+\end{figure}
+
+If we had set \textbf{nstart} to a higher value we would have obtained a
+smoother curve in figure \ref{fig:tissueExpressionElbow}. There is no
+obvious elbow, but the rate of decrease in the total-within sum of
+squares appears to slow after k=5. Since we know that there are seven
+tissues in the data set we will try k=7.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{42}\NormalTok{)}
+\NormalTok{res <-}\StringTok{ }\KeywordTok{kmeans}\NormalTok{(}\KeywordTok{t}\NormalTok{(e), }\DecValTok{7}\NormalTok{, }\DataTypeTok{nstart=}\DecValTok{10}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(tissue, res$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              
+## tissue         1  2  3  4  5  6  7
+##   cerebellum   0  0  0 33  0  0  5
+##   colon        0  0  0  0  0 34  0
+##   endometrium  0  0  0  0 15  0  0
+##   hippocampus  0  0  0  0  0  0 31
+##   kidney       0  0 39  0  0  0  0
+##   liver       26  0  0  0  0  0  0
+##   placenta     0  6  0  0  0  0  0
+\end{verbatim}
+
+The analysis has found a distinct cluster for each tissue and therefore
+performed slightly better than the earlier hierarchical clustering
+analysis, which placed endometrium and kidney observations in the same
+cluster.
+
+To visualize the result in a 2D scatter plot we first need to apply
+dimensionality reduction. We will use principal component analysis
+(PCA), which was described in chapter \ref{dimensionality-reduction}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pca <-}\StringTok{ }\KeywordTok{prcomp}\NormalTok{(}\KeywordTok{t}\NormalTok{(e))}
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data=}\KeywordTok{as.data.frame}\NormalTok{(pca$x), }\KeywordTok{aes}\NormalTok{(PC1,PC2)) +}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{7}\NormalTok{,}\StringTok{"Dark2"}\NormalTok{)[res$cluster], }
+             \DataTypeTok{shape=}\KeywordTok{c}\NormalTok{(}\DecValTok{49}\NormalTok{:}\DecValTok{55}\NormalTok{)[res$cluster], }\DataTypeTok{size=}\DecValTok{5}\NormalTok{) +}\StringTok{ }
+\StringTok{  }\KeywordTok{theme_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.5\linewidth]{09-clustering_files/figure-latex/tissueExpressionPCA-1} 
+
+}
+
+\caption{K-means clustering of human gene expression (k=7): scatterplot of first two principal components.}\label{fig:tissueExpressionPCA}
+\end{figure}
+
 \section{DBSCAN}\label{dbscan}
 
 Density-based spatial clustering of applications with noise
@@ -1420,6 +1545,21 @@ Abstract DBSCAN algorithm in pseudocode \citep{Schubert2017}
 \end{figure}
 
 \subsection{Choosing parameters}\label{choosing-parameters}
+
+The algorithm only needs parameteres \textbf{eps} and \textbf{minPts}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dbscan)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{blobs <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/blobs.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
+\NormalTok{dist2knn <-}\StringTok{ }\KeywordTok{kNNdist}\NormalTok{(blobs, }\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 \subsection{Example: clustering synthetic data
 sets}\label{example-clustering-synthetic-data-sets-2}
