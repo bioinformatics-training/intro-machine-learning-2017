@@ -55,7 +55,7 @@ Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
 Get to see clusters for all number of clusters k
 
-produce step by step figure to show how objects are linked
+### Linkage algorithms
 
 
 
@@ -69,10 +69,6 @@ C    6    5
 D    10   10   5       
 E    9    8    3    4  
 
-### Linkage algorithms
-Make one section
-panel of three dendrograms
-one table
 
 Single linkage - nearest neighbours linkage
 Complete linkage - furthest neighbours linkage
@@ -663,6 +659,12 @@ res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 
 ```
 ## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
 ```
 
 ```r
@@ -768,13 +770,47 @@ dim(e)
 ## [1] 22215   189
 ```
 
-First we will examine the total intra-cluster variance with different values of *k*. In practice we would set **nstart** to a large value (e.g. 50), but in the interests of speed for this demonstration we will set it to one. We use **set.seed** to make this example reproducible, but in practice you would allow **R** to generate a random seed.
+First we will examine the total intra-cluster variance with different values of *k*. In practice we would set **nstart** to a large value (e.g. 50), but in the interests of speed for this demonstration we will set it to one. We use **set.seed** to make this example reproducible, but in practice we would allow **R** to generate a random seed.
 
+First we will examine the total intra-cluster variance with different values of *k*. Our data-set is fairly large, so clustering it for several values or *k* and with multiple random starting centres is computationally quite intensive. Fortunately the task readily lends itself to parallelization; we can assign the analysis of each 'k' to a different processing core. As we have seen in the previous chapters on supervised learning, [caret](http://cran.r-project.org/web/packages/caret/index.html) has parallel processing built in and we simply have to load a package for multicore processing, such as [doMC](http://cran.r-project.org/web/packages/doMC/index.html), and then register the number of cores we would like to use. Running **kmeans** in parallel is slightly more involved, but still very easy. We will start by loading [doMC](http://cran.r-project.org/web/packages/doMC/index.html) and registering all available cores:
+
+```r
+library(doMC)
+```
+
+```
+## Loading required package: foreach
+```
+
+```
+## Loading required package: iterators
+```
+
+```
+## Loading required package: parallel
+```
+
+```r
+registerDoMC()
+```
+To find out how many cores we have registered we can use:
+
+```r
+getDoParWorkers()
+```
+
+```
+## [1] 2
+```
+
+Instead of using the **lapply** function to vectorize our code, we will instead use the parallel equivalent, **foreach**. Like **lapply**, **foreach** returns a list by default. For this example we have set a seed, rather than generate a random number, for the sake of reproducibility. Ordinarily we would omit ```set.seed(42)``` and ```.options.multicore=list(set.seed=FALSE)```.
 
 ```r
 k<-1:15
 set.seed(42)
-res_k_15 <- lapply(k, function(i){kmeans(t(e), i, nstart=1)})
+res_k_15 <- foreach(
+  i=k, 
+  .options.multicore=list(set.seed=FALSE)) %dopar% kmeans(t(e), i, nstart=10)
 plot_tot_withinss(res_k_15)
 ```
 
@@ -782,7 +818,11 @@ plot_tot_withinss(res_k_15)
 <img src="09-clustering_files/figure-html/tissueExpressionElbow-1.png" alt="K-means clustering of human tissue gene expression: variance within clusters." width="100%" />
 <p class="caption">(\#fig:tissueExpressionElbow)K-means clustering of human tissue gene expression: variance within clusters.</p>
 </div>
-If we had set **nstart** to a higher value we would have obtained a smoother curve in figure \@ref(fig:tissueExpressionElbow). There is no obvious elbow, but the rate of decrease in the total-within sum of squares appears to slow after k=5. Since we know that there are seven tissues in the data set we will try k=7. 
+<!--
+set.seed(42)
+res_k_15 <- lapply(k, function(i){kmeans(t(e), i, nstart=10)})
+-->
+There is no obvious elbow, but the rate of decrease in the total-within sum of squares appears to slow after k=5. Since we know that there are seven tissues in the data set we will try k=7. 
 
 
 ```r
@@ -858,23 +898,41 @@ library(dbscan)
 
 ```r
 blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
-dist2knn <- kNNdist(blobs, 3)
+dist2knn <- kNNdist(blobs, 10)
+kNNdistplot(blobs[,1:2], k=10)
 ```
 
+<img src="09-clustering_files/figure-html/unnamed-chunk-30-1.png" width="672" />
+
+res <- dbscan::dbscan
+
+### Example: clustering synthetic data sets
 <!--
 ?dbscan::dbscan
+blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
 aggregation <- read.table("data/example_clusters/aggregation.txt")
 noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
-noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
+diff_density <- read.csv("data/example_clusters/different_density.csv", header=F)
 aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
 no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
 -->
 
+#### Aggregation
 
-### Example: clustering synthetic data sets
+#### Noisy moons
+
+#### Different density
 
 
-### Gene expression
+#### Anisotropic distributions
+
+
+#### No structure
+
+
+
+
+### Example: gene expression profiling of human tissues
 tissue types?
 
 
@@ -889,6 +947,9 @@ tissue types?
 <!--
 Not appropriate for phylogenetic analysis!!
 -->
+
+## Evaluating cluster quality
+
 
 ## Exercises
 

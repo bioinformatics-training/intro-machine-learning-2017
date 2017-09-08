@@ -15,6 +15,10 @@ filter methods  /  wrapper methods / genetic algorithms
 
 -->
 
+Parallel processing with doMC
+registerDoMC()
+getDoParWorkers()
+
 ## Example one
 
 ## Example two

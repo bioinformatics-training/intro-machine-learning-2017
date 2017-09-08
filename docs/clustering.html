@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-05">
+<meta name="date" content="2017-09-08">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -166,14 +166,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.5.1" data-path="clustering.html"><a href="clustering.html#algorithm-1"><i class="fa fa-check"></i><b>10.5.1</b> Algorithm</a></li>
 <li class="chapter" data-level="10.5.2" data-path="clustering.html"><a href="clustering.html#choosing-parameters"><i class="fa fa-check"></i><b>10.5.2</b> Choosing parameters</a></li>
 <li class="chapter" data-level="10.5.3" data-path="clustering.html"><a href="clustering.html#example-clustering-synthetic-data-sets-2"><i class="fa fa-check"></i><b>10.5.3</b> Example: clustering synthetic data sets</a></li>
-<li class="chapter" data-level="10.5.4" data-path="clustering.html"><a href="clustering.html#gene-expression"><i class="fa fa-check"></i><b>10.5.4</b> Gene expression</a></li>
+<li class="chapter" data-level="10.5.4" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues-2"><i class="fa fa-check"></i><b>10.5.4</b> Example: gene expression profiling of human tissues</a></li>
 </ul></li>
 <li class="chapter" data-level="10.6" data-path="clustering.html"><a href="clustering.html#summary"><i class="fa fa-check"></i><b>10.6</b> Summary</a><ul>
 <li class="chapter" data-level="10.6.1" data-path="clustering.html"><a href="clustering.html#applications"><i class="fa fa-check"></i><b>10.6.1</b> Applications</a></li>
 <li class="chapter" data-level="10.6.2" data-path="clustering.html"><a href="clustering.html#strengths"><i class="fa fa-check"></i><b>10.6.2</b> Strengths</a></li>
 <li class="chapter" data-level="10.6.3" data-path="clustering.html"><a href="clustering.html#limitations"><i class="fa fa-check"></i><b>10.6.3</b> Limitations</a></li>
 </ul></li>
-<li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#exercises-7"><i class="fa fa-check"></i><b>10.7</b> Exercises</a></li>
+<li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#evaluating-cluster-quality"><i class="fa fa-check"></i><b>10.7</b> Evaluating cluster quality</a></li>
+<li class="chapter" data-level="10.8" data-path="clustering.html"><a href="clustering.html#exercises-7"><i class="fa fa-check"></i><b>10.8</b> Exercises</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="resources.html"><a href="resources.html"><i class="fa fa-check"></i><b>A</b> Resources</a><ul>
@@ -281,7 +282,8 @@ Figure 10.2: Building a dendrogram using hierarchic agglomerative clustering.
 </p>
 </div>
 <p>Get to see clusters for all number of clusters k</p>
-<p>produce step by step figure to show how objects are linked</p>
+<div id="linkage-algorithms" class="section level3">
+<h3><span class="header-section-number">10.3.1</span> Linkage algorithms</h3>
 <table>
 <caption><span id="tab:distance-matrix">Table 10.1: </span>Example distance matrix</caption>
 <thead>
@@ -324,9 +326,6 @@ Figure 10.2: Building a dendrogram using hierarchic agglomerative clustering.
 </tr>
 </tbody>
 </table>
-<div id="linkage-algorithms" class="section level3">
-<h3><span class="header-section-number">10.3.1</span> Linkage algorithms</h3>
-<p>Make one section panel of three dendrograms one table</p>
 <p>Single linkage - nearest neighbours linkage Complete linkage - furthest neighbours linkage Average linkage - UPGMA (Unweighted Pair Group Method with Arithmetic Mean)</p>
 <!--
 Explain anatomy of the dendrogram - branches, nodes and leaves.
@@ -808,7 +807,13 @@ Figure 10.18: K-means clustering of the noisy moons data set: scatterplot of clu
 <h4><span class="header-section-number">10.4.4.3</span> Different density</h4>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">diff_density &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/different_density.csv&quot;</span>, <span class="dt">header=</span>F))
 res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})</code></pre></div>
-<pre><code>## Warning: did not converge in 10 iterations</code></pre>
+<pre><code>## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:kmeansDiffDensityElbow"></span>
 <img src="09-clustering_files/figure-html/kmeansDiffDensityElbow-1.png" alt="K-means clustering of the different density distributions data set: variance within clusters." width="50%" />
@@ -884,10 +889,22 @@ Figure 10.24: K-means clustering of the data set with no structure: scatterplot 
 ##           6</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(e)</code></pre></div>
 <pre><code>## [1] 22215   189</code></pre>
-<p>First we will examine the total intra-cluster variance with different values of <em>k</em>. In practice we would set <strong>nstart</strong> to a large value (e.g. 50), but in the interests of speed for this demonstration we will set it to one. We use <strong>set.seed</strong> to make this example reproducible, but in practice you would allow <strong>R</strong> to generate a random seed.</p>
+<p>First we will examine the total intra-cluster variance with different values of <em>k</em>. In practice we would set <strong>nstart</strong> to a large value (e.g. 50), but in the interests of speed for this demonstration we will set it to one. We use <strong>set.seed</strong> to make this example reproducible, but in practice we would allow <strong>R</strong> to generate a random seed.</p>
+<p>First we will examine the total intra-cluster variance with different values of <em>k</em>. Our data-set is fairly large, so clustering it for several values or <em>k</em> and with multiple random starting centres is computationally quite intensive. Fortunately the task readily lends itself to parallelization; we can assign the analysis of each ‘k’ to a different processing core. As we have seen in the previous chapters on supervised learning, <a href="http://cran.r-project.org/web/packages/caret/index.html">caret</a> has parallel processing built in and we simply have to load a package for multicore processing, such as <a href="http://cran.r-project.org/web/packages/doMC/index.html">doMC</a>, and then register the number of cores we would like to use. Running <strong>kmeans</strong> in parallel is slightly more involved, but still very easy. We will start by loading <a href="http://cran.r-project.org/web/packages/doMC/index.html">doMC</a> and registering all available cores:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(doMC)</code></pre></div>
+<pre><code>## Loading required package: foreach</code></pre>
+<pre><code>## Loading required package: iterators</code></pre>
+<pre><code>## Loading required package: parallel</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">registerDoMC</span>()</code></pre></div>
+<p>To find out how many cores we have registered we can use:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getDoParWorkers</span>()</code></pre></div>
+<pre><code>## [1] 2</code></pre>
+<p>Instead of using the <strong>lapply</strong> function to vectorize our code, we will instead use the parallel equivalent, <strong>foreach</strong>. Like <strong>lapply</strong>, <strong>foreach</strong> returns a list by default. For this example we have set a seed, rather than generate a random number, for the sake of reproducibility. Ordinarily we would omit <code>set.seed(42)</code> and <code>.options.multicore=list(set.seed=FALSE)</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k&lt;-<span class="dv">1</span>:<span class="dv">15</span>
 <span class="kw">set.seed</span>(<span class="dv">42</span>)
-res_k_15 &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(<span class="kw">t</span>(e), i, <span class="dt">nstart=</span><span class="dv">1</span>)})
+res_k_15 &lt;-<span class="st"> </span><span class="kw">foreach</span>(
+  <span class="dt">i=</span>k, 
+  <span class="dt">.options.multicore=</span><span class="kw">list</span>(<span class="dt">set.seed=</span><span class="ot">FALSE</span>)) %dopar%<span class="st"> </span><span class="kw">kmeans</span>(<span class="kw">t</span>(e), i, <span class="dt">nstart=</span><span class="dv">10</span>)
 <span class="kw">plot_tot_withinss</span>(res_k_15)</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:tissueExpressionElbow"></span>
 <img src="09-clustering_files/figure-html/tissueExpressionElbow-1.png" alt="K-means clustering of human tissue gene expression: variance within clusters." width="100%" />
@@ -895,7 +912,11 @@ res_k_15 &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, functio
 Figure 10.25: K-means clustering of human tissue gene expression: variance within clusters.
 </p>
 </div>
-<p>If we had set <strong>nstart</strong> to a higher value we would have obtained a smoother curve in figure <a href="clustering.html#fig:tissueExpressionElbow">10.25</a>. There is no obvious elbow, but the rate of decrease in the total-within sum of squares appears to slow after k=5. Since we know that there are seven tissues in the data set we will try k=7.</p>
+<!--
+set.seed(42)
+res_k_15 <- lapply(k, function(i){kmeans(t(e), i, nstart=10)})
+-->
+<p>There is no obvious elbow, but the rate of decrease in the total-within sum of squares appears to slow after k=5. Since we know that there are seven tissues in the data set we will try k=7.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">42</span>)
 res &lt;-<span class="st"> </span><span class="kw">kmeans</span>(<span class="kw">t</span>(e), <span class="dv">7</span>, <span class="dt">nstart=</span><span class="dv">10</span>)
 <span class="kw">table</span>(tissue, res$cluster)</code></pre></div>
@@ -946,21 +967,40 @@ Figure 10.27: Illustration of the DBSCAN algorithm.
 <p>The algorithm only needs parameteres <strong>eps</strong> and <strong>minPts</strong>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dbscan)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">blobs &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/blobs.csv&quot;</span>, <span class="dt">header=</span>F)
-dist2knn &lt;-<span class="st"> </span><span class="kw">kNNdist</span>(blobs, <span class="dv">3</span>)</code></pre></div>
-<!--
-?dbscan::dbscan
-aggregation <- read.table("data/example_clusters/aggregation.txt")
-noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
-noisy_circles <- read.csv("data/example_clusters/noisy_circles.csv", header=F)
-aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
-no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
--->
+dist2knn &lt;-<span class="st"> </span><span class="kw">kNNdist</span>(blobs, <span class="dv">10</span>)
+<span class="kw">kNNdistplot</span>(blobs[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">k=</span><span class="dv">10</span>)</code></pre></div>
+<p><img src="09-clustering_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<p>res &lt;- dbscan::dbscan</p>
 </div>
 <div id="example-clustering-synthetic-data-sets-2" class="section level3">
 <h3><span class="header-section-number">10.5.3</span> Example: clustering synthetic data sets</h3>
+<!--
+?dbscan::dbscan
+blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
+aggregation <- read.table("data/example_clusters/aggregation.txt")
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+diff_density <- read.csv("data/example_clusters/different_density.csv", header=F)
+aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
+no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
+-->
+<div id="aggregation-1" class="section level4">
+<h4><span class="header-section-number">10.5.3.1</span> Aggregation</h4>
 </div>
-<div id="gene-expression" class="section level3">
-<h3><span class="header-section-number">10.5.4</span> Gene expression</h3>
+<div id="noisy-moons-1" class="section level4">
+<h4><span class="header-section-number">10.5.3.2</span> Noisy moons</h4>
+</div>
+<div id="different-density-1" class="section level4">
+<h4><span class="header-section-number">10.5.3.3</span> Different density</h4>
+</div>
+<div id="anisotropic-distributions-1" class="section level4">
+<h4><span class="header-section-number">10.5.3.4</span> Anisotropic distributions</h4>
+</div>
+<div id="no-structure-1" class="section level4">
+<h4><span class="header-section-number">10.5.3.5</span> No structure</h4>
+</div>
+</div>
+<div id="example-gene-expression-profiling-of-human-tissues-2" class="section level3">
+<h3><span class="header-section-number">10.5.4</span> Example: gene expression profiling of human tissues</h3>
 <p>tissue types?</p>
 </div>
 </div>
@@ -979,8 +1019,11 @@ Not appropriate for phylogenetic analysis!!
 -->
 </div>
 </div>
+<div id="evaluating-cluster-quality" class="section level2">
+<h2><span class="header-section-number">10.7</span> Evaluating cluster quality</h2>
+</div>
 <div id="exercises-7" class="section level2">
-<h2><span class="header-section-number">10.7</span> Exercises</h2>
+<h2><span class="header-section-number">10.8</span> Exercises</h2>
 <!--
 1. Toy/synthetic clusters
 2. mouse mammary time-course (kmeans and dbscan)
