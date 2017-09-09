@@ -471,7 +471,6 @@ heatmap.2(e[idxTop40,], labCol=tissue, trace="none",
 
 Pseudocode
 
-to illustrate range of different types of data that can be clustered - image segmentation
 
 <div class="figure" style="text-align: center">
 <img src="09-clustering_files/figure-html/kmeansIterations-1.png" alt="Iterations of the k-means algorithm" width="90%" />
@@ -665,6 +664,12 @@ res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 ## Warning: did not converge in 10 iterations
 
 ## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
 ```
 
 ```r
@@ -769,8 +774,6 @@ dim(e)
 ```
 ## [1] 22215   189
 ```
-
-First we will examine the total intra-cluster variance with different values of *k*. In practice we would set **nstart** to a large value (e.g. 50), but in the interests of speed for this demonstration we will set it to one. We use **set.seed** to make this example reproducible, but in practice we would allow **R** to generate a random seed.
 
 First we will examine the total intra-cluster variance with different values of *k*. Our data-set is fairly large, so clustering it for several values or *k* and with multiple random starting centres is computationally quite intensive. Fortunately the task readily lends itself to parallelization; we can assign the analysis of each 'k' to a different processing core. As we have seen in the previous chapters on supervised learning, [caret](http://cran.r-project.org/web/packages/caret/index.html) has parallel processing built in and we simply have to load a package for multicore processing, such as [doMC](http://cran.r-project.org/web/packages/doMC/index.html), and then register the number of cores we would like to use. Running **kmeans** in parallel is slightly more involved, but still very easy. We will start by loading [doMC](http://cran.r-project.org/web/packages/doMC/index.html) and registering all available cores:
 
@@ -883,58 +886,365 @@ Abstract DBSCAN algorithm in pseudocode [@Schubert2017]
 <p class="caption">(\#fig:dbscanIllustration)Illustration of the DBSCAN algorithm.</p>
 </div>
 
+The method requires two parameters; MinPts that is the minimum number of samples in any cluster; Eps that is the maximum distance of the sample to at least one other sample within the same cluster.
+
+This algorithm works on a parametric approach. The two parameters involved in this algorithm are:
+* e (eps) is the radius of our neighborhoods around a data point p.
+* minPts is the minimum number of data points we want in a neighborhood to define a cluster.
 
 
-### Choosing parameters
-The algorithm only needs parameteres **eps** and **minPts**.
 
+### Implementation in R
+DBSCAN is implemented in two R packages: [dbscan](https://cran.r-project.org/package=dbscan) and [fpc](https://cran.r-project.org/package=fpc). We will use the package [dbscan](https://cran.r-project.org/package=dbscan), because it is significantly faster and can handle larger data sets than [fpc](https://cran.r-project.org/package=fpc). The function has the same name in both packages and so if for any reason both packages have been loaded into our current workspace, there is a danger of calling the wrong implementation. To avoid this we can specify the package name when calling the function, e.g.:
+```
+dbscan::dbscan
+```
 
-
+We load the dbscan package in the usual way:
 
 ```r
 library(dbscan)
 ```
 
+### Choosing parameters
+The algorithm only needs parameteres **eps** and **minPts**.
+
+Read in data and use **kNNdist** function from [dbscan](https://cran.r-project.org/package=dbscan) package to plot the distances of the 10-nearest neighbours for each observation (figure \@ref(fig:blobsKNNdist)).
+
 
 ```r
 blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
-dist2knn <- kNNdist(blobs, 10)
 kNNdistplot(blobs[,1:2], k=10)
+abline(h=0.6)
 ```
 
-<img src="09-clustering_files/figure-html/unnamed-chunk-30-1.png" width="672" />
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/blobsKNNdist-1.png" alt="10-nearest neighbour distances for the blobs data set" width="75%" />
+<p class="caption">(\#fig:blobsKNNdist)10-nearest neighbour distances for the blobs data set</p>
+</div>
+<!-- dist2knn <- kNNdist(blobs, 10) -->
 
-res <- dbscan::dbscan
+
+```r
+res <- dbscan::dbscan(blobs[,1:2], eps=0.6, minPts = 10)
+table(res$cluster)
+```
+
+```
+## 
+##   0   1   2   3 
+##  43 484 486 487
+```
+
+
+
+```r
+ggplot(blobs, aes(V1,V2)) + 
+  geom_point(col=brewer.pal(8,"Dark2")[c(8,1:7)][res$cluster+1],
+             shape=c(4,15,17,19)[res$cluster+1],
+             size=1.5) +
+  theme_bw()
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/blobsDBSCANscatter-1.png" alt="DBSCAN clustering (eps=0.6, minPts=10) of the blobs data set. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">(\#fig:blobsDBSCANscatter)DBSCAN clustering (eps=0.6, minPts=10) of the blobs data set. Outlier observations are shown as grey crosses.</p>
+</div>
+
 
 ### Example: clustering synthetic data sets
-<!--
-?dbscan::dbscan
-blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
-aggregation <- read.table("data/example_clusters/aggregation.txt")
-noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
-diff_density <- read.csv("data/example_clusters/different_density.csv", header=F)
-aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
-no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
--->
+
+
+```r
+point_shapes <- c(4,15,17,19,5,6,0,1)
+point_colours <- brewer.pal(8,"Dark2")[c(8,1:7)]
+point_size = 1.5
+center_point_size = 8
+
+plot_dbscan_clusters <- function(data_set, dbscan_output){
+  ggplot(data_set, aes(V1,V2)) + 
+    geom_point(col=point_colours[dbscan_output$cluster+1],
+               shape=point_shapes[dbscan_output$cluster+1], 
+               size=point_size) +
+    theme_bw()
+}
+```
+
 
 #### Aggregation
 
+
+```r
+aggregation <- read.table("data/example_clusters/aggregation.txt")
+kNNdistplot(aggregation[,1:2], k=10)
+abline(h=1.8)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/aggregationKNNdist-1.png" alt="10-nearest neighbour distances for the aggregation data set" width="75%" />
+<p class="caption">(\#fig:aggregationKNNdist)10-nearest neighbour distances for the aggregation data set</p>
+</div>
+
+
+```r
+res <- dbscan::dbscan(aggregation[,1:2], eps=1.8, minPts = 10)
+table(res$cluster)
+```
+
+```
+## 
+##   0   1   2   3   4   5   6 
+##   2 168 307 105 127  45  34
+```
+
+
+```r
+plot_dbscan_clusters(aggregation, res)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/aggregationDBSCANscatter-1.png" alt="DBSCAN clustering (eps=1.8, minPts=10) of the aggregation data set. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">(\#fig:aggregationDBSCANscatter)DBSCAN clustering (eps=1.8, minPts=10) of the aggregation data set. Outlier observations are shown as grey crosses.</p>
+</div>
+
+
 #### Noisy moons
 
+```r
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+kNNdistplot(noisy_moons[,1:2], k=10)
+abline(h=0.075)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/noisyMoonsKNNdist-1.png" alt="10-nearest neighbour distances for the noisy moons data set" width="75%" />
+<p class="caption">(\#fig:noisyMoonsKNNdist)10-nearest neighbour distances for the noisy moons data set</p>
+</div>
+
+
+```r
+res <- dbscan::dbscan(noisy_moons[,1:2], eps=0.075, minPts = 10)
+table(res$cluster)
+```
+
+```
+## 
+##   0   1   2 
+##   8 748 744
+```
+
+
+```r
+plot_dbscan_clusters(noisy_moons, res)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/noisyMoonsDBSCANscatter-1.png" alt="DBSCAN clustering (eps=0.075, minPts=10) of the noisy moons data set. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">(\#fig:noisyMoonsDBSCANscatter)DBSCAN clustering (eps=0.075, minPts=10) of the noisy moons data set. Outlier observations are shown as grey crosses.</p>
+</div>
+
+
 #### Different density
+
+
+```r
+diff_density <- read.csv("data/example_clusters/different_density.csv", header=F)
+kNNdistplot(diff_density[,1:2], k=10)
+abline(h=0.9)
+abline(h=0.6, lty=2)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/diffDensityKNNdist-1.png" alt="10-nearest neighbour distances for the different density distributions data set" width="75%" />
+<p class="caption">(\#fig:diffDensityKNNdist)10-nearest neighbour distances for the different density distributions data set</p>
+</div>
+
+
+```r
+res <- dbscan::dbscan(diff_density[,1:2], eps=0.9, minPts = 10)
+table(res$cluster)
+```
+
+```
+## 
+##    0    1 
+##   40 1460
+```
+
+
+```r
+plot_dbscan_clusters(diff_density, res)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/diffDensityDBSCANscatter1-1.png" alt="DBSCAN clustering of the different density distribution data set with eps=0.9 and minPts=10. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">(\#fig:diffDensityDBSCANscatter1)DBSCAN clustering of the different density distribution data set with eps=0.9 and minPts=10. Outlier observations are shown as grey crosses.</p>
+</div>
+
+
+```r
+res <- dbscan::dbscan(diff_density[,1:2], eps=0.6, minPts = 10)
+table(res$cluster)
+```
+
+```
+## 
+##   0   1   2 
+## 109 399 992
+```
+
+
+```r
+plot_dbscan_clusters(diff_density, res)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/diffDensityDBSCANscatter2-1.png" alt="DBSCAN clustering of the different density distribution data set with eps=0.6 and minPts=10. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">(\#fig:diffDensityDBSCANscatter2)DBSCAN clustering of the different density distribution data set with eps=0.6 and minPts=10. Outlier observations are shown as grey crosses.</p>
+</div>
 
 
 #### Anisotropic distributions
 
 
+```r
+aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
+kNNdistplot(aniso[,1:2], k=10)
+abline(h=0.35)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/anisoKNNdist-1.png" alt="10-nearest neighbour distances for the anisotropic distributions data set" width="75%" />
+<p class="caption">(\#fig:anisoKNNdist)10-nearest neighbour distances for the anisotropic distributions data set</p>
+</div>
+
+
+```r
+res <- dbscan::dbscan(aniso[,1:2], eps=0.35, minPts = 10)
+table(res$cluster)
+```
+
+```
+## 
+##   0   1   2   3 
+##  29 489 488 494
+```
+
+
+```r
+plot_dbscan_clusters(aniso, res)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/anisoDBSCANscatter-1.png" alt="DBSCAN clustering (eps=0.3, minPts=10) of the anisotropic distributions data set. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">(\#fig:anisoDBSCANscatter)DBSCAN clustering (eps=0.3, minPts=10) of the anisotropic distributions data set. Outlier observations are shown as grey crosses.</p>
+</div>
+
+
 #### No structure
 
 
+```r
+no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
+kNNdistplot(no_structure[,1:2], k=10)
+abline(h=0.057)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/noStructureKNNdist-1.png" alt="10-nearest neighbour distances for the data set with no structure." width="75%" />
+<p class="caption">(\#fig:noStructureKNNdist)10-nearest neighbour distances for the data set with no structure.</p>
+</div>
+
+
+```r
+res <- dbscan::dbscan(no_structure[,1:2], eps=0.57, minPts = 10)
+table(res$cluster)
+```
+
+```
+## 
+##    1 
+## 1500
+```
+
+<!--No need for scatter plot-->
 
 
 ### Example: gene expression profiling of human tissues
-tissue types?
+Returning again to the data on gene expression of human tissues.
 
+```r
+load("data/tissues_gene_expression/tissuesGeneExpression.rda")
+```
+
+
+```r
+table(tissue)
+```
+
+```
+## tissue
+##  cerebellum       colon endometrium hippocampus      kidney       liver 
+##          38          34          15          31          39          26 
+##    placenta 
+##           6
+```
+
+We'll try k=5 (default for dbscan), because there are only six observations for placenta.
+
+
+```r
+kNNdistplot(t(e), k=5)
+abline(h=85)
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/tissueExpressionKNNdist-1.png" alt="Five-nearest neighbour distances for the gene expression profiling of human tissues data set." width="75%" />
+<p class="caption">(\#fig:tissueExpressionKNNdist)Five-nearest neighbour distances for the gene expression profiling of human tissues data set.</p>
+</div>
+
+
+```r
+set.seed(42)
+res <- dbscan::dbscan(t(e), eps=85, minPts=5)
+table(res$cluster)
+```
+
+```
+## 
+##  0  1  2  3  4  5  6 
+## 12 37 62 34 24 15  5
+```
+
+```r
+table(tissue, res$cluster)
+```
+
+```
+##              
+## tissue         0  1  2  3  4  5  6
+##   cerebellum   2  0 31  0  0  0  5
+##   colon        0  0  0 34  0  0  0
+##   endometrium  0  0  0  0  0 15  0
+##   hippocampus  0  0 31  0  0  0  0
+##   kidney       2 37  0  0  0  0  0
+##   liver        2  0  0  0 24  0  0
+##   placenta     6  0  0  0  0  0  0
+```
+
+
+```r
+pca <- prcomp(t(e))
+ggplot(data=as.data.frame(pca$x), aes(PC1,PC2)) + 
+  geom_point(col=brewer.pal(8,"Dark2")[c(8,1:7)][res$cluster+1], 
+             shape=c(48:55)[res$cluster+1], size=5) + 
+  theme_bw()
+```
+
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/tissueExpressionDBSCANscatter-1.png" alt="Clustering of human tissue gene expression: scatterplot of first two principal components." width="60%" />
+<p class="caption">(\#fig:tissueExpressionDBSCANscatter)Clustering of human tissue gene expression: scatterplot of first two principal components.</p>
+</div>
 
 ## Summary
 
@@ -949,8 +1259,17 @@ Not appropriate for phylogenetic analysis!!
 -->
 
 ## Evaluating cluster quality
+<!--
+http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html
+-->
 
+### Silhouette
 
+**Silhouette**
+\begin{equation}
+  s(i) = \frac{b(i) - a(i)}{max\left(a(i),b(i)\right)}
+  (\#eq:silhouette)
+\end{equation}
 ## Exercises
 
 <!--

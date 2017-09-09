@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-08">
+<meta name="date" content="2017-09-09">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -164,16 +164,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="10.5" data-path="clustering.html"><a href="clustering.html#dbscan"><i class="fa fa-check"></i><b>10.5</b> DBSCAN</a><ul>
 <li class="chapter" data-level="10.5.1" data-path="clustering.html"><a href="clustering.html#algorithm-1"><i class="fa fa-check"></i><b>10.5.1</b> Algorithm</a></li>
-<li class="chapter" data-level="10.5.2" data-path="clustering.html"><a href="clustering.html#choosing-parameters"><i class="fa fa-check"></i><b>10.5.2</b> Choosing parameters</a></li>
-<li class="chapter" data-level="10.5.3" data-path="clustering.html"><a href="clustering.html#example-clustering-synthetic-data-sets-2"><i class="fa fa-check"></i><b>10.5.3</b> Example: clustering synthetic data sets</a></li>
-<li class="chapter" data-level="10.5.4" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues-2"><i class="fa fa-check"></i><b>10.5.4</b> Example: gene expression profiling of human tissues</a></li>
+<li class="chapter" data-level="10.5.2" data-path="clustering.html"><a href="clustering.html#implementation-in-r"><i class="fa fa-check"></i><b>10.5.2</b> Implementation in R</a></li>
+<li class="chapter" data-level="10.5.3" data-path="clustering.html"><a href="clustering.html#choosing-parameters"><i class="fa fa-check"></i><b>10.5.3</b> Choosing parameters</a></li>
+<li class="chapter" data-level="10.5.4" data-path="clustering.html"><a href="clustering.html#example-clustering-synthetic-data-sets-2"><i class="fa fa-check"></i><b>10.5.4</b> Example: clustering synthetic data sets</a></li>
+<li class="chapter" data-level="10.5.5" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues-2"><i class="fa fa-check"></i><b>10.5.5</b> Example: gene expression profiling of human tissues</a></li>
 </ul></li>
 <li class="chapter" data-level="10.6" data-path="clustering.html"><a href="clustering.html#summary"><i class="fa fa-check"></i><b>10.6</b> Summary</a><ul>
 <li class="chapter" data-level="10.6.1" data-path="clustering.html"><a href="clustering.html#applications"><i class="fa fa-check"></i><b>10.6.1</b> Applications</a></li>
 <li class="chapter" data-level="10.6.2" data-path="clustering.html"><a href="clustering.html#strengths"><i class="fa fa-check"></i><b>10.6.2</b> Strengths</a></li>
 <li class="chapter" data-level="10.6.3" data-path="clustering.html"><a href="clustering.html#limitations"><i class="fa fa-check"></i><b>10.6.3</b> Limitations</a></li>
 </ul></li>
-<li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#evaluating-cluster-quality"><i class="fa fa-check"></i><b>10.7</b> Evaluating cluster quality</a></li>
+<li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#evaluating-cluster-quality"><i class="fa fa-check"></i><b>10.7</b> Evaluating cluster quality</a><ul>
+<li class="chapter" data-level="10.7.1" data-path="clustering.html"><a href="clustering.html#silhouette"><i class="fa fa-check"></i><b>10.7.1</b> Silhouette</a></li>
+</ul></li>
 <li class="chapter" data-level="10.8" data-path="clustering.html"><a href="clustering.html#exercises-7"><i class="fa fa-check"></i><b>10.8</b> Exercises</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
@@ -644,7 +647,6 @@ Figure 10.10: Heatmap of the expression of the 40 genes with the highest varianc
 <div id="algorithm" class="section level3">
 <h3><span class="header-section-number">10.4.1</span> Algorithm</h3>
 <p>Pseudocode</p>
-<p>to illustrate range of different types of data that can be clustered - image segmentation</p>
 <div class="figure" style="text-align: center"><span id="fig:kmeansIterations"></span>
 <img src="09-clustering_files/figure-html/kmeansIterations-1.png" alt="Iterations of the k-means algorithm" width="90%" />
 <p class="caption">
@@ -813,6 +815,12 @@ res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){
 
 ## Warning: did not converge in 10 iterations
 
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
 ## Warning: did not converge in 10 iterations</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:kmeansDiffDensityElbow"></span>
@@ -889,7 +897,6 @@ Figure 10.24: K-means clustering of the data set with no structure: scatterplot 
 ##           6</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(e)</code></pre></div>
 <pre><code>## [1] 22215   189</code></pre>
-<p>First we will examine the total intra-cluster variance with different values of <em>k</em>. In practice we would set <strong>nstart</strong> to a large value (e.g. 50), but in the interests of speed for this demonstration we will set it to one. We use <strong>set.seed</strong> to make this example reproducible, but in practice we would allow <strong>R</strong> to generate a random seed.</p>
 <p>First we will examine the total intra-cluster variance with different values of <em>k</em>. Our data-set is fairly large, so clustering it for several values or <em>k</em> and with multiple random starting centres is computationally quite intensive. Fortunately the task readily lends itself to parallelization; we can assign the analysis of each ‘k’ to a different processing core. As we have seen in the previous chapters on supervised learning, <a href="http://cran.r-project.org/web/packages/caret/index.html">caret</a> has parallel processing built in and we simply have to load a package for multicore processing, such as <a href="http://cran.r-project.org/web/packages/doMC/index.html">doMC</a>, and then register the number of cores we would like to use. Running <strong>kmeans</strong> in parallel is slightly more involved, but still very easy. We will start by loading <a href="http://cran.r-project.org/web/packages/doMC/index.html">doMC</a> and registering all available cores:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(doMC)</code></pre></div>
 <pre><code>## Loading required package: foreach</code></pre>
@@ -961,47 +968,235 @@ Figure 10.26: K-means clustering of human gene expression (k=7): scatterplot of 
 Figure 10.27: Illustration of the DBSCAN algorithm.
 </p>
 </div>
+<p>The method requires two parameters; MinPts that is the minimum number of samples in any cluster; Eps that is the maximum distance of the sample to at least one other sample within the same cluster.</p>
+<p>This algorithm works on a parametric approach. The two parameters involved in this algorithm are: * e (eps) is the radius of our neighborhoods around a data point p. * minPts is the minimum number of data points we want in a neighborhood to define a cluster.</p>
+</div>
+<div id="implementation-in-r" class="section level3">
+<h3><span class="header-section-number">10.5.2</span> Implementation in R</h3>
+<p>DBSCAN is implemented in two R packages: <a href="https://cran.r-project.org/package=dbscan">dbscan</a> and <a href="https://cran.r-project.org/package=fpc">fpc</a>. We will use the package <a href="https://cran.r-project.org/package=dbscan">dbscan</a>, because it is significantly faster and can handle larger data sets than <a href="https://cran.r-project.org/package=fpc">fpc</a>. The function has the same name in both packages and so if for any reason both packages have been loaded into our current workspace, there is a danger of calling the wrong implementation. To avoid this we can specify the package name when calling the function, e.g.:</p>
+<pre><code>dbscan::dbscan</code></pre>
+<p>We load the dbscan package in the usual way:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dbscan)</code></pre></div>
 </div>
 <div id="choosing-parameters" class="section level3">
-<h3><span class="header-section-number">10.5.2</span> Choosing parameters</h3>
+<h3><span class="header-section-number">10.5.3</span> Choosing parameters</h3>
 <p>The algorithm only needs parameteres <strong>eps</strong> and <strong>minPts</strong>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dbscan)</code></pre></div>
+<p>Read in data and use <strong>kNNdist</strong> function from <a href="https://cran.r-project.org/package=dbscan">dbscan</a> package to plot the distances of the 10-nearest neighbours for each observation (figure <a href="clustering.html#fig:blobsKNNdist">10.28</a>).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">blobs &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/blobs.csv&quot;</span>, <span class="dt">header=</span>F)
-dist2knn &lt;-<span class="st"> </span><span class="kw">kNNdist</span>(blobs, <span class="dv">10</span>)
-<span class="kw">kNNdistplot</span>(blobs[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">k=</span><span class="dv">10</span>)</code></pre></div>
-<p><img src="09-clustering_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
-<p>res &lt;- dbscan::dbscan</p>
+<span class="kw">kNNdistplot</span>(blobs[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">k=</span><span class="dv">10</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="fl">0.6</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:blobsKNNdist"></span>
+<img src="09-clustering_files/figure-html/blobsKNNdist-1.png" alt="10-nearest neighbour distances for the blobs data set" width="75%" />
+<p class="caption">
+Figure 10.28: 10-nearest neighbour distances for the blobs data set
+</p>
+</div>
+<!-- dist2knn <- kNNdist(blobs, 10) -->
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>dbscan::<span class="kw">dbscan</span>(blobs[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">eps=</span><span class="fl">0.6</span>, <span class="dt">minPts =</span> <span class="dv">10</span>)
+<span class="kw">table</span>(res$cluster)</code></pre></div>
+<pre><code>## 
+##   0   1   2   3 
+##  43 484 486 487</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(blobs, <span class="kw">aes</span>(V1,V2)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span><span class="kw">brewer.pal</span>(<span class="dv">8</span>,<span class="st">&quot;Dark2&quot;</span>)[<span class="kw">c</span>(<span class="dv">8</span>,<span class="dv">1</span>:<span class="dv">7</span>)][res$cluster<span class="dv">+1</span>],
+             <span class="dt">shape=</span><span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">15</span>,<span class="dv">17</span>,<span class="dv">19</span>)[res$cluster<span class="dv">+1</span>],
+             <span class="dt">size=</span><span class="fl">1.5</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:blobsDBSCANscatter"></span>
+<img src="09-clustering_files/figure-html/blobsDBSCANscatter-1.png" alt="DBSCAN clustering (eps=0.6, minPts=10) of the blobs data set. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">
+Figure 10.29: DBSCAN clustering (eps=0.6, minPts=10) of the blobs data set. Outlier observations are shown as grey crosses.
+</p>
+</div>
 </div>
 <div id="example-clustering-synthetic-data-sets-2" class="section level3">
-<h3><span class="header-section-number">10.5.3</span> Example: clustering synthetic data sets</h3>
-<!--
-?dbscan::dbscan
-blobs <- read.csv("data/example_clusters/blobs.csv", header=F)
-aggregation <- read.table("data/example_clusters/aggregation.txt")
-noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
-diff_density <- read.csv("data/example_clusters/different_density.csv", header=F)
-aniso <- read.csv("data/example_clusters/aniso.csv", header=F)
-no_structure <- read.csv("data/example_clusters/no_structure.csv", header=F)
--->
+<h3><span class="header-section-number">10.5.4</span> Example: clustering synthetic data sets</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">point_shapes &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">15</span>,<span class="dv">17</span>,<span class="dv">19</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">1</span>)
+point_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">8</span>,<span class="st">&quot;Dark2&quot;</span>)[<span class="kw">c</span>(<span class="dv">8</span>,<span class="dv">1</span>:<span class="dv">7</span>)]
+point_size =<span class="st"> </span><span class="fl">1.5</span>
+center_point_size =<span class="st"> </span><span class="dv">8</span>
+
+plot_dbscan_clusters &lt;-<span class="st"> </span>function(data_set, dbscan_output){
+  <span class="kw">ggplot</span>(data_set, <span class="kw">aes</span>(V1,V2)) +<span class="st"> </span>
+<span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[dbscan_output$cluster<span class="dv">+1</span>],
+               <span class="dt">shape=</span>point_shapes[dbscan_output$cluster<span class="dv">+1</span>], 
+               <span class="dt">size=</span>point_size) +
+<span class="st">    </span><span class="kw">theme_bw</span>()
+}</code></pre></div>
 <div id="aggregation-1" class="section level4">
-<h4><span class="header-section-number">10.5.3.1</span> Aggregation</h4>
+<h4><span class="header-section-number">10.5.4.1</span> Aggregation</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aggregation &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;data/example_clusters/aggregation.txt&quot;</span>)
+<span class="kw">kNNdistplot</span>(aggregation[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">k=</span><span class="dv">10</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="fl">1.8</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:aggregationKNNdist"></span>
+<img src="09-clustering_files/figure-html/aggregationKNNdist-1.png" alt="10-nearest neighbour distances for the aggregation data set" width="75%" />
+<p class="caption">
+Figure 10.30: 10-nearest neighbour distances for the aggregation data set
+</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>dbscan::<span class="kw">dbscan</span>(aggregation[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">eps=</span><span class="fl">1.8</span>, <span class="dt">minPts =</span> <span class="dv">10</span>)
+<span class="kw">table</span>(res$cluster)</code></pre></div>
+<pre><code>## 
+##   0   1   2   3   4   5   6 
+##   2 168 307 105 127  45  34</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_dbscan_clusters</span>(aggregation, res)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:aggregationDBSCANscatter"></span>
+<img src="09-clustering_files/figure-html/aggregationDBSCANscatter-1.png" alt="DBSCAN clustering (eps=1.8, minPts=10) of the aggregation data set. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">
+Figure 10.31: DBSCAN clustering (eps=1.8, minPts=10) of the aggregation data set. Outlier observations are shown as grey crosses.
+</p>
+</div>
 </div>
 <div id="noisy-moons-1" class="section level4">
-<h4><span class="header-section-number">10.5.3.2</span> Noisy moons</h4>
+<h4><span class="header-section-number">10.5.4.2</span> Noisy moons</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">noisy_moons &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/noisy_moons.csv&quot;</span>, <span class="dt">header=</span>F)
+<span class="kw">kNNdistplot</span>(noisy_moons[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">k=</span><span class="dv">10</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="fl">0.075</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:noisyMoonsKNNdist"></span>
+<img src="09-clustering_files/figure-html/noisyMoonsKNNdist-1.png" alt="10-nearest neighbour distances for the noisy moons data set" width="75%" />
+<p class="caption">
+Figure 10.32: 10-nearest neighbour distances for the noisy moons data set
+</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>dbscan::<span class="kw">dbscan</span>(noisy_moons[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">eps=</span><span class="fl">0.075</span>, <span class="dt">minPts =</span> <span class="dv">10</span>)
+<span class="kw">table</span>(res$cluster)</code></pre></div>
+<pre><code>## 
+##   0   1   2 
+##   8 748 744</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_dbscan_clusters</span>(noisy_moons, res)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:noisyMoonsDBSCANscatter"></span>
+<img src="09-clustering_files/figure-html/noisyMoonsDBSCANscatter-1.png" alt="DBSCAN clustering (eps=0.075, minPts=10) of the noisy moons data set. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">
+Figure 10.33: DBSCAN clustering (eps=0.075, minPts=10) of the noisy moons data set. Outlier observations are shown as grey crosses.
+</p>
+</div>
 </div>
 <div id="different-density-1" class="section level4">
-<h4><span class="header-section-number">10.5.3.3</span> Different density</h4>
+<h4><span class="header-section-number">10.5.4.3</span> Different density</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">diff_density &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/different_density.csv&quot;</span>, <span class="dt">header=</span>F)
+<span class="kw">kNNdistplot</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">k=</span><span class="dv">10</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="fl">0.9</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="fl">0.6</span>, <span class="dt">lty=</span><span class="dv">2</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:diffDensityKNNdist"></span>
+<img src="09-clustering_files/figure-html/diffDensityKNNdist-1.png" alt="10-nearest neighbour distances for the different density distributions data set" width="75%" />
+<p class="caption">
+Figure 10.34: 10-nearest neighbour distances for the different density distributions data set
+</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>dbscan::<span class="kw">dbscan</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">eps=</span><span class="fl">0.9</span>, <span class="dt">minPts =</span> <span class="dv">10</span>)
+<span class="kw">table</span>(res$cluster)</code></pre></div>
+<pre><code>## 
+##    0    1 
+##   40 1460</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_dbscan_clusters</span>(diff_density, res)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:diffDensityDBSCANscatter1"></span>
+<img src="09-clustering_files/figure-html/diffDensityDBSCANscatter1-1.png" alt="DBSCAN clustering of the different density distribution data set with eps=0.9 and minPts=10. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">
+Figure 10.35: DBSCAN clustering of the different density distribution data set with eps=0.9 and minPts=10. Outlier observations are shown as grey crosses.
+</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>dbscan::<span class="kw">dbscan</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">eps=</span><span class="fl">0.6</span>, <span class="dt">minPts =</span> <span class="dv">10</span>)
+<span class="kw">table</span>(res$cluster)</code></pre></div>
+<pre><code>## 
+##   0   1   2 
+## 109 399 992</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_dbscan_clusters</span>(diff_density, res)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:diffDensityDBSCANscatter2"></span>
+<img src="09-clustering_files/figure-html/diffDensityDBSCANscatter2-1.png" alt="DBSCAN clustering of the different density distribution data set with eps=0.6 and minPts=10. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">
+Figure 10.36: DBSCAN clustering of the different density distribution data set with eps=0.6 and minPts=10. Outlier observations are shown as grey crosses.
+</p>
+</div>
 </div>
 <div id="anisotropic-distributions-1" class="section level4">
-<h4><span class="header-section-number">10.5.3.4</span> Anisotropic distributions</h4>
+<h4><span class="header-section-number">10.5.4.4</span> Anisotropic distributions</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aniso &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/aniso.csv&quot;</span>, <span class="dt">header=</span>F)
+<span class="kw">kNNdistplot</span>(aniso[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">k=</span><span class="dv">10</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="fl">0.35</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:anisoKNNdist"></span>
+<img src="09-clustering_files/figure-html/anisoKNNdist-1.png" alt="10-nearest neighbour distances for the anisotropic distributions data set" width="75%" />
+<p class="caption">
+Figure 10.37: 10-nearest neighbour distances for the anisotropic distributions data set
+</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>dbscan::<span class="kw">dbscan</span>(aniso[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">eps=</span><span class="fl">0.35</span>, <span class="dt">minPts =</span> <span class="dv">10</span>)
+<span class="kw">table</span>(res$cluster)</code></pre></div>
+<pre><code>## 
+##   0   1   2   3 
+##  29 489 488 494</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_dbscan_clusters</span>(aniso, res)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:anisoDBSCANscatter"></span>
+<img src="09-clustering_files/figure-html/anisoDBSCANscatter-1.png" alt="DBSCAN clustering (eps=0.3, minPts=10) of the anisotropic distributions data set. Outlier observations are shown as grey crosses." width="60%" />
+<p class="caption">
+Figure 10.38: DBSCAN clustering (eps=0.3, minPts=10) of the anisotropic distributions data set. Outlier observations are shown as grey crosses.
+</p>
+</div>
 </div>
 <div id="no-structure-1" class="section level4">
-<h4><span class="header-section-number">10.5.3.5</span> No structure</h4>
+<h4><span class="header-section-number">10.5.4.5</span> No structure</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">no_structure &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/no_structure.csv&quot;</span>, <span class="dt">header=</span>F)
+<span class="kw">kNNdistplot</span>(no_structure[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">k=</span><span class="dv">10</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="fl">0.057</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:noStructureKNNdist"></span>
+<img src="09-clustering_files/figure-html/noStructureKNNdist-1.png" alt="10-nearest neighbour distances for the data set with no structure." width="75%" />
+<p class="caption">
+Figure 10.39: 10-nearest neighbour distances for the data set with no structure.
+</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>dbscan::<span class="kw">dbscan</span>(no_structure[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">eps=</span><span class="fl">0.57</span>, <span class="dt">minPts =</span> <span class="dv">10</span>)
+<span class="kw">table</span>(res$cluster)</code></pre></div>
+<pre><code>## 
+##    1 
+## 1500</code></pre>
+<!--No need for scatter plot-->
 </div>
 </div>
 <div id="example-gene-expression-profiling-of-human-tissues-2" class="section level3">
-<h3><span class="header-section-number">10.5.4</span> Example: gene expression profiling of human tissues</h3>
-<p>tissue types?</p>
+<h3><span class="header-section-number">10.5.5</span> Example: gene expression profiling of human tissues</h3>
+<p>Returning again to the data on gene expression of human tissues.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;data/tissues_gene_expression/tissuesGeneExpression.rda&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(tissue)</code></pre></div>
+<pre><code>## tissue
+##  cerebellum       colon endometrium hippocampus      kidney       liver 
+##          38          34          15          31          39          26 
+##    placenta 
+##           6</code></pre>
+<p>We’ll try k=5 (default for dbscan), because there are only six observations for placenta.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">kNNdistplot</span>(<span class="kw">t</span>(e), <span class="dt">k=</span><span class="dv">5</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="dv">85</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:tissueExpressionKNNdist"></span>
+<img src="09-clustering_files/figure-html/tissueExpressionKNNdist-1.png" alt="Five-nearest neighbour distances for the gene expression profiling of human tissues data set." width="75%" />
+<p class="caption">
+Figure 10.40: Five-nearest neighbour distances for the gene expression profiling of human tissues data set.
+</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">42</span>)
+res &lt;-<span class="st"> </span>dbscan::<span class="kw">dbscan</span>(<span class="kw">t</span>(e), <span class="dt">eps=</span><span class="dv">85</span>, <span class="dt">minPts=</span><span class="dv">5</span>)
+<span class="kw">table</span>(res$cluster)</code></pre></div>
+<pre><code>## 
+##  0  1  2  3  4  5  6 
+## 12 37 62 34 24 15  5</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(tissue, res$cluster)</code></pre></div>
+<pre><code>##              
+## tissue         0  1  2  3  4  5  6
+##   cerebellum   2  0 31  0  0  0  5
+##   colon        0  0  0 34  0  0  0
+##   endometrium  0  0  0  0  0 15  0
+##   hippocampus  0  0 31  0  0  0  0
+##   kidney       2 37  0  0  0  0  0
+##   liver        2  0  0  0 24  0  0
+##   placenta     6  0  0  0  0  0  0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pca &lt;-<span class="st"> </span><span class="kw">prcomp</span>(<span class="kw">t</span>(e))
+<span class="kw">ggplot</span>(<span class="dt">data=</span><span class="kw">as.data.frame</span>(pca$x), <span class="kw">aes</span>(PC1,PC2)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span><span class="kw">brewer.pal</span>(<span class="dv">8</span>,<span class="st">&quot;Dark2&quot;</span>)[<span class="kw">c</span>(<span class="dv">8</span>,<span class="dv">1</span>:<span class="dv">7</span>)][res$cluster<span class="dv">+1</span>], 
+             <span class="dt">shape=</span><span class="kw">c</span>(<span class="dv">48</span>:<span class="dv">55</span>)[res$cluster<span class="dv">+1</span>], <span class="dt">size=</span><span class="dv">5</span>) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:tissueExpressionDBSCANscatter"></span>
+<img src="09-clustering_files/figure-html/tissueExpressionDBSCANscatter-1.png" alt="Clustering of human tissue gene expression: scatterplot of first two principal components." width="60%" />
+<p class="caption">
+Figure 10.41: Clustering of human tissue gene expression: scatterplot of first two principal components.
+</p>
+</div>
 </div>
 </div>
 <div id="summary" class="section level2">
@@ -1021,6 +1216,17 @@ Not appropriate for phylogenetic analysis!!
 </div>
 <div id="evaluating-cluster-quality" class="section level2">
 <h2><span class="header-section-number">10.7</span> Evaluating cluster quality</h2>
+<!--
+http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html
+-->
+<div id="silhouette" class="section level3">
+<h3><span class="header-section-number">10.7.1</span> Silhouette</h3>
+<strong>Silhouette</strong>
+<span class="math display" id="eq:silhouette">\[\begin{equation}
+  s(i) = \frac{b(i) - a(i)}{max\left(a(i),b(i)\right)}
+  \tag{10.2}
+\end{equation}\]</span>
+</div>
 </div>
 <div id="exercises-7" class="section level2">
 <h2><span class="header-section-number">10.8</span> Exercises</h2>
