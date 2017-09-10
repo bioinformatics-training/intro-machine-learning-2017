@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-09-05}
+  \date{2017-09-10}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -329,6 +329,8 @@ Solutions to exercises can be found in appendix
 
 \chapter{Nearest neighbours}\label{nearest-neighbours}
 
+Parallel processing with doMC registerDoMC() getDoParWorkers()
+
 \section{Example one}\label{example-one}
 
 \section{Example two}\label{example-two}
@@ -439,7 +441,7 @@ Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
 Get to see clusters for all number of clusters k
 
-produce step by step figure to show how objects are linked
+\subsection{Linkage algorithms}\label{linkage-algorithms}
 
 \begin{table}
 
@@ -456,10 +458,6 @@ E & 9 & 8 & 3 & 4\\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\subsection{Linkage algorithms}\label{linkage-algorithms}
-
-Make one section panel of three dendrograms one table
 
 Single linkage - nearest neighbours linkage Complete linkage - furthest
 neighbours linkage Average linkage - UPGMA (Unweighted Pair Group Method
@@ -1055,9 +1053,6 @@ Plot heatmap.
 
 Pseudocode
 
-to illustrate range of different types of data that can be clustered -
-image segmentation
-
 \begin{figure}
 
 {\centering \includegraphics[width=0.9\linewidth]{09-clustering_files/figure-latex/kmeansIterations-1} 
@@ -1297,6 +1292,20 @@ data sets.
 \begin{Highlighting}[]
 \NormalTok{diff_density <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/different_density.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F))}
 \NormalTok{res <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(k, function(i)\{}\KeywordTok{kmeans}\NormalTok{(diff_density[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], i, }\DataTypeTok{nstart=}\DecValTok{50}\NormalTok{)\})}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+\end{verbatim}
+
+Failure to converge, so increase number of iterations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(k, function(i)\{}\KeywordTok{kmeans}\NormalTok{(diff_density[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], i, }\DataTypeTok{iter.max=}\DecValTok{20}\NormalTok{, }\DataTypeTok{nstart=}\DecValTok{50}\NormalTok{)\})}
 \KeywordTok{plot_tot_withinss}\NormalTok{(res)}
 \end{Highlighting}
 \end{Shaded}
@@ -1441,17 +1450,73 @@ As we saw earlier, the data set contains expression levels for over
 \end{verbatim}
 
 First we will examine the total intra-cluster variance with different
-values of \emph{k}. In practice we would set \textbf{nstart} to a large
-value (e.g.~50), but in the interests of speed for this demonstration we
-will set it to one. We use \textbf{set.seed} to make this example
-reproducible, but in practice you would allow \textbf{R} to generate a
-random seed.
+values of \emph{k}. Our data-set is fairly large, so clustering it for
+several values or \emph{k} and with multiple random starting centres is
+computationally quite intensive. Fortunately the task readily lends
+itself to parallelization; we can assign the analysis of each `k' to a
+different processing core. As we have seen in the previous chapters on
+supervised learning,
+\href{http://cran.r-project.org/web/packages/caret/index.html}{caret}
+has parallel processing built in and we simply have to load a package
+for multicore processing, such as
+\href{http://cran.r-project.org/web/packages/doMC/index.html}{doMC}, and
+then register the number of cores we would like to use. Running
+\textbf{kmeans} in parallel is slightly more involved, but still very
+easy. We will start by loading
+\href{http://cran.r-project.org/web/packages/doMC/index.html}{doMC} and
+registering all available cores:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(doMC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: foreach
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: iterators
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: parallel
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{registerDoMC}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+To find out how many cores we have registered we can use:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{getDoParWorkers}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2
+\end{verbatim}
+
+Instead of using the \textbf{lapply} function to vectorize our code, we
+will instead use the parallel equivalent, \textbf{foreach}. Like
+\textbf{lapply}, \textbf{foreach} returns a list by default. For this
+example we have set a seed, rather than generate a random number, for
+the sake of reproducibility. Ordinarily we would omit
+\texttt{set.seed(42)} and
+\texttt{.options.multicore=list(set.seed=FALSE)}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{k<-}\DecValTok{1}\NormalTok{:}\DecValTok{15}
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{42}\NormalTok{)}
-\NormalTok{res_k_15 <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(k, function(i)\{}\KeywordTok{kmeans}\NormalTok{(}\KeywordTok{t}\NormalTok{(e), i, }\DataTypeTok{nstart=}\DecValTok{1}\NormalTok{)\})}
+\NormalTok{res_k_15 <-}\StringTok{ }\KeywordTok{foreach}\NormalTok{(}
+  \DataTypeTok{i=}\NormalTok{k, }
+  \DataTypeTok{.options.multicore=}\KeywordTok{list}\NormalTok{(}\DataTypeTok{set.seed=}\OtherTok{FALSE}\NormalTok{)) %dopar%}\StringTok{ }\KeywordTok{kmeans}\NormalTok{(}\KeywordTok{t}\NormalTok{(e), i, }\DataTypeTok{nstart=}\DecValTok{10}\NormalTok{)}
 \KeywordTok{plot_tot_withinss}\NormalTok{(res_k_15)}
 \end{Highlighting}
 \end{Shaded}
@@ -1465,30 +1530,26 @@ random seed.
 \caption{K-means clustering of human tissue gene expression: variance within clusters.}\label{fig:tissueExpressionElbow}
 \end{figure}
 
-If we had set \textbf{nstart} to a higher value we would have obtained a
-smoother curve in figure \ref{fig:tissueExpressionElbow}. There is no
-obvious elbow, but the rate of decrease in the total-within sum of
-squares appears to slow after k=5. Since we know that there are seven
-tissues in the data set we will try k=7.
+There is no obvious elbow, but the rate of decrease in the total-within
+sum of squares appears to slow after k=5. Since we know that there are
+seven tissues in the data set we will try k=7.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{set.seed}\NormalTok{(}\DecValTok{42}\NormalTok{)}
-\NormalTok{res <-}\StringTok{ }\KeywordTok{kmeans}\NormalTok{(}\KeywordTok{t}\NormalTok{(e), }\DecValTok{7}\NormalTok{, }\DataTypeTok{nstart=}\DecValTok{10}\NormalTok{)}
-\KeywordTok{table}\NormalTok{(tissue, res$cluster)}
+\KeywordTok{table}\NormalTok{(tissue, res_k_15[[}\DecValTok{7}\NormalTok{]]$cluster)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ##              
 ## tissue         1  2  3  4  5  6  7
-##   cerebellum   0  0  0 33  0  0  5
-##   colon        0  0  0  0  0 34  0
-##   endometrium  0  0  0  0 15  0  0
-##   hippocampus  0  0  0  0  0  0 31
-##   kidney       0  0 39  0  0  0  0
-##   liver       26  0  0  0  0  0  0
-##   placenta     0  6  0  0  0  0  0
+##   cerebellum   0  0  0  0  0  5 33
+##   colon        0  0 34  0  0  0  0
+##   endometrium 15  0  0  0  0  0  0
+##   hippocampus  0  0  0  0 31  0  0
+##   kidney      37  2  0  0  0  0  0
+##   liver        0 26  0  0  0  0  0
+##   placenta     0  0  0  6  0  0  0
 \end{verbatim}
 
 The analysis has found a distinct cluster for each tissue and therefore
@@ -1504,8 +1565,8 @@ dimensionality reduction. We will use principal component analysis
 \begin{Highlighting}[]
 \NormalTok{pca <-}\StringTok{ }\KeywordTok{prcomp}\NormalTok{(}\KeywordTok{t}\NormalTok{(e))}
 \KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data=}\KeywordTok{as.data.frame}\NormalTok{(pca$x), }\KeywordTok{aes}\NormalTok{(PC1,PC2)) +}\StringTok{ }
-\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{7}\NormalTok{,}\StringTok{"Dark2"}\NormalTok{)[res$cluster], }
-             \DataTypeTok{shape=}\KeywordTok{c}\NormalTok{(}\DecValTok{49}\NormalTok{:}\DecValTok{55}\NormalTok{)[res$cluster], }\DataTypeTok{size=}\DecValTok{5}\NormalTok{) +}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{7}\NormalTok{,}\StringTok{"Dark2"}\NormalTok{)[res_k_15[[}\DecValTok{7}\NormalTok{]]$cluster], }
+             \DataTypeTok{shape=}\KeywordTok{c}\NormalTok{(}\DecValTok{49}\NormalTok{:}\DecValTok{55}\NormalTok{)[res_k_15[[}\DecValTok{7}\NormalTok{]]$cluster], }\DataTypeTok{size=}\DecValTok{5}\NormalTok{) +}\StringTok{ }
 \StringTok{  }\KeywordTok{theme_bw}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
@@ -1544,9 +1605,33 @@ Abstract DBSCAN algorithm in pseudocode \citep{Schubert2017}
 \caption{Illustration of the DBSCAN algorithm.}\label{fig:dbscanIllustration}
 \end{figure}
 
-\subsection{Choosing parameters}\label{choosing-parameters}
+The method requires two parameters; MinPts that is the minimum number of
+samples in any cluster; Eps that is the maximum distance of the sample
+to at least one other sample within the same cluster.
 
-The algorithm only needs parameteres \textbf{eps} and \textbf{minPts}.
+This algorithm works on a parametric approach. The two parameters
+involved in this algorithm are: * e (eps) is the radius of our
+neighborhoods around a data point p. * minPts is the minimum number of
+data points we want in a neighborhood to define a cluster.
+
+\subsection{Implementation in R}\label{implementation-in-r}
+
+DBSCAN is implemented in two R packages:
+\href{https://cran.r-project.org/package=dbscan}{dbscan} and
+\href{https://cran.r-project.org/package=fpc}{fpc}. We will use the
+package \href{https://cran.r-project.org/package=dbscan}{dbscan},
+because it is significantly faster and can handle larger data sets than
+\href{https://cran.r-project.org/package=fpc}{fpc}. The function has the
+same name in both packages and so if for any reason both packages have
+been loaded into our current workspace, there is a danger of calling the
+wrong implementation. To avoid this we can specify the package name when
+calling the function, e.g.:
+
+\begin{verbatim}
+dbscan::dbscan
+\end{verbatim}
+
+We load the dbscan package in the usual way:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1554,19 +1639,428 @@ The algorithm only needs parameteres \textbf{eps} and \textbf{minPts}.
 \end{Highlighting}
 \end{Shaded}
 
+\subsection{Choosing parameters}\label{choosing-parameters}
+
+The algorithm only needs parameteres \textbf{eps} and \textbf{minPts}.
+
+Read in data and use \textbf{kNNdist} function from
+\href{https://cran.r-project.org/package=dbscan}{dbscan} package to plot
+the distances of the 10-nearest neighbours for each observation (figure
+\ref{fig:blobsKNNdist}).
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{blobs <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/blobs.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
-\NormalTok{dist2knn <-}\StringTok{ }\KeywordTok{kNNdist}\NormalTok{(blobs, }\DecValTok{3}\NormalTok{)}
+\KeywordTok{kNNdistplot}\NormalTok{(blobs[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{k=}\DecValTok{10}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\FloatTok{0.6}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.75\linewidth]{09-clustering_files/figure-latex/blobsKNNdist-1} 
+
+}
+
+\caption{10-nearest neighbour distances for the blobs data set}\label{fig:blobsKNNdist}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res <-}\StringTok{ }\NormalTok{dbscan::}\KeywordTok{dbscan}\NormalTok{(blobs[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{eps=}\FloatTok{0.6}\NormalTok{, }\DataTypeTok{minPts =} \DecValTok{10}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(res$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##   0   1   2   3 
+##  43 484 486 487
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(blobs, }\KeywordTok{aes}\NormalTok{(V1,V2)) +}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{8}\NormalTok{,}\StringTok{"Dark2"}\NormalTok{)[}\KeywordTok{c}\NormalTok{(}\DecValTok{8}\NormalTok{,}\DecValTok{1}\NormalTok{:}\DecValTok{7}\NormalTok{)][res$cluster}\DecValTok{+1}\NormalTok{],}
+             \DataTypeTok{shape=}\KeywordTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{15}\NormalTok{,}\DecValTok{17}\NormalTok{,}\DecValTok{19}\NormalTok{)[res$cluster}\DecValTok{+1}\NormalTok{],}
+             \DataTypeTok{size=}\FloatTok{1.5}\NormalTok{) +}
+\StringTok{  }\KeywordTok{theme_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{09-clustering_files/figure-latex/blobsDBSCANscatter-1} 
+
+}
+
+\caption{DBSCAN clustering (eps=0.6, minPts=10) of the blobs data set. Outlier observations are shown as grey crosses.}\label{fig:blobsDBSCANscatter}
+\end{figure}
 
 \subsection{Example: clustering synthetic data
 sets}\label{example-clustering-synthetic-data-sets-2}
 
-\subsection{Gene expression}\label{gene-expression}
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{point_shapes <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{15}\NormalTok{,}\DecValTok{17}\NormalTok{,}\DecValTok{19}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\NormalTok{point_colours <-}\StringTok{ }\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{8}\NormalTok{,}\StringTok{"Dark2"}\NormalTok{)[}\KeywordTok{c}\NormalTok{(}\DecValTok{8}\NormalTok{,}\DecValTok{1}\NormalTok{:}\DecValTok{7}\NormalTok{)]}
+\NormalTok{point_size =}\StringTok{ }\FloatTok{1.5}
+\NormalTok{center_point_size =}\StringTok{ }\DecValTok{8}
 
-tissue types?
+\NormalTok{plot_dbscan_clusters <-}\StringTok{ }\NormalTok{function(data_set, dbscan_output)\{}
+  \KeywordTok{ggplot}\NormalTok{(data_set, }\KeywordTok{aes}\NormalTok{(V1,V2)) +}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\NormalTok{point_colours[dbscan_output$cluster}\DecValTok{+1}\NormalTok{],}
+               \DataTypeTok{shape=}\NormalTok{point_shapes[dbscan_output$cluster}\DecValTok{+1}\NormalTok{], }
+               \DataTypeTok{size=}\NormalTok{point_size) +}
+\StringTok{    }\KeywordTok{theme_bw}\NormalTok{()}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Aggregation}\label{aggregation-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{aggregation <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{"data/example_clusters/aggregation.txt"}\NormalTok{)}
+\KeywordTok{kNNdistplot}\NormalTok{(aggregation[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{k=}\DecValTok{10}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\FloatTok{1.8}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.75\linewidth]{09-clustering_files/figure-latex/aggregationKNNdist-1} 
+
+}
+
+\caption{10-nearest neighbour distances for the aggregation data set}\label{fig:aggregationKNNdist}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res <-}\StringTok{ }\NormalTok{dbscan::}\KeywordTok{dbscan}\NormalTok{(aggregation[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{eps=}\FloatTok{1.8}\NormalTok{, }\DataTypeTok{minPts =} \DecValTok{10}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(res$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##   0   1   2   3   4   5   6 
+##   2 168 307 105 127  45  34
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot_dbscan_clusters}\NormalTok{(aggregation, res)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{09-clustering_files/figure-latex/aggregationDBSCANscatter-1} 
+
+}
+
+\caption{DBSCAN clustering (eps=1.8, minPts=10) of the aggregation data set. Outlier observations are shown as grey crosses.}\label{fig:aggregationDBSCANscatter}
+\end{figure}
+
+\subsubsection{Noisy moons}\label{noisy-moons-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{noisy_moons <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/noisy_moons.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
+\KeywordTok{kNNdistplot}\NormalTok{(noisy_moons[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{k=}\DecValTok{10}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\FloatTok{0.075}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.75\linewidth]{09-clustering_files/figure-latex/noisyMoonsKNNdist-1} 
+
+}
+
+\caption{10-nearest neighbour distances for the noisy moons data set}\label{fig:noisyMoonsKNNdist}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res <-}\StringTok{ }\NormalTok{dbscan::}\KeywordTok{dbscan}\NormalTok{(noisy_moons[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{eps=}\FloatTok{0.075}\NormalTok{, }\DataTypeTok{minPts =} \DecValTok{10}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(res$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##   0   1   2 
+##   8 748 744
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot_dbscan_clusters}\NormalTok{(noisy_moons, res)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{09-clustering_files/figure-latex/noisyMoonsDBSCANscatter-1} 
+
+}
+
+\caption{DBSCAN clustering (eps=0.075, minPts=10) of the noisy moons data set. Outlier observations are shown as grey crosses.}\label{fig:noisyMoonsDBSCANscatter}
+\end{figure}
+
+\subsubsection{Different density}\label{different-density-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{diff_density <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/different_density.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
+\KeywordTok{kNNdistplot}\NormalTok{(diff_density[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{k=}\DecValTok{10}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\FloatTok{0.9}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\FloatTok{0.6}\NormalTok{, }\DataTypeTok{lty=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.75\linewidth]{09-clustering_files/figure-latex/diffDensityKNNdist-1} 
+
+}
+
+\caption{10-nearest neighbour distances for the different density distributions data set}\label{fig:diffDensityKNNdist}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res <-}\StringTok{ }\NormalTok{dbscan::}\KeywordTok{dbscan}\NormalTok{(diff_density[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{eps=}\FloatTok{0.9}\NormalTok{, }\DataTypeTok{minPts =} \DecValTok{10}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(res$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##    0    1 
+##   40 1460
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot_dbscan_clusters}\NormalTok{(diff_density, res)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{09-clustering_files/figure-latex/diffDensityDBSCANscatter1-1} 
+
+}
+
+\caption{DBSCAN clustering of the different density distribution data set with eps=0.9 and minPts=10. Outlier observations are shown as grey crosses.}\label{fig:diffDensityDBSCANscatter1}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res <-}\StringTok{ }\NormalTok{dbscan::}\KeywordTok{dbscan}\NormalTok{(diff_density[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{eps=}\FloatTok{0.6}\NormalTok{, }\DataTypeTok{minPts =} \DecValTok{10}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(res$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##   0   1   2 
+## 109 399 992
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot_dbscan_clusters}\NormalTok{(diff_density, res)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{09-clustering_files/figure-latex/diffDensityDBSCANscatter2-1} 
+
+}
+
+\caption{DBSCAN clustering of the different density distribution data set with eps=0.6 and minPts=10. Outlier observations are shown as grey crosses.}\label{fig:diffDensityDBSCANscatter2}
+\end{figure}
+
+\subsubsection{Anisotropic
+distributions}\label{anisotropic-distributions-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{aniso <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/aniso.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
+\KeywordTok{kNNdistplot}\NormalTok{(aniso[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{k=}\DecValTok{10}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\FloatTok{0.35}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.75\linewidth]{09-clustering_files/figure-latex/anisoKNNdist-1} 
+
+}
+
+\caption{10-nearest neighbour distances for the anisotropic distributions data set}\label{fig:anisoKNNdist}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res <-}\StringTok{ }\NormalTok{dbscan::}\KeywordTok{dbscan}\NormalTok{(aniso[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{eps=}\FloatTok{0.35}\NormalTok{, }\DataTypeTok{minPts =} \DecValTok{10}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(res$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##   0   1   2   3 
+##  29 489 488 494
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot_dbscan_clusters}\NormalTok{(aniso, res)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{09-clustering_files/figure-latex/anisoDBSCANscatter-1} 
+
+}
+
+\caption{DBSCAN clustering (eps=0.3, minPts=10) of the anisotropic distributions data set. Outlier observations are shown as grey crosses.}\label{fig:anisoDBSCANscatter}
+\end{figure}
+
+\subsubsection{No structure}\label{no-structure-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{no_structure <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"data/example_clusters/no_structure.csv"}\NormalTok{, }\DataTypeTok{header=}\NormalTok{F)}
+\KeywordTok{kNNdistplot}\NormalTok{(no_structure[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{k=}\DecValTok{10}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\FloatTok{0.057}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.75\linewidth]{09-clustering_files/figure-latex/noStructureKNNdist-1} 
+
+}
+
+\caption{10-nearest neighbour distances for the data set with no structure.}\label{fig:noStructureKNNdist}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res <-}\StringTok{ }\NormalTok{dbscan::}\KeywordTok{dbscan}\NormalTok{(no_structure[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], }\DataTypeTok{eps=}\FloatTok{0.57}\NormalTok{, }\DataTypeTok{minPts =} \DecValTok{10}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(res$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##    1 
+## 1500
+\end{verbatim}
+
+\subsection{Example: gene expression profiling of human
+tissues}\label{example-gene-expression-profiling-of-human-tissues-2}
+
+Returning again to the data on gene expression of human tissues.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{load}\NormalTok{(}\StringTok{"data/tissues_gene_expression/tissuesGeneExpression.rda"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{table}\NormalTok{(tissue)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## tissue
+##  cerebellum       colon endometrium hippocampus      kidney       liver 
+##          38          34          15          31          39          26 
+##    placenta 
+##           6
+\end{verbatim}
+
+We'll try k=5 (default for dbscan), because there are only six
+observations for placenta.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{kNNdistplot}\NormalTok{(}\KeywordTok{t}\NormalTok{(e), }\DataTypeTok{k=}\DecValTok{5}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{85}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.75\linewidth]{09-clustering_files/figure-latex/tissueExpressionKNNdist-1} 
+
+}
+
+\caption{Five-nearest neighbour distances for the gene expression profiling of human tissues data set.}\label{fig:tissueExpressionKNNdist}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{42}\NormalTok{)}
+\NormalTok{res <-}\StringTok{ }\NormalTok{dbscan::}\KeywordTok{dbscan}\NormalTok{(}\KeywordTok{t}\NormalTok{(e), }\DataTypeTok{eps=}\DecValTok{85}\NormalTok{, }\DataTypeTok{minPts=}\DecValTok{5}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(res$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  0  1  2  3  4  5  6 
+## 12 37 62 34 24 15  5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{table}\NormalTok{(tissue, res$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              
+## tissue         0  1  2  3  4  5  6
+##   cerebellum   2  0 31  0  0  0  5
+##   colon        0  0  0 34  0  0  0
+##   endometrium  0  0  0  0  0 15  0
+##   hippocampus  0  0 31  0  0  0  0
+##   kidney       2 37  0  0  0  0  0
+##   liver        2  0  0  0 24  0  0
+##   placenta     6  0  0  0  0  0  0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pca <-}\StringTok{ }\KeywordTok{prcomp}\NormalTok{(}\KeywordTok{t}\NormalTok{(e))}
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data=}\KeywordTok{as.data.frame}\NormalTok{(pca$x), }\KeywordTok{aes}\NormalTok{(PC1,PC2)) +}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{8}\NormalTok{,}\StringTok{"Dark2"}\NormalTok{)[}\KeywordTok{c}\NormalTok{(}\DecValTok{8}\NormalTok{,}\DecValTok{1}\NormalTok{:}\DecValTok{7}\NormalTok{)][res$cluster}\DecValTok{+1}\NormalTok{], }
+             \DataTypeTok{shape=}\KeywordTok{c}\NormalTok{(}\DecValTok{48}\NormalTok{:}\DecValTok{55}\NormalTok{)[res$cluster}\DecValTok{+1}\NormalTok{], }\DataTypeTok{size=}\DecValTok{5}\NormalTok{) +}\StringTok{ }
+\StringTok{  }\KeywordTok{theme_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{09-clustering_files/figure-latex/tissueExpressionDBSCANscatter-1} 
+
+}
+
+\caption{Clustering of human tissue gene expression: scatterplot of first two principal components.}\label{fig:tissueExpressionDBSCANscatter}
+\end{figure}
 
 \section{Summary}\label{summary}
 
@@ -1575,6 +2069,174 @@ tissue types?
 \subsection{Strengths}\label{strengths}
 
 \subsection{Limitations}\label{limitations}
+
+\section{Evaluating cluster quality}\label{evaluating-cluster-quality}
+
+\subsection{Silhouette method}\label{silhouette-method}
+
+\textbf{Silhouette}
+
+\begin{equation}
+  s(i) = \frac{b(i) - a(i)}{max\left(a(i),b(i)\right)}
+  \label{eq:silhouette}
+\end{equation}
+
+Method can be applied to clusters generated using any algorithm.
+
+\subsection{Example - k-means clustering of blobs data
+set}\label{example---k-means-clustering-of-blobs-data-set}
+
+Load library required for calculating silhouette coefficients and
+plotting silhouettes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+We are going to take another look at k-means clustering of the blobs
+data-set (figure \ref{fig:kmeansRangeK}). Specifically we are going to
+see if silhouette analysis supports our original choice of k=3 as the
+optimum number of clusters (figure \ref{fig:choosingK}).
+
+Silhouette analysis requires a minimum of two clusters, so we'll try
+values of k from 2 to 9.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{k <-}\StringTok{ }\DecValTok{2}\NormalTok{:}\DecValTok{9}
+\end{Highlighting}
+\end{Shaded}
+
+Create a palette of colours for plotting.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{kColours <-}\StringTok{ }\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{9}\NormalTok{,}\StringTok{"Set1"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Perform k-means clustering for each value of k from 2 to 9.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(k, function(i)\{}\KeywordTok{kmeans}\NormalTok{(blobs[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{], i, }\DataTypeTok{nstart=}\DecValTok{50}\NormalTok{)\})}
+\end{Highlighting}
+\end{Shaded}
+
+Calculate the Euclidean distance matrix
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{d <-}\StringTok{ }\KeywordTok{dist}\NormalTok{(blobs[,}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+Silhouette plot for k=2
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{s2 <-}\StringTok{ }\KeywordTok{silhouette}\NormalTok{(res[[}\DecValTok{2-1}\NormalTok{]]$cluster, d)}
+\KeywordTok{plot}\NormalTok{(s2, }\DataTypeTok{border=}\OtherTok{NA}\NormalTok{, }\DataTypeTok{col=}\NormalTok{kColours[}\KeywordTok{sort}\NormalTok{(res[[}\DecValTok{2-1}\NormalTok{]]$cluster)], }\DataTypeTok{main=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{09-clustering_files/figure-latex/silhouetteK2-1} 
+
+}
+
+\caption{Silhouette plot for k-means clustering of the blobs data set with k=2.}\label{fig:silhouetteK2}
+\end{figure}
+
+Silhouette plot for k=9
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{s9 <-}\StringTok{ }\KeywordTok{silhouette}\NormalTok{(res[[}\DecValTok{9-1}\NormalTok{]]$cluster, d)}
+\KeywordTok{plot}\NormalTok{(s9, }\DataTypeTok{border=}\OtherTok{NA}\NormalTok{, }\DataTypeTok{col=}\NormalTok{kColours[}\KeywordTok{sort}\NormalTok{(res[[}\DecValTok{9-1}\NormalTok{]]$cluster)], }\DataTypeTok{main=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{09-clustering_files/figure-latex/silhouetteK9-1} 
+
+}
+
+\caption{Silhouette plot for k-means clustering of the blobs data set with k=9.}\label{fig:silhouetteK9}
+\end{figure}
+
+Let's take a look at the silhouette plot for k=3.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{s3 <-}\StringTok{ }\KeywordTok{silhouette}\NormalTok{(res[[}\DecValTok{3-1}\NormalTok{]]$cluster, d)}
+\KeywordTok{plot}\NormalTok{(s3, }\DataTypeTok{border=}\OtherTok{NA}\NormalTok{, }\DataTypeTok{col=}\NormalTok{kColours[}\KeywordTok{sort}\NormalTok{(res[[}\DecValTok{3-1}\NormalTok{]]$cluster)], }\DataTypeTok{main=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.6\linewidth]{09-clustering_files/figure-latex/silhouetteK3-1} 
+
+}
+
+\caption{Silhouette plot for k-means clustering of the blobs data set with k=3.}\label{fig:silhouetteK3}
+\end{figure}
+
+So far the silhouette plots have shown that k=3 appears to be the
+optimum number of clusters, but we should investigate the silhouette
+coefficients at other values of k. Rather than produce a silhouette plot
+for each value of k, we can get a useful summary by making a barplot of
+average silhouette coefficients.
+
+First we will calculate the silhouette coefficient for every observation
+(we need to index our list of \textbf{kmeans} outputs by \texttt{i-1},
+because we are counting from k=2 ).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{s <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(k, function(i)\{}\KeywordTok{silhouette}\NormalTok{(res[[i}\DecValTok{-1}\NormalTok{]]$cluster, d)\})}
+\end{Highlighting}
+\end{Shaded}
+
+We can then calculate the mean silhouette coefficient for each value of
+k from 2 to 9.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{avgS <-}\StringTok{ }\KeywordTok{sapply}\NormalTok{(s, function(x)\{}\KeywordTok{mean}\NormalTok{(x[,}\DecValTok{3}\NormalTok{])\})}
+\end{Highlighting}
+\end{Shaded}
+
+Now we have the data we need to produce a barplot.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(k, avgS))}
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{dat, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{k, }\DataTypeTok{y=}\NormalTok{avgS)) +}\StringTok{ }
+\StringTok{         }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat=}\StringTok{"identity"}\NormalTok{, }\DataTypeTok{fill=}\StringTok{"steelblue"}\NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_text}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{label=}\KeywordTok{round}\NormalTok{(avgS,}\DecValTok{2}\NormalTok{)), }\DataTypeTok{vjust=}\FloatTok{1.6}\NormalTok{, }\DataTypeTok{color=}\StringTok{"white"}\NormalTok{, }\DataTypeTok{size=}\FloatTok{3.5}\NormalTok{)+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=}\StringTok{"Average silhouette coefficient"}\NormalTok{) +}
+\StringTok{  }\KeywordTok{scale_x_continuous}\NormalTok{(}\DataTypeTok{breaks=}\DecValTok{2}\NormalTok{:}\DecValTok{9}\NormalTok{) +}
+\StringTok{  }\KeywordTok{theme_bw}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.75\linewidth]{09-clustering_files/figure-latex/silhouetteAllK-1} 
+
+}
+
+\caption{Barplot of the average silhouette coefficients resulting from k-means clustering of the blobs data-set using values of k from 1-9.}\label{fig:silhouetteAllK}
+\end{figure}
+
+The bar plot (figure \ref{fig:silhouetteAllK}) confirms that the optimum
+number of clusters is three.
 
 \section{Exercises}\label{exercises-7}
 
@@ -1593,7 +2255,9 @@ Solutions to exercises can be found in appendix
 \href{http://scikit-learn.org}{scikit-learn}
 
 \section{Machine learning data set
-repository}\label{machine-learning-data-set-repository}
+repositories}\label{machine-learning-data-set-repositories}
+
+\subsection{MLDATA}\label{mldata}
 
 \href{http://mldata.org/}{mldata.org}
 
@@ -1610,6 +2274,12 @@ This repository manages the following types of objects:
 \item
   Challenges - Collections of tasks which have a particular theme.
 \end{itemize}
+
+\subsection{UCI Machine Learning
+Repository}\label{uci-machine-learning-repository}
+
+Machine learning database at the University of California, Irvine,
+School of Information and Computer Sciences \citep{Lichman2013}.
 
 \chapter{Solutions ch.~3 - Linear models and matrix
 algebra}\label{solutions-linear-models}

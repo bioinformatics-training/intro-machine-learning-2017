@@ -1,7 +1,7 @@
 --- 
 title: "An Introduction to Machine Learning"
 author: "Sudhakaran Prabakaran, Matt Wayland and Chris Penfold"
-date: "2017-09-09"
+date: "2017-09-10"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
 documentclass: book

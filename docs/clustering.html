@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-09">
+<meta name="date" content="2017-09-10">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -175,7 +175,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.6.3" data-path="clustering.html"><a href="clustering.html#limitations"><i class="fa fa-check"></i><b>10.6.3</b> Limitations</a></li>
 </ul></li>
 <li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#evaluating-cluster-quality"><i class="fa fa-check"></i><b>10.7</b> Evaluating cluster quality</a><ul>
-<li class="chapter" data-level="10.7.1" data-path="clustering.html"><a href="clustering.html#silhouette"><i class="fa fa-check"></i><b>10.7.1</b> Silhouette</a></li>
+<li class="chapter" data-level="10.7.1" data-path="clustering.html"><a href="clustering.html#silhouette-method"><i class="fa fa-check"></i><b>10.7.1</b> Silhouette method</a></li>
+<li class="chapter" data-level="10.7.2" data-path="clustering.html"><a href="clustering.html#example---k-means-clustering-of-blobs-data-set"><i class="fa fa-check"></i><b>10.7.2</b> Example - k-means clustering of blobs data set</a></li>
 </ul></li>
 <li class="chapter" data-level="10.8" data-path="clustering.html"><a href="clustering.html#exercises-7"><i class="fa fa-check"></i><b>10.8</b> Exercises</a></li>
 </ul></li>
@@ -813,16 +814,10 @@ res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){
 
 ## Warning: did not converge in 10 iterations
 
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-
 ## Warning: did not converge in 10 iterations</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
+<p>Failure to converge, so increase number of iterations.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">iter.max=</span><span class="dv">20</span>, <span class="dt">nstart=</span><span class="dv">50</span>)})
+<span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:kmeansDiffDensityElbow"></span>
 <img src="09-clustering_files/figure-html/kmeansDiffDensityElbow-1.png" alt="K-means clustering of the different density distributions data set: variance within clusters." width="50%" />
 <p class="caption">
@@ -923,11 +918,16 @@ Figure 10.25: K-means clustering of human tissue gene expression: variance withi
 set.seed(42)
 res_k_15 <- lapply(k, function(i){kmeans(t(e), i, nstart=10)})
 -->
-<p>There is no obvious elbow, but the rate of decrease in the total-within sum of squares appears to slow after k=5. Since we know that there are seven tissues in the data set we will try k=7.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">42</span>)
-res &lt;-<span class="st"> </span><span class="kw">kmeans</span>(<span class="kw">t</span>(e), <span class="dv">7</span>, <span class="dt">nstart=</span><span class="dv">10</span>)
-<span class="kw">table</span>(tissue, res$cluster)</code></pre></div>
-<pre><code>##              
+<p>There is no obvious elbow, but the rate of decrease in the total-within sum of squares appears to slow after k=5. Since we know that there are seven tissues in the data set we will try k=7. <!--
+
+```r
+set.seed(42)
+res <- kmeans(t(e), 7, nstart=10)
+table(tissue, res$cluster)
+```
+
+```
+##              
 ## tissue         1  2  3  4  5  6  7
 ##   cerebellum   0  0  0 33  0  0  5
 ##   colon        0  0  0  0  0 34  0
@@ -935,13 +935,25 @@ res &lt;-<span class="st"> </span><span class="kw">kmeans</span>(<span class="kw
 ##   hippocampus  0  0  0  0  0  0 31
 ##   kidney       0  0 39  0  0  0  0
 ##   liver       26  0  0  0  0  0  0
-##   placenta     0  6  0  0  0  0  0</code></pre>
+##   placenta     0  6  0  0  0  0  0
+```
+--></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(tissue, res_k_15[[<span class="dv">7</span>]]$cluster)</code></pre></div>
+<pre><code>##              
+## tissue         1  2  3  4  5  6  7
+##   cerebellum   0  0  0  0  0  5 33
+##   colon        0  0 34  0  0  0  0
+##   endometrium 15  0  0  0  0  0  0
+##   hippocampus  0  0  0  0 31  0  0
+##   kidney      37  2  0  0  0  0  0
+##   liver        0 26  0  0  0  0  0
+##   placenta     0  0  0  6  0  0  0</code></pre>
 <p>The analysis has found a distinct cluster for each tissue and therefore performed slightly better than the earlier hierarchical clustering analysis, which placed endometrium and kidney observations in the same cluster.</p>
 <p>To visualize the result in a 2D scatter plot we first need to apply dimensionality reduction. We will use principal component analysis (PCA), which was described in chapter <a href="dimensionality-reduction.html#dimensionality-reduction">9</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pca &lt;-<span class="st"> </span><span class="kw">prcomp</span>(<span class="kw">t</span>(e))
 <span class="kw">ggplot</span>(<span class="dt">data=</span><span class="kw">as.data.frame</span>(pca$x), <span class="kw">aes</span>(PC1,PC2)) +<span class="st"> </span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span><span class="kw">brewer.pal</span>(<span class="dv">7</span>,<span class="st">&quot;Dark2&quot;</span>)[res$cluster], 
-             <span class="dt">shape=</span><span class="kw">c</span>(<span class="dv">49</span>:<span class="dv">55</span>)[res$cluster], <span class="dt">size=</span><span class="dv">5</span>) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span><span class="kw">brewer.pal</span>(<span class="dv">7</span>,<span class="st">&quot;Dark2&quot;</span>)[res_k_15[[<span class="dv">7</span>]]$cluster], 
+             <span class="dt">shape=</span><span class="kw">c</span>(<span class="dv">49</span>:<span class="dv">55</span>)[res_k_15[[<span class="dv">7</span>]]$cluster], <span class="dt">size=</span><span class="dv">5</span>) +<span class="st"> </span>
 <span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:tissueExpressionPCA"></span>
 <img src="09-clustering_files/figure-html/tissueExpressionPCA-1.png" alt="K-means clustering of human gene expression (k=7): scatterplot of first two principal components." width="50%" />
@@ -1219,13 +1231,75 @@ Not appropriate for phylogenetic analysis!!
 <!--
 http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html
 -->
-<div id="silhouette" class="section level3">
-<h3><span class="header-section-number">10.7.1</span> Silhouette</h3>
+<div id="silhouette-method" class="section level3">
+<h3><span class="header-section-number">10.7.1</span> Silhouette method</h3>
 <strong>Silhouette</strong>
 <span class="math display" id="eq:silhouette">\[\begin{equation}
   s(i) = \frac{b(i) - a(i)}{max\left(a(i),b(i)\right)}
   \tag{10.2}
 \end{equation}\]</span>
+<p>Method can be applied to clusters generated using any algorithm.</p>
+</div>
+<div id="example---k-means-clustering-of-blobs-data-set" class="section level3">
+<h3><span class="header-section-number">10.7.2</span> Example - k-means clustering of blobs data set</h3>
+<p>Load library required for calculating silhouette coefficients and plotting silhouettes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cluster)</code></pre></div>
+<p>We are going to take another look at k-means clustering of the blobs data-set (figure <a href="clustering.html#fig:kmeansRangeK">10.13</a>). Specifically we are going to see if silhouette analysis supports our original choice of k=3 as the optimum number of clusters (figure <a href="clustering.html#fig:choosingK">10.14</a>).</p>
+<p>Silhouette analysis requires a minimum of two clusters, so we’ll try values of k from 2 to 9.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k &lt;-<span class="st"> </span><span class="dv">2</span>:<span class="dv">9</span></code></pre></div>
+<p>Create a palette of colours for plotting.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">kColours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">9</span>,<span class="st">&quot;Set1&quot;</span>)</code></pre></div>
+<p>Perform k-means clustering for each value of k from 2 to 9.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(blobs[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})</code></pre></div>
+<p>Calculate the Euclidean distance matrix</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span><span class="kw">dist</span>(blobs[,<span class="dv">1</span>:<span class="dv">2</span>])</code></pre></div>
+<p>Silhouette plot for k=2</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s2 &lt;-<span class="st"> </span><span class="kw">silhouette</span>(res[[<span class="dv">2-1</span>]]$cluster, d)
+<span class="kw">plot</span>(s2, <span class="dt">border=</span><span class="ot">NA</span>, <span class="dt">col=</span>kColours[<span class="kw">sort</span>(res[[<span class="dv">2-1</span>]]$cluster)], <span class="dt">main=</span><span class="st">&quot;&quot;</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:silhouetteK2"></span>
+<img src="09-clustering_files/figure-html/silhouetteK2-1.png" alt="Silhouette plot for k-means clustering of the blobs data set with k=2." width="60%" />
+<p class="caption">
+Figure 10.42: Silhouette plot for k-means clustering of the blobs data set with k=2.
+</p>
+</div>
+<p>Silhouette plot for k=9</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s9 &lt;-<span class="st"> </span><span class="kw">silhouette</span>(res[[<span class="dv">9-1</span>]]$cluster, d)
+<span class="kw">plot</span>(s9, <span class="dt">border=</span><span class="ot">NA</span>, <span class="dt">col=</span>kColours[<span class="kw">sort</span>(res[[<span class="dv">9-1</span>]]$cluster)], <span class="dt">main=</span><span class="st">&quot;&quot;</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:silhouetteK9"></span>
+<img src="09-clustering_files/figure-html/silhouetteK9-1.png" alt="Silhouette plot for k-means clustering of the blobs data set with k=9." width="60%" />
+<p class="caption">
+Figure 10.43: Silhouette plot for k-means clustering of the blobs data set with k=9.
+</p>
+</div>
+<p>Let’s take a look at the silhouette plot for k=3.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s3 &lt;-<span class="st"> </span><span class="kw">silhouette</span>(res[[<span class="dv">3-1</span>]]$cluster, d)
+<span class="kw">plot</span>(s3, <span class="dt">border=</span><span class="ot">NA</span>, <span class="dt">col=</span>kColours[<span class="kw">sort</span>(res[[<span class="dv">3-1</span>]]$cluster)], <span class="dt">main=</span><span class="st">&quot;&quot;</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:silhouetteK3"></span>
+<img src="09-clustering_files/figure-html/silhouetteK3-1.png" alt="Silhouette plot for k-means clustering of the blobs data set with k=3." width="60%" />
+<p class="caption">
+Figure 10.44: Silhouette plot for k-means clustering of the blobs data set with k=3.
+</p>
+</div>
+<p>So far the silhouette plots have shown that k=3 appears to be the optimum number of clusters, but we should investigate the silhouette coefficients at other values of k. Rather than produce a silhouette plot for each value of k, we can get a useful summary by making a barplot of average silhouette coefficients.</p>
+<p>First we will calculate the silhouette coefficient for every observation (we need to index our list of <strong>kmeans</strong> outputs by <code>i-1</code>, because we are counting from k=2 ).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">silhouette</span>(res[[i<span class="dv">-1</span>]]$cluster, d)})</code></pre></div>
+<p>We can then calculate the mean silhouette coefficient for each value of k from 2 to 9.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">avgS &lt;-<span class="st"> </span><span class="kw">sapply</span>(s, function(x){<span class="kw">mean</span>(x[,<span class="dv">3</span>])})</code></pre></div>
+<p>Now we have the data we need to produce a barplot.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">cbind</span>(k, avgS))
+<span class="kw">ggplot</span>(<span class="dt">data=</span>dat, <span class="kw">aes</span>(<span class="dt">x=</span>k, <span class="dt">y=</span>avgS)) +<span class="st"> </span>
+<span class="st">         </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>, <span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) +
+<span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(avgS,<span class="dv">2</span>)), <span class="dt">vjust=</span><span class="fl">1.6</span>, <span class="dt">color=</span><span class="st">&quot;white&quot;</span>, <span class="dt">size=</span><span class="fl">3.5</span>)+
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;Average silhouette coefficient&quot;</span>) +
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks=</span><span class="dv">2</span>:<span class="dv">9</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:silhouetteAllK"></span>
+<img src="09-clustering_files/figure-html/silhouetteAllK-1.png" alt="Barplot of the average silhouette coefficients resulting from k-means clustering of the blobs data-set using values of k from 1-9." width="75%" />
+<p class="caption">
+Figure 10.45: Barplot of the average silhouette coefficients resulting from k-means clustering of the blobs data-set using values of k from 1-9.
+</p>
+</div>
+<p>The bar plot (figure <a href="clustering.html#fig:silhouetteAllK">10.45</a>) confirms that the optimum number of clusters is three.</p>
 </div>
 </div>
 <div id="exercises-7" class="section level2">

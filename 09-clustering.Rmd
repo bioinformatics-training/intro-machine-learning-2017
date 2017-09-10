@@ -589,9 +589,14 @@ plot_clusters(noisy_moons, res, 2)
 ```
 
 #### Different density
-```{r kmeansDiffDensityElbow, fig.cap='K-means clustering of the different density distributions data set: variance within clusters.', out.width='50%', fig.asp=1, fig.align='center', echo=T}
+
+```{r echo=T}
 diff_density <- as.data.frame(read.csv("data/example_clusters/different_density.csv", header=F))
 res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
+```
+Failure to converge, so increase number of iterations.
+```{r kmeansDiffDensityElbow, fig.cap='K-means clustering of the different density distributions data set: variance within clusters.', out.width='50%', fig.asp=1, fig.align='center', echo=T}
+res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, iter.max=20, nstart=50)})
 plot_tot_withinss(res)
 ```
 
@@ -666,11 +671,15 @@ set.seed(42)
 res_k_15 <- lapply(k, function(i){kmeans(t(e), i, nstart=10)})
 -->
 There is no obvious elbow, but the rate of decrease in the total-within sum of squares appears to slow after k=5. Since we know that there are seven tissues in the data set we will try k=7. 
-
+<!--
 ```{r echo=T}
 set.seed(42)
 res <- kmeans(t(e), 7, nstart=10)
 table(tissue, res$cluster)
+```
+-->
+```{r echo=T}
+table(tissue, res_k_15[[7]]$cluster)
 ```
 The analysis has found a distinct cluster for each tissue and therefore performed slightly better than the earlier hierarchical clustering analysis, which placed endometrium and kidney observations in the same cluster.
 
@@ -679,8 +688,8 @@ To visualize the result in a 2D scatter plot we first need to apply dimensionali
 ```{r tissueExpressionPCA, fig.cap='K-means clustering of human gene expression (k=7): scatterplot of first two principal components.', out.width='50%', fig.asp=1, fig.align='center', echo=T}
 pca <- prcomp(t(e))
 ggplot(data=as.data.frame(pca$x), aes(PC1,PC2)) + 
-  geom_point(col=brewer.pal(7,"Dark2")[res$cluster], 
-             shape=c(49:55)[res$cluster], size=5) + 
+  geom_point(col=brewer.pal(7,"Dark2")[res_k_15[[7]]$cluster], 
+             shape=c(49:55)[res_k_15[[7]]$cluster], size=5) + 
   theme_bw()
 ```
 
@@ -917,13 +926,92 @@ Not appropriate for phylogenetic analysis!!
 http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html
 -->
 
-### Silhouette
+### Silhouette method
 
 **Silhouette**
 \begin{equation}
   s(i) = \frac{b(i) - a(i)}{max\left(a(i),b(i)\right)}
   (\#eq:silhouette)
 \end{equation}
+
+Method can be applied to clusters generated using any algorithm. 
+
+### Example - k-means clustering of blobs data set
+Load library required for calculating silhouette coefficients and plotting silhouettes.
+```{r echo=T}
+library(cluster)
+```
+
+We are going to take another look at k-means clustering of the blobs data-set (figure \@ref(fig:kmeansRangeK)). Specifically we are going to see if silhouette analysis supports our original choice of k=3 as the optimum number of clusters (figure \@ref(fig:choosingK)).
+
+Silhouette analysis requires a minimum of two clusters, so we'll try values of k from 2 to 9.
+```{r echo=T}
+k <- 2:9
+```
+Create a palette of colours for plotting.
+```{r echo=T}
+kColours <- brewer.pal(9,"Set1")
+```
+Perform k-means clustering for each value of k from 2 to 9.
+```{r echo=T}
+res <- lapply(k, function(i){kmeans(blobs[,1:2], i, nstart=50)})
+```
+
+Calculate the Euclidean distance matrix
+```{r echo=T}
+d <- dist(blobs[,1:2])
+```
+
+Silhouette plot for k=2
+```{r silhouetteK2, fig.cap='Silhouette plot for k-means clustering of the blobs data set with k=2.', out.width='60%', fig.asp=1, fig.align='center', echo=T}
+s2 <- silhouette(res[[2-1]]$cluster, d)
+plot(s2, border=NA, col=kColours[sort(res[[2-1]]$cluster)], main="")
+```
+
+Silhouette plot for k=9
+```{r silhouetteK9, fig.cap='Silhouette plot for k-means clustering of the blobs data set with k=9.', out.width='60%', fig.asp=1, fig.align='center', echo=T}
+s9 <- silhouette(res[[9-1]]$cluster, d)
+plot(s9, border=NA, col=kColours[sort(res[[9-1]]$cluster)], main="")
+```
+
+Let's take a look at the silhouette plot for k=3.
+```{r silhouetteK3, fig.cap='Silhouette plot for k-means clustering of the blobs data set with k=3.', out.width='60%', fig.asp=1, fig.align='center', echo=T}
+s3 <- silhouette(res[[3-1]]$cluster, d)
+plot(s3, border=NA, col=kColours[sort(res[[3-1]]$cluster)], main="")
+```
+
+So far the silhouette plots have shown that k=3 appears to be the optimum number of clusters, but we should investigate the silhouette coefficients at other values of k. Rather than produce a silhouette plot for each value of k, we can get a useful summary by making a barplot of average silhouette coefficients.
+
+First we will calculate the silhouette coefficient for every observation (we need to index our list of **kmeans** outputs by ```i-1```, because we are counting from k=2 ).
+```{r echo=T}
+s <- lapply(k, function(i){silhouette(res[[i-1]]$cluster, d)})
+```
+We can then calculate the mean silhouette coefficient for each value of k from 2 to 9.
+```{r echo=T}
+avgS <- sapply(s, function(x){mean(x[,3])})
+```
+Now we have the data we need to produce a barplot.
+```{r silhouetteAllK, fig.cap='Barplot of the average silhouette coefficients resulting from k-means clustering of the blobs data-set using values of k from 1-9.', out.width='75%', fig.asp=0.7, fig.align='center', echo=T}
+dat <- as.data.frame(cbind(k, avgS))
+ggplot(data=dat, aes(x=k, y=avgS)) + 
+         geom_bar(stat="identity", fill="steelblue") +
+  geom_text(aes(label=round(avgS,2)), vjust=1.6, color="white", size=3.5)+
+  labs(y="Average silhouette coefficient") +
+  scale_x_continuous(breaks=2:9) +
+  theme_bw()
+```
+
+The bar plot (figure \@ref(fig:silhouetteAllK)) confirms that the optimum number of clusters is three.
+
+
+
+
+
+
+
+
+
+
 ## Exercises
 
 <!--
