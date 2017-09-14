@@ -499,7 +499,7 @@ pm
 Convergence to a local minimum can be avoided by starting the algorithm multiple times, with different random centres. The **nstart** argument to the **k-means** function can be used to specify the number of random sets and optimal solution will be selected automatically.
 
 
-### Choosing k
+### Choosing k {#choosingK}
 
 ```{r kmeansRangeK, fig.cap='K-means clustering of the blobs data set using a range of values of k from 1-9. Cluster centres indicated with a cross.', out.width='100%', fig.asp=1, fig.align='center',echo=T}
 point_colours <- brewer.pal(9,"Set1")
@@ -522,7 +522,7 @@ pm <- ggmatrix(
 pm
 ```
 
-```{r choosingK, fig.cap='Variance within the clusters. Total within-cluster sum of squares plotted against k.', out.width='50%', fig.asp=1, fig.align='center',echo=T}
+```{r choosingKplot, fig.cap='Variance within the clusters. Total within-cluster sum of squares plotted against k.', out.width='50%', fig.asp=1, fig.align='center',echo=T}
 tot_withinss <- sapply(k, function(i){res[[i]]$tot.withinss})
 qplot(k, tot_withinss, geom=c("point", "line"), 
       ylab="Total within-cluster sum of squares") + theme_bw()
@@ -711,7 +711,7 @@ Abstract DBSCAN algorithm in pseudocode [@Schubert2017]
 
 
 
-```{r dbscanIllustration, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Illustration of the DBSCAN algorithm."}
+```{r dbscanIllustration, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Illustration of the DBSCAN algorithm. By Chire (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons."}
 knitr::include_graphics("images/DBSCAN_Illustration.svg")
 ```
 
@@ -1021,6 +1021,84 @@ The bar plot (figure \@ref(fig:silhouetteAllK)) confirms that the optimum number
 4. exercise involving heatmap
 
 -->
+
+### Exercise 1 {#clusteringEx1}
+
+<!-- link to solution for this specific exercise -->
+
+silohouette and dbscan (c.f. k-means)
+
+DBSCAN
+
+### Exercise 2 {#clusteringEx2}
+
+Image segmentation is used to partition digital images into distinct regions containing pixels with similar attributes. Applications include identifying objects or structures in biomedical images. The aim of this exercise is to use k-means clustering to segment the image of a histological section of lung tissue (figure \@ref(fig:lungHistology)) into distinct biological structures, based on pixel colour.
+
+```{r lungHistology, fig.cap='Image of haematoxylin and eosin (H&E) stained section of lung tissue from a patient with end-stage emphysema. CC BY 2.0, https://commons.wikimedia.org/w/index.php?curid=437645.', out.width='80%', fig.align='center', echo=F}
+knitr::include_graphics("data/histology/Emphysema_H_and_E.jpg")
+```
+
+The haematoxylin and eosin (H & E) staining reveals four types of biological objects, identified by the following colours:
+
+* blue-purple: cell nuclei
+* red: red blood cells
+* pink: other cell bodies and extracellular material
+* white: air spaces
+
+**Consider the following questions:**
+
+* Can k-means clustering find the four biological objects in the image based on pixel colour? 
+* Earlier we saw that if we plot the total within-cluster sum of squares against k, the position of the "elbow" is a useful guide to choosing the appropriate value of k (see section \@ref(choosingK). According to the "elbow" method, how many distinct clusters (colours) of pixels are present in the image? 
+
+**Hints:**
+If you haven't worked with images in R before, you may find the following information helpful.
+
+The package [EBImage](https://bioconductor.org/packages/EBImage/) provides a suite of tools for working with images. We will use it to read the file containing the image of the lung section.
+
+<!--EBImage needs methods library, but doesn't import it -->
+```{r echo=F}
+library(methods)
+```
+
+```{r echo=T}
+library(EBImage)
+library(methods)
+img <- readImage("data/histology/Emphysema_H_and_E.jpg")
+```
+
+```img``` is an object of the [EBImage](https://bioconductor.org/packages/EBImage/) class Image; it is essentially a multidimensional array containing the pixel intensities. To see the dimensions of the array, run:
+```{r echo=T}
+dim(img)
+```
+
+In the case of this colour image, the array is 3-dimensional with 528 x 393 x 3 elements. These dimensions correspond to the image width (in pixels), image height and number of colour channels, respectively. The colour channels are red, green and blue (RGB). 
+
+Before we can cluster the pixels on colour, we need to convert the 3D array into a 2D data.frame (or matrix). Specifically, we require a data.frame (or matrix) where rows represent pixels and there is a column for the intensity of each of the three colour channels. We also need columns for the x and y coordinates of each pixel.
+
+```{r echo=T}
+imgDim <- dim(img)
+imgDF <- data.frame(
+  x = rep(1:imgDim[1], imgDim[2]),
+  y = rep(imgDim[2]:1, each=imgDim[1]),
+  r = as.vector(img[,,1]),
+  g = as.vector(img[,,2]),
+  b = as.vector(img[,,3])
+)
+```
+
+To check that the data in ```imgDF``` are correct, we can plot the
+
+If the data in ```imgDF``` are correct, we should be able to recreate the image:
+```{r recreatedLungHistology, fig.cap='Image of lung tissue recreated from reshaped data.', out.width='80%', fig.asp=0.744, fig.align='center', echo=T}
+ggplot(data = imgDF, aes(x = x, y = y)) + 
+  geom_point(colour = rgb(imgDF[c("r", "g", "b")])) +
+  xlab("x") +
+  ylab("y") +
+  theme_minimal()
+```
+
+
+
 
 
 Exercise solutions: \@ref(solutions-clustering)

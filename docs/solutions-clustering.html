@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-10">
+<meta name="date" content="2017-09-14">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -158,7 +158,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.4" data-path="clustering.html"><a href="clustering.html#k-means"><i class="fa fa-check"></i><b>10.4</b> K-means</a><ul>
 <li class="chapter" data-level="10.4.1" data-path="clustering.html"><a href="clustering.html#algorithm"><i class="fa fa-check"></i><b>10.4.1</b> Algorithm</a></li>
 <li class="chapter" data-level="10.4.2" data-path="clustering.html"><a href="clustering.html#choosing-initial-cluster-centres"><i class="fa fa-check"></i><b>10.4.2</b> Choosing initial cluster centres</a></li>
-<li class="chapter" data-level="10.4.3" data-path="clustering.html"><a href="clustering.html#choosing-k"><i class="fa fa-check"></i><b>10.4.3</b> Choosing k</a></li>
+<li class="chapter" data-level="10.4.3" data-path="clustering.html"><a href="clustering.html#choosingK"><i class="fa fa-check"></i><b>10.4.3</b> Choosing k</a></li>
 <li class="chapter" data-level="10.4.4" data-path="clustering.html"><a href="clustering.html#example-clustering-synthetic-data-sets-1"><i class="fa fa-check"></i><b>10.4.4</b> Example: clustering synthetic data sets</a></li>
 <li class="chapter" data-level="10.4.5" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues-1"><i class="fa fa-check"></i><b>10.4.5</b> Example: gene expression profiling of human tissues</a></li>
 </ul></li>
@@ -178,7 +178,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.7.1" data-path="clustering.html"><a href="clustering.html#silhouette-method"><i class="fa fa-check"></i><b>10.7.1</b> Silhouette method</a></li>
 <li class="chapter" data-level="10.7.2" data-path="clustering.html"><a href="clustering.html#example---k-means-clustering-of-blobs-data-set"><i class="fa fa-check"></i><b>10.7.2</b> Example - k-means clustering of blobs data set</a></li>
 </ul></li>
-<li class="chapter" data-level="10.8" data-path="clustering.html"><a href="clustering.html#exercises-7"><i class="fa fa-check"></i><b>10.8</b> Exercises</a></li>
+<li class="chapter" data-level="10.8" data-path="clustering.html"><a href="clustering.html#exercises-7"><i class="fa fa-check"></i><b>10.8</b> Exercises</a><ul>
+<li class="chapter" data-level="10.8.1" data-path="clustering.html"><a href="clustering.html#clusteringEx1"><i class="fa fa-check"></i><b>10.8.1</b> Exercise 1</a></li>
+<li class="chapter" data-level="10.8.2" data-path="clustering.html"><a href="clustering.html#clusteringEx2"><i class="fa fa-check"></i><b>10.8.2</b> Exercise 2</a></li>
+</ul></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="resources.html"><a href="resources.html"><i class="fa fa-check"></i><b>A</b> Resources</a><ul>
@@ -255,11 +258,63 @@ dbscanS <- silhouette(dbscanRes$cluster[dbscanRes$cluster>0], d)
 plot(dbscanS, col="black")
 
 -->
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)</code></pre></div>
 <div id="exercise-1-7" class="section level2">
 <h2><span class="header-section-number">I.1</span> Exercise 1</h2>
 </div>
 <div id="exercise-2-7" class="section level2">
 <h2><span class="header-section-number">I.2</span> Exercise 2</h2>
+<p>First we need to read the image data and transform it into a suitable format for analysis:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(EBImage)
+img &lt;-<span class="st"> </span><span class="kw">readImage</span>(<span class="st">&quot;data/histology/Emphysema_H_and_E.jpg&quot;</span>)
+
+imgDim &lt;-<span class="st"> </span><span class="kw">dim</span>(img)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">imgDF &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+  <span class="dt">x =</span> <span class="kw">rep</span>(<span class="dv">1</span>:imgDim[<span class="dv">1</span>], imgDim[<span class="dv">2</span>]),
+  <span class="dt">y =</span> <span class="kw">rep</span>(imgDim[<span class="dv">2</span>]:<span class="dv">1</span>, <span class="dt">each=</span>imgDim[<span class="dv">1</span>]),
+  <span class="dt">r =</span> <span class="kw">as.vector</span>(img[,,<span class="dv">1</span>]),
+  <span class="dt">g =</span> <span class="kw">as.vector</span>(img[,,<span class="dv">2</span>]),
+  <span class="dt">b =</span> <span class="kw">as.vector</span>(img[,,<span class="dv">3</span>])
+)</code></pre></div>
+<p>Next we will perform kmeans clustering for k in the range 1:9. This is computationally quite intensive, so we’ll use parallel processing:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(doMC)</code></pre></div>
+<pre><code>## Loading required package: foreach</code></pre>
+<pre><code>## Loading required package: iterators</code></pre>
+<pre><code>## Loading required package: parallel</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">registerDoMC</span>()
+k=<span class="dv">1</span>:<span class="dv">9</span>
+<span class="kw">set.seed</span>(<span class="dv">42</span>)
+res_k_9 &lt;-<span class="st"> </span><span class="kw">foreach</span>(
+  <span class="dt">i=</span>k, 
+  <span class="dt">.options.multicore=</span><span class="kw">list</span>(<span class="dt">set.seed=</span><span class="ot">FALSE</span>)) %dopar%<span class="st"> </span><span class="kw">kmeans</span>(imgDF[,<span class="kw">c</span>(<span class="st">&quot;r&quot;</span>, <span class="st">&quot;g&quot;</span>, <span class="st">&quot;b&quot;</span>)], i, <span class="dt">nstart=</span><span class="dv">50</span>)</code></pre></div>
+<p>We can now plot total within-cluster sum of squares against k:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plot_tot_withinss &lt;-<span class="st"> </span>function(kmeans_output){
+  tot_withinss &lt;-<span class="st"> </span><span class="kw">sapply</span>(k, function(i){kmeans_output[[i]]$tot.withinss})
+  <span class="kw">qplot</span>(k, tot_withinss, <span class="dt">geom=</span><span class="kw">c</span>(<span class="st">&quot;point&quot;</span>, <span class="st">&quot;line&quot;</span>), 
+        <span class="dt">ylab=</span><span class="st">&quot;Total within-cluster sum of squares&quot;</span>) +<span class="st"> </span><span class="kw">theme_bw</span>()
+}
+
+<span class="kw">plot_tot_withinss</span>(res_k_9)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:imageAnalysisElbowPlot"></span>
+<img src="20-solutions-clustering_files/figure-html/imageAnalysisElbowPlot-1.png" alt="Variance within the clusters of pixels. Total within-cluster sum of squares plotted against k." width="80%" />
+<p class="caption">
+Figure I.1: Variance within the clusters of pixels. Total within-cluster sum of squares plotted against k.
+</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterColours &lt;-<span class="st"> </span><span class="kw">rgb</span>(res_k_9[[<span class="dv">4</span>]]$centers) 
+<span class="kw">ggplot</span>(<span class="dt">data =</span> imgDF, <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> clusterColours[res_k_9[[<span class="dv">4</span>]]$cluster]) +
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;x&quot;</span>) +
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;y&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_minimal</span>()</code></pre></div>
+<p><img src="20-solutions-clustering_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterColours &lt;-<span class="st"> </span><span class="kw">rgb</span>(res_k_9[[<span class="dv">2</span>]]$centers) 
+<span class="kw">ggplot</span>(<span class="dt">data =</span> imgDF, <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> clusterColours[res_k_9[[<span class="dv">2</span>]]$cluster]) +
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;x&quot;</span>) +
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;y&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_minimal</span>()</code></pre></div>
+<p><img src="20-solutions-clustering_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 
 </div>
 </div>

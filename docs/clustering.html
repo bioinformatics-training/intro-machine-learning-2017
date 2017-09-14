@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-10">
+<meta name="date" content="2017-09-14">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -158,7 +158,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.4" data-path="clustering.html"><a href="clustering.html#k-means"><i class="fa fa-check"></i><b>10.4</b> K-means</a><ul>
 <li class="chapter" data-level="10.4.1" data-path="clustering.html"><a href="clustering.html#algorithm"><i class="fa fa-check"></i><b>10.4.1</b> Algorithm</a></li>
 <li class="chapter" data-level="10.4.2" data-path="clustering.html"><a href="clustering.html#choosing-initial-cluster-centres"><i class="fa fa-check"></i><b>10.4.2</b> Choosing initial cluster centres</a></li>
-<li class="chapter" data-level="10.4.3" data-path="clustering.html"><a href="clustering.html#choosing-k"><i class="fa fa-check"></i><b>10.4.3</b> Choosing k</a></li>
+<li class="chapter" data-level="10.4.3" data-path="clustering.html"><a href="clustering.html#choosingK"><i class="fa fa-check"></i><b>10.4.3</b> Choosing k</a></li>
 <li class="chapter" data-level="10.4.4" data-path="clustering.html"><a href="clustering.html#example-clustering-synthetic-data-sets-1"><i class="fa fa-check"></i><b>10.4.4</b> Example: clustering synthetic data sets</a></li>
 <li class="chapter" data-level="10.4.5" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues-1"><i class="fa fa-check"></i><b>10.4.5</b> Example: gene expression profiling of human tissues</a></li>
 </ul></li>
@@ -178,7 +178,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.7.1" data-path="clustering.html"><a href="clustering.html#silhouette-method"><i class="fa fa-check"></i><b>10.7.1</b> Silhouette method</a></li>
 <li class="chapter" data-level="10.7.2" data-path="clustering.html"><a href="clustering.html#example---k-means-clustering-of-blobs-data-set"><i class="fa fa-check"></i><b>10.7.2</b> Example - k-means clustering of blobs data set</a></li>
 </ul></li>
-<li class="chapter" data-level="10.8" data-path="clustering.html"><a href="clustering.html#exercises-7"><i class="fa fa-check"></i><b>10.8</b> Exercises</a></li>
+<li class="chapter" data-level="10.8" data-path="clustering.html"><a href="clustering.html#exercises-7"><i class="fa fa-check"></i><b>10.8</b> Exercises</a><ul>
+<li class="chapter" data-level="10.8.1" data-path="clustering.html"><a href="clustering.html#clusteringEx1"><i class="fa fa-check"></i><b>10.8.1</b> Exercise 1</a></li>
+<li class="chapter" data-level="10.8.2" data-path="clustering.html"><a href="clustering.html#clusteringEx2"><i class="fa fa-check"></i><b>10.8.2</b> Exercise 2</a></li>
+</ul></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="resources.html"><a href="resources.html"><i class="fa fa-check"></i><b>A</b> Resources</a><ul>
@@ -699,7 +702,7 @@ Figure 10.12: Initial centres determine clusters. The starting centres are shown
 </div>
 <p>Convergence to a local minimum can be avoided by starting the algorithm multiple times, with different random centres. The <strong>nstart</strong> argument to the <strong>k-means</strong> function can be used to specify the number of random sets and optimal solution will be selected automatically.</p>
 </div>
-<div id="choosing-k" class="section level3">
+<div id="choosingK" class="section level3">
 <h3><span class="header-section-number">10.4.3</span> Choosing k</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">point_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">9</span>,<span class="st">&quot;Set1&quot;</span>)
 k &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="dv">9</span>
@@ -728,8 +731,8 @@ Figure 10.13: K-means clustering of the blobs data set using a range of values o
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tot_withinss &lt;-<span class="st"> </span><span class="kw">sapply</span>(k, function(i){res[[i]]$tot.withinss})
 <span class="kw">qplot</span>(k, tot_withinss, <span class="dt">geom=</span><span class="kw">c</span>(<span class="st">&quot;point&quot;</span>, <span class="st">&quot;line&quot;</span>), 
       <span class="dt">ylab=</span><span class="st">&quot;Total within-cluster sum of squares&quot;</span>) +<span class="st"> </span><span class="kw">theme_bw</span>()</code></pre></div>
-<div class="figure" style="text-align: center"><span id="fig:choosingK"></span>
-<img src="09-clustering_files/figure-html/choosingK-1.png" alt="Variance within the clusters. Total within-cluster sum of squares plotted against k." width="50%" />
+<div class="figure" style="text-align: center"><span id="fig:choosingKplot"></span>
+<img src="09-clustering_files/figure-html/choosingKplot-1.png" alt="Variance within the clusters. Total within-cluster sum of squares plotted against k." width="50%" />
 <p class="caption">
 Figure 10.14: Variance within the clusters. Total within-cluster sum of squares plotted against k.
 </p>
@@ -975,9 +978,9 @@ Figure 10.26: K-means clustering of human gene expression (k=7): scatterplot of 
       Add to a neighbouring core point if possible            // Assign border points
       Otherwise, add to noise                                 // Assign noise points</code></pre>
 <div class="figure" style="text-align: center"><span id="fig:dbscanIllustration"></span>
-<img src="images/DBSCAN_Illustration.svg" alt="Illustration of the DBSCAN algorithm." width="75%" />
+<img src="images/DBSCAN_Illustration.svg" alt="Illustration of the DBSCAN algorithm. By Chire (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons." width="75%" />
 <p class="caption">
-Figure 10.27: Illustration of the DBSCAN algorithm.
+Figure 10.27: Illustration of the DBSCAN algorithm. By Chire (Own work) [CC BY-SA 3.0 (<a href="http://creativecommons.org/licenses/by-sa/3.0" class="uri">http://creativecommons.org/licenses/by-sa/3.0</a>)], via Wikimedia Commons.
 </p>
 </div>
 <p>The method requires two parameters; MinPts that is the minimum number of samples in any cluster; Eps that is the maximum distance of the sample to at least one other sample within the same cluster.</p>
@@ -1244,7 +1247,7 @@ http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_anal
 <h3><span class="header-section-number">10.7.2</span> Example - k-means clustering of blobs data set</h3>
 <p>Load library required for calculating silhouette coefficients and plotting silhouettes.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cluster)</code></pre></div>
-<p>We are going to take another look at k-means clustering of the blobs data-set (figure <a href="clustering.html#fig:kmeansRangeK">10.13</a>). Specifically we are going to see if silhouette analysis supports our original choice of k=3 as the optimum number of clusters (figure <a href="clustering.html#fig:choosingK">10.14</a>).</p>
+<p>We are going to take another look at k-means clustering of the blobs data-set (figure <a href="clustering.html#fig:kmeansRangeK">10.13</a>). Specifically we are going to see if silhouette analysis supports our original choice of k=3 as the optimum number of clusters (figure <a href="#fig:choosingK"><strong>??</strong></a>).</p>
 <p>Silhouette analysis requires a minimum of two clusters, so we’ll try values of k from 2 to 9.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k &lt;-<span class="st"> </span><span class="dv">2</span>:<span class="dv">9</span></code></pre></div>
 <p>Create a palette of colours for plotting.</p>
@@ -1311,9 +1314,74 @@ Figure 10.45: Barplot of the average silhouette coefficients resulting from k-me
 4. exercise involving heatmap
 
 -->
+<div id="clusteringEx1" class="section level3">
+<h3><span class="header-section-number">10.8.1</span> Exercise 1</h3>
+<!-- link to solution for this specific exercise -->
+<p>silohouette and dbscan (c.f. k-means)</p>
+<p>DBSCAN</p>
+</div>
+<div id="clusteringEx2" class="section level3">
+<h3><span class="header-section-number">10.8.2</span> Exercise 2</h3>
+<p>Image segmentation is used to partition digital images into distinct regions containing pixels with similar attributes. Applications include identifying objects or structures in biomedical images. The aim of this exercise is to use k-means clustering to segment the image of a histological section of lung tissue (figure <a href="clustering.html#fig:lungHistology">10.46</a>) into distinct biological structures, based on pixel colour.</p>
+<div class="figure" style="text-align: center"><span id="fig:lungHistology"></span>
+<img src="data/histology/Emphysema_H_and_E.jpg" alt="Image of haematoxylin and eosin (H&amp;E) stained section of lung tissue from a patient with end-stage emphysema. CC BY 2.0, https://commons.wikimedia.org/w/index.php?curid=437645." width="80%" />
+<p class="caption">
+Figure 10.46: Image of haematoxylin and eosin (H&amp;E) stained section of lung tissue from a patient with end-stage emphysema. CC BY 2.0, <a href="https://commons.wikimedia.org/w/index.php?curid=437645" class="uri">https://commons.wikimedia.org/w/index.php?curid=437645</a>.
+</p>
+</div>
+<p>The haematoxylin and eosin (H &amp; E) staining reveals four types of biological objects, identified by the following colours:</p>
+<ul>
+<li>blue-purple: cell nuclei</li>
+<li>red: red blood cells</li>
+<li>pink: other cell bodies and extracellular material</li>
+<li>white: air spaces</li>
+</ul>
+<p><strong>Consider the following questions:</strong></p>
+<ul>
+<li>Can k-means clustering find the four biological objects in the image based on pixel colour?</li>
+<li>Earlier we saw that if we plot the total within-cluster sum of squares against k, the position of the “elbow” is a useful guide to choosing the appropriate value of k (see section <a href="clustering.html#choosingK">10.4.3</a>. According to the “elbow” method, how many distinct clusters (colours) of pixels are present in the image?</li>
+</ul>
+<p><strong>Hints:</strong> If you haven’t worked with images in R before, you may find the following information helpful.</p>
+<p>The package <a href="https://bioconductor.org/packages/EBImage/">EBImage</a> provides a suite of tools for working with images. We will use it to read the file containing the image of the lung section.</p>
+<!--EBImage needs methods library, but doesn't import it -->
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(EBImage)</code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;EBImage&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dendextend&#39;:
+## 
+##     rotate</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(methods)
+img &lt;-<span class="st"> </span><span class="kw">readImage</span>(<span class="st">&quot;data/histology/Emphysema_H_and_E.jpg&quot;</span>)</code></pre></div>
+<p><code>img</code> is an object of the <a href="https://bioconductor.org/packages/EBImage/">EBImage</a> class Image; it is essentially a multidimensional array containing the pixel intensities. To see the dimensions of the array, run:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(img)</code></pre></div>
+<pre><code>## [1] 528 393   3</code></pre>
+<p>In the case of this colour image, the array is 3-dimensional with 528 x 393 x 3 elements. These dimensions correspond to the image width (in pixels), image height and number of colour channels, respectively. The colour channels are red, green and blue (RGB).</p>
+<p>Before we can cluster the pixels on colour, we need to convert the 3D array into a 2D data.frame (or matrix). Specifically, we require a data.frame (or matrix) where rows represent pixels and there is a column for the intensity of each of the three colour channels. We also need columns for the x and y coordinates of each pixel.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">imgDim &lt;-<span class="st"> </span><span class="kw">dim</span>(img)
+imgDF &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+  <span class="dt">x =</span> <span class="kw">rep</span>(<span class="dv">1</span>:imgDim[<span class="dv">1</span>], imgDim[<span class="dv">2</span>]),
+  <span class="dt">y =</span> <span class="kw">rep</span>(imgDim[<span class="dv">2</span>]:<span class="dv">1</span>, <span class="dt">each=</span>imgDim[<span class="dv">1</span>]),
+  <span class="dt">r =</span> <span class="kw">as.vector</span>(img[,,<span class="dv">1</span>]),
+  <span class="dt">g =</span> <span class="kw">as.vector</span>(img[,,<span class="dv">2</span>]),
+  <span class="dt">b =</span> <span class="kw">as.vector</span>(img[,,<span class="dv">3</span>])
+)</code></pre></div>
+<p>To check that the data in <code>imgDF</code> are correct, we can plot the</p>
+<p>If the data in <code>imgDF</code> are correct, we should be able to recreate the image:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> imgDF, <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> <span class="kw">rgb</span>(imgDF[<span class="kw">c</span>(<span class="st">&quot;r&quot;</span>, <span class="st">&quot;g&quot;</span>, <span class="st">&quot;b&quot;</span>)])) +
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;x&quot;</span>) +
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;y&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_minimal</span>()</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:recreatedLungHistology"></span>
+<img src="09-clustering_files/figure-html/recreatedLungHistology-1.png" alt="Image of lung tissue recreated from reshaped data." width="80%" />
+<p class="caption">
+Figure 10.47: Image of lung tissue recreated from reshaped data.
+</p>
+</div>
 <p>Exercise solutions: <a href="solutions-clustering.html#solutions-clustering">I</a></p>
 <p>Solutions to exercises can be found in appendix <a href="solutions-clustering.html#solutions-clustering">I</a>.</p>
 
+</div>
 </div>
 </div>
 
