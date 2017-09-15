@@ -15,30 +15,82 @@ plot(dbscanS, col="black")
 -->
 
 
-```r
-library(ggplot2)
-```
 
 
 ## Exercise 1
+
+Load required packages
+
+```r
+library(ggplot2)
+library(cluster)
+library(RColorBrewer)
+```
+
+Define colours for plots
+
+```r
+clusterColours <- brewer.pal(9,"Set1")
+```
+
+Read data
+
+```r
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+```
+
+Perform clustering
+
+```r
+res <- dbscan::dbscan(noisy_moons[,1:2], eps=0.075, minPts = 10)
+```
+
+Identify noise points as we do not want to include these in the silhouette analysis
+
+```r
+# identify and remove noise points
+noise <- res$cluster==0
+```
+
+Remove noise points from cluster results
+
+```r
+clusters <- res$cluster[!noise]
+```
+
+Generate distance matrix from ```noisy_moons``` data.frame, exluding noise points.
+
+```r
+d <- dist(noisy_moons[!noise,1:2])
+```
+
+Silhouette analysis
+
+```r
+sil <- silhouette(clusters, d)
+plot(sil, border=NA, col=clusterColours[sort(clusters)], main="")
+```
+
+<img src="20-solutions-clustering_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+
+
+
+
 
 
 ## Exercise 2
 
 First we need to read the image data and transform it into a suitable format for analysis:
 
-
-
-
 ```r
 library(EBImage)
+library(ggplot2)
+
+
 img <- readImage("data/histology/Emphysema_H_and_E.jpg")
 
 imgDim <- dim(img)
-```
 
-
-```r
 imgDF <- data.frame(
   x = rep(1:imgDim[1], imgDim[2]),
   y = rep(imgDim[2]:1, each=imgDim[1]),
@@ -70,7 +122,7 @@ library(doMC)
 registerDoMC()
 k=1:9
 set.seed(42)
-res_k_9 <- foreach(
+res <- foreach(
   i=k, 
   .options.multicore=list(set.seed=FALSE)) %dopar% kmeans(imgDF[,c("r", "g", "b")], i, nstart=50)
 ```
@@ -84,7 +136,7 @@ plot_tot_withinss <- function(kmeans_output){
         ylab="Total within-cluster sum of squares") + theme_bw()
 }
 
-plot_tot_withinss(res_k_9)
+plot_tot_withinss(res)
 ```
 
 <div class="figure" style="text-align: center">
@@ -95,27 +147,35 @@ plot_tot_withinss(res_k_9)
 
 
 
+
+
 ```r
-clusterColours <- rgb(res_k_9[[4]]$centers) 
+clusterColours <- rgb(res[[4]]$centers) 
 ggplot(data = imgDF, aes(x = x, y = y)) + 
-  geom_point(colour = clusterColours[res_k_9[[4]]$cluster]) +
+  geom_point(colour = clusterColours[res[[4]]$cluster]) +
   xlab("x") +
   ylab("y") +
   theme_minimal()
 ```
 
-<img src="20-solutions-clustering_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+<div class="figure" style="text-align: center">
+<img src="20-solutions-clustering_files/figure-html/pixelClustersK4-1.png" alt="Result of k-means clustering of pixels based on colour for k=4." width="80%" />
+<p class="caption">(\#fig:pixelClustersK4)Result of k-means clustering of pixels based on colour for k=4.</p>
+</div>
 
 
 
 ```r
-clusterColours <- rgb(res_k_9[[2]]$centers) 
+clusterColours <- rgb(res[[2]]$centers) 
 ggplot(data = imgDF, aes(x = x, y = y)) + 
-  geom_point(colour = clusterColours[res_k_9[[2]]$cluster]) +
+  geom_point(colour = clusterColours[res[[2]]$cluster]) +
   xlab("x") +
   ylab("y") +
   theme_minimal()
 ```
 
-<img src="20-solutions-clustering_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+<div class="figure" style="text-align: center">
+<img src="20-solutions-clustering_files/figure-html/pixelClustersK2-1.png" alt="Result of k-means clustering of pixels based on colour for k=2." width="80%" />
+<p class="caption">(\#fig:pixelClustersK2)Result of k-means clustering of pixels based on colour for k=2.</p>
+</div>
 

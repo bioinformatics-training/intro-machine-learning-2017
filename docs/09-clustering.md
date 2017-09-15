@@ -659,10 +659,6 @@ res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 
 ```
 ## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
 ```
 Failure to converge, so increase number of iterations.
 
@@ -1258,24 +1254,13 @@ ggplot(data=as.data.frame(pca$x), aes(PC1,PC2)) +
 <p class="caption">(\#fig:tissueExpressionDBSCANscatter)Clustering of human tissue gene expression: scatterplot of first two principal components.</p>
 </div>
 
-## Summary
-
-### Applications
-
-### Strengths
-
-### Limitations
-
-<!--
-Not appropriate for phylogenetic analysis!!
--->
 
 ## Evaluating cluster quality
 <!--
 http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html
 -->
 
-### Silhouette method
+### Silhouette method {#silhouetteMethod}
 
 **Silhouette**
 \begin{equation}
@@ -1387,6 +1372,17 @@ The bar plot (figure \@ref(fig:silhouetteAllK)) confirms that the optimum number
 
 
 
+## Summary
+
+### Applications
+
+### Strengths
+
+### Limitations
+
+<!--
+Not appropriate for phylogenetic analysis!!
+-->
 
 
 
@@ -1429,7 +1425,7 @@ The haematoxylin and eosin (H & E) staining reveals four types of biological obj
 **Consider the following questions:**
 
 * Can k-means clustering find the four biological objects in the image based on pixel colour? 
-* Earlier we saw that if we plot the total within-cluster sum of squares against k, the position of the "elbow" is a useful guide to choosing the appropriate value of k (see section \@ref(choosingK). According to the "elbow" method, how many distinct clusters (colours) of pixels are present in the image? 
+* Earlier we saw that if we plot the total within-cluster sum of squares against k, the position of the "elbow" is a useful guide to choosing the appropriate value of k (see section \@ref(choosingK). According to the "elbow" method, how many distinct clusters (colours) of pixels are present in the image?
 
 **Hints:**
 If you haven't worked with images in R before, you may find the following information helpful.
@@ -1485,8 +1481,6 @@ imgDF <- data.frame(
   b = as.vector(img[,,3])
 )
 ```
-
-To check that the data in ```imgDF``` are correct, we can plot the
 
 If the data in ```imgDF``` are correct, we should be able to recreate the image:
 

@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-14">
+<meta name="date" content="2017-09-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -169,14 +169,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.5.4" data-path="clustering.html"><a href="clustering.html#example-clustering-synthetic-data-sets-2"><i class="fa fa-check"></i><b>10.5.4</b> Example: clustering synthetic data sets</a></li>
 <li class="chapter" data-level="10.5.5" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues-2"><i class="fa fa-check"></i><b>10.5.5</b> Example: gene expression profiling of human tissues</a></li>
 </ul></li>
-<li class="chapter" data-level="10.6" data-path="clustering.html"><a href="clustering.html#summary"><i class="fa fa-check"></i><b>10.6</b> Summary</a><ul>
-<li class="chapter" data-level="10.6.1" data-path="clustering.html"><a href="clustering.html#applications"><i class="fa fa-check"></i><b>10.6.1</b> Applications</a></li>
-<li class="chapter" data-level="10.6.2" data-path="clustering.html"><a href="clustering.html#strengths"><i class="fa fa-check"></i><b>10.6.2</b> Strengths</a></li>
-<li class="chapter" data-level="10.6.3" data-path="clustering.html"><a href="clustering.html#limitations"><i class="fa fa-check"></i><b>10.6.3</b> Limitations</a></li>
+<li class="chapter" data-level="10.6" data-path="clustering.html"><a href="clustering.html#evaluating-cluster-quality"><i class="fa fa-check"></i><b>10.6</b> Evaluating cluster quality</a><ul>
+<li class="chapter" data-level="10.6.1" data-path="clustering.html"><a href="clustering.html#silhouetteMethod"><i class="fa fa-check"></i><b>10.6.1</b> Silhouette method</a></li>
+<li class="chapter" data-level="10.6.2" data-path="clustering.html"><a href="clustering.html#example---k-means-clustering-of-blobs-data-set"><i class="fa fa-check"></i><b>10.6.2</b> Example - k-means clustering of blobs data set</a></li>
 </ul></li>
-<li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#evaluating-cluster-quality"><i class="fa fa-check"></i><b>10.7</b> Evaluating cluster quality</a><ul>
-<li class="chapter" data-level="10.7.1" data-path="clustering.html"><a href="clustering.html#silhouette-method"><i class="fa fa-check"></i><b>10.7.1</b> Silhouette method</a></li>
-<li class="chapter" data-level="10.7.2" data-path="clustering.html"><a href="clustering.html#example---k-means-clustering-of-blobs-data-set"><i class="fa fa-check"></i><b>10.7.2</b> Example - k-means clustering of blobs data set</a></li>
+<li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#summary"><i class="fa fa-check"></i><b>10.7</b> Summary</a><ul>
+<li class="chapter" data-level="10.7.1" data-path="clustering.html"><a href="clustering.html#applications"><i class="fa fa-check"></i><b>10.7.1</b> Applications</a></li>
+<li class="chapter" data-level="10.7.2" data-path="clustering.html"><a href="clustering.html#strengths"><i class="fa fa-check"></i><b>10.7.2</b> Strengths</a></li>
+<li class="chapter" data-level="10.7.3" data-path="clustering.html"><a href="clustering.html#limitations"><i class="fa fa-check"></i><b>10.7.3</b> Limitations</a></li>
 </ul></li>
 <li class="chapter" data-level="10.8" data-path="clustering.html"><a href="clustering.html#exercises-7"><i class="fa fa-check"></i><b>10.8</b> Exercises</a><ul>
 <li class="chapter" data-level="10.8.1" data-path="clustering.html"><a href="clustering.html#clusteringEx1"><i class="fa fa-check"></i><b>10.8.1</b> Exercise 1</a></li>
@@ -813,11 +813,7 @@ Figure 10.18: K-means clustering of the noisy moons data set: scatterplot of clu
 <h4><span class="header-section-number">10.4.4.3</span> Different density</h4>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">diff_density &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/different_density.csv&quot;</span>, <span class="dt">header=</span>F))
 res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})</code></pre></div>
-<pre><code>## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations</code></pre>
+<pre><code>## Warning: did not converge in 10 iterations</code></pre>
 <p>Failure to converge, so increase number of iterations.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">iter.max=</span><span class="dv">20</span>, <span class="dt">nstart=</span><span class="dv">50</span>)})
 <span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
@@ -1214,28 +1210,13 @@ Figure 10.41: Clustering of human tissue gene expression: scatterplot of first t
 </div>
 </div>
 </div>
-<div id="summary" class="section level2">
-<h2><span class="header-section-number">10.6</span> Summary</h2>
-<div id="applications" class="section level3">
-<h3><span class="header-section-number">10.6.1</span> Applications</h3>
-</div>
-<div id="strengths" class="section level3">
-<h3><span class="header-section-number">10.6.2</span> Strengths</h3>
-</div>
-<div id="limitations" class="section level3">
-<h3><span class="header-section-number">10.6.3</span> Limitations</h3>
-<!--
-Not appropriate for phylogenetic analysis!!
--->
-</div>
-</div>
 <div id="evaluating-cluster-quality" class="section level2">
-<h2><span class="header-section-number">10.7</span> Evaluating cluster quality</h2>
+<h2><span class="header-section-number">10.6</span> Evaluating cluster quality</h2>
 <!--
 http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html
 -->
-<div id="silhouette-method" class="section level3">
-<h3><span class="header-section-number">10.7.1</span> Silhouette method</h3>
+<div id="silhouetteMethod" class="section level3">
+<h3><span class="header-section-number">10.6.1</span> Silhouette method</h3>
 <strong>Silhouette</strong>
 <span class="math display" id="eq:silhouette">\[\begin{equation}
   s(i) = \frac{b(i) - a(i)}{max\left(a(i),b(i)\right)}
@@ -1244,7 +1225,7 @@ http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_anal
 <p>Method can be applied to clusters generated using any algorithm.</p>
 </div>
 <div id="example---k-means-clustering-of-blobs-data-set" class="section level3">
-<h3><span class="header-section-number">10.7.2</span> Example - k-means clustering of blobs data set</h3>
+<h3><span class="header-section-number">10.6.2</span> Example - k-means clustering of blobs data set</h3>
 <p>Load library required for calculating silhouette coefficients and plotting silhouettes.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cluster)</code></pre></div>
 <p>We are going to take another look at k-means clustering of the blobs data-set (figure <a href="clustering.html#fig:kmeansRangeK">10.13</a>). Specifically we are going to see if silhouette analysis supports our original choice of k=3 as the optimum number of clusters (figure <a href="#fig:choosingK"><strong>??</strong></a>).</p>
@@ -1303,6 +1284,21 @@ Figure 10.45: Barplot of the average silhouette coefficients resulting from k-me
 </p>
 </div>
 <p>The bar plot (figure <a href="clustering.html#fig:silhouetteAllK">10.45</a>) confirms that the optimum number of clusters is three.</p>
+</div>
+</div>
+<div id="summary" class="section level2">
+<h2><span class="header-section-number">10.7</span> Summary</h2>
+<div id="applications" class="section level3">
+<h3><span class="header-section-number">10.7.1</span> Applications</h3>
+</div>
+<div id="strengths" class="section level3">
+<h3><span class="header-section-number">10.7.2</span> Strengths</h3>
+</div>
+<div id="limitations" class="section level3">
+<h3><span class="header-section-number">10.7.3</span> Limitations</h3>
+<!--
+Not appropriate for phylogenetic analysis!!
+-->
 </div>
 </div>
 <div id="exercises-7" class="section level2">
@@ -1365,7 +1361,6 @@ imgDF &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">g =</span> <span class="kw">as.vector</span>(img[,,<span class="dv">2</span>]),
   <span class="dt">b =</span> <span class="kw">as.vector</span>(img[,,<span class="dv">3</span>])
 )</code></pre></div>
-<p>To check that the data in <code>imgDF</code> are correct, we can plot the</p>
 <p>If the data in <code>imgDF</code> are correct, we should be able to recreate the image:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> imgDF, <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) +<span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> <span class="kw">rgb</span>(imgDF[<span class="kw">c</span>(<span class="st">&quot;r&quot;</span>, <span class="st">&quot;g&quot;</span>, <span class="st">&quot;b&quot;</span>)])) +

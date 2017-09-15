@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-14">
+<meta name="date" content="2017-09-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -169,14 +169,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.5.4" data-path="clustering.html"><a href="clustering.html#example-clustering-synthetic-data-sets-2"><i class="fa fa-check"></i><b>10.5.4</b> Example: clustering synthetic data sets</a></li>
 <li class="chapter" data-level="10.5.5" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues-2"><i class="fa fa-check"></i><b>10.5.5</b> Example: gene expression profiling of human tissues</a></li>
 </ul></li>
-<li class="chapter" data-level="10.6" data-path="clustering.html"><a href="clustering.html#summary"><i class="fa fa-check"></i><b>10.6</b> Summary</a><ul>
-<li class="chapter" data-level="10.6.1" data-path="clustering.html"><a href="clustering.html#applications"><i class="fa fa-check"></i><b>10.6.1</b> Applications</a></li>
-<li class="chapter" data-level="10.6.2" data-path="clustering.html"><a href="clustering.html#strengths"><i class="fa fa-check"></i><b>10.6.2</b> Strengths</a></li>
-<li class="chapter" data-level="10.6.3" data-path="clustering.html"><a href="clustering.html#limitations"><i class="fa fa-check"></i><b>10.6.3</b> Limitations</a></li>
+<li class="chapter" data-level="10.6" data-path="clustering.html"><a href="clustering.html#evaluating-cluster-quality"><i class="fa fa-check"></i><b>10.6</b> Evaluating cluster quality</a><ul>
+<li class="chapter" data-level="10.6.1" data-path="clustering.html"><a href="clustering.html#silhouetteMethod"><i class="fa fa-check"></i><b>10.6.1</b> Silhouette method</a></li>
+<li class="chapter" data-level="10.6.2" data-path="clustering.html"><a href="clustering.html#example---k-means-clustering-of-blobs-data-set"><i class="fa fa-check"></i><b>10.6.2</b> Example - k-means clustering of blobs data set</a></li>
 </ul></li>
-<li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#evaluating-cluster-quality"><i class="fa fa-check"></i><b>10.7</b> Evaluating cluster quality</a><ul>
-<li class="chapter" data-level="10.7.1" data-path="clustering.html"><a href="clustering.html#silhouette-method"><i class="fa fa-check"></i><b>10.7.1</b> Silhouette method</a></li>
-<li class="chapter" data-level="10.7.2" data-path="clustering.html"><a href="clustering.html#example---k-means-clustering-of-blobs-data-set"><i class="fa fa-check"></i><b>10.7.2</b> Example - k-means clustering of blobs data set</a></li>
+<li class="chapter" data-level="10.7" data-path="clustering.html"><a href="clustering.html#summary"><i class="fa fa-check"></i><b>10.7</b> Summary</a><ul>
+<li class="chapter" data-level="10.7.1" data-path="clustering.html"><a href="clustering.html#applications"><i class="fa fa-check"></i><b>10.7.1</b> Applications</a></li>
+<li class="chapter" data-level="10.7.2" data-path="clustering.html"><a href="clustering.html#strengths"><i class="fa fa-check"></i><b>10.7.2</b> Strengths</a></li>
+<li class="chapter" data-level="10.7.3" data-path="clustering.html"><a href="clustering.html#limitations"><i class="fa fa-check"></i><b>10.7.3</b> Limitations</a></li>
 </ul></li>
 <li class="chapter" data-level="10.8" data-path="clustering.html"><a href="clustering.html#exercises-7"><i class="fa fa-check"></i><b>10.8</b> Exercises</a><ul>
 <li class="chapter" data-level="10.8.1" data-path="clustering.html"><a href="clustering.html#clusteringEx1"><i class="fa fa-check"></i><b>10.8.1</b> Exercise 1</a></li>
@@ -258,18 +258,42 @@ dbscanS <- silhouette(dbscanRes$cluster[dbscanRes$cluster>0], d)
 plot(dbscanS, col="black")
 
 -->
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)</code></pre></div>
 <div id="exercise-1-7" class="section level2">
 <h2><span class="header-section-number">I.1</span> Exercise 1</h2>
+<p>Load required packages</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(cluster)
+<span class="kw">library</span>(RColorBrewer)</code></pre></div>
+<p>Define colours for plots</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterColours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">9</span>,<span class="st">&quot;Set1&quot;</span>)</code></pre></div>
+<p>Read data</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">noisy_moons &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/noisy_moons.csv&quot;</span>, <span class="dt">header=</span>F)</code></pre></div>
+<p>Perform clustering</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span>dbscan::<span class="kw">dbscan</span>(noisy_moons[,<span class="dv">1</span>:<span class="dv">2</span>], <span class="dt">eps=</span><span class="fl">0.075</span>, <span class="dt">minPts =</span> <span class="dv">10</span>)</code></pre></div>
+<p>Identify noise points as we do not want to include these in the silhouette analysis</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># identify and remove noise points</span>
+noise &lt;-<span class="st"> </span>res$cluster==<span class="dv">0</span></code></pre></div>
+<p>Remove noise points from cluster results</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusters &lt;-<span class="st"> </span>res$cluster[!noise]</code></pre></div>
+<p>Generate distance matrix from <code>noisy_moons</code> data.frame, exluding noise points.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span><span class="kw">dist</span>(noisy_moons[!noise,<span class="dv">1</span>:<span class="dv">2</span>])</code></pre></div>
+<p>Silhouette analysis</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sil &lt;-<span class="st"> </span><span class="kw">silhouette</span>(clusters, d)
+<span class="kw">plot</span>(sil, <span class="dt">border=</span><span class="ot">NA</span>, <span class="dt">col=</span>clusterColours[<span class="kw">sort</span>(clusters)], <span class="dt">main=</span><span class="st">&quot;&quot;</span>)</code></pre></div>
+<p><img src="20-solutions-clustering_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 <div id="exercise-2-7" class="section level2">
 <h2><span class="header-section-number">I.2</span> Exercise 2</h2>
 <p>First we need to read the image data and transform it into a suitable format for analysis:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(EBImage)
+<span class="kw">library</span>(ggplot2)
+
+
 img &lt;-<span class="st"> </span><span class="kw">readImage</span>(<span class="st">&quot;data/histology/Emphysema_H_and_E.jpg&quot;</span>)
 
-imgDim &lt;-<span class="st"> </span><span class="kw">dim</span>(img)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">imgDF &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+imgDim &lt;-<span class="st"> </span><span class="kw">dim</span>(img)
+
+imgDF &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">x =</span> <span class="kw">rep</span>(<span class="dv">1</span>:imgDim[<span class="dv">1</span>], imgDim[<span class="dv">2</span>]),
   <span class="dt">y =</span> <span class="kw">rep</span>(imgDim[<span class="dv">2</span>]:<span class="dv">1</span>, <span class="dt">each=</span>imgDim[<span class="dv">1</span>]),
   <span class="dt">r =</span> <span class="kw">as.vector</span>(img[,,<span class="dv">1</span>]),
@@ -284,7 +308,7 @@ imgDim &lt;-<span class="st"> </span><span class="kw">dim</span>(img)</code></pr
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">registerDoMC</span>()
 k=<span class="dv">1</span>:<span class="dv">9</span>
 <span class="kw">set.seed</span>(<span class="dv">42</span>)
-res_k_9 &lt;-<span class="st"> </span><span class="kw">foreach</span>(
+res &lt;-<span class="st"> </span><span class="kw">foreach</span>(
   <span class="dt">i=</span>k, 
   <span class="dt">.options.multicore=</span><span class="kw">list</span>(<span class="dt">set.seed=</span><span class="ot">FALSE</span>)) %dopar%<span class="st"> </span><span class="kw">kmeans</span>(imgDF[,<span class="kw">c</span>(<span class="st">&quot;r&quot;</span>, <span class="st">&quot;g&quot;</span>, <span class="st">&quot;b&quot;</span>)], i, <span class="dt">nstart=</span><span class="dv">50</span>)</code></pre></div>
 <p>We can now plot total within-cluster sum of squares against k:</p>
@@ -294,27 +318,37 @@ res_k_9 &lt;-<span class="st"> </span><span class="kw">foreach</span>(
         <span class="dt">ylab=</span><span class="st">&quot;Total within-cluster sum of squares&quot;</span>) +<span class="st"> </span><span class="kw">theme_bw</span>()
 }
 
-<span class="kw">plot_tot_withinss</span>(res_k_9)</code></pre></div>
+<span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
 <div class="figure" style="text-align: center"><span id="fig:imageAnalysisElbowPlot"></span>
 <img src="20-solutions-clustering_files/figure-html/imageAnalysisElbowPlot-1.png" alt="Variance within the clusters of pixels. Total within-cluster sum of squares plotted against k." width="80%" />
 <p class="caption">
 Figure I.1: Variance within the clusters of pixels. Total within-cluster sum of squares plotted against k.
 </p>
 </div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterColours &lt;-<span class="st"> </span><span class="kw">rgb</span>(res_k_9[[<span class="dv">4</span>]]$centers) 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterColours &lt;-<span class="st"> </span><span class="kw">rgb</span>(res[[<span class="dv">4</span>]]$centers) 
 <span class="kw">ggplot</span>(<span class="dt">data =</span> imgDF, <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) +<span class="st"> </span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> clusterColours[res_k_9[[<span class="dv">4</span>]]$cluster]) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> clusterColours[res[[<span class="dv">4</span>]]$cluster]) +
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;x&quot;</span>) +
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;y&quot;</span>) +
 <span class="st">  </span><span class="kw">theme_minimal</span>()</code></pre></div>
-<p><img src="20-solutions-clustering_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterColours &lt;-<span class="st"> </span><span class="kw">rgb</span>(res_k_9[[<span class="dv">2</span>]]$centers) 
+<div class="figure" style="text-align: center"><span id="fig:pixelClustersK4"></span>
+<img src="20-solutions-clustering_files/figure-html/pixelClustersK4-1.png" alt="Result of k-means clustering of pixels based on colour for k=4." width="80%" />
+<p class="caption">
+Figure I.2: Result of k-means clustering of pixels based on colour for k=4.
+</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterColours &lt;-<span class="st"> </span><span class="kw">rgb</span>(res[[<span class="dv">2</span>]]$centers) 
 <span class="kw">ggplot</span>(<span class="dt">data =</span> imgDF, <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) +<span class="st"> </span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> clusterColours[res_k_9[[<span class="dv">2</span>]]$cluster]) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> clusterColours[res[[<span class="dv">2</span>]]$cluster]) +
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;x&quot;</span>) +
 <span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;y&quot;</span>) +
 <span class="st">  </span><span class="kw">theme_minimal</span>()</code></pre></div>
-<p><img src="20-solutions-clustering_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<div class="figure" style="text-align: center"><span id="fig:pixelClustersK2"></span>
+<img src="20-solutions-clustering_files/figure-html/pixelClustersK2-1.png" alt="Result of k-means clustering of pixels based on colour for k=2." width="80%" />
+<p class="caption">
+Figure I.3: Result of k-means clustering of pixels based on colour for k=2.
+</p>
+</div>
 
 </div>
 </div>
