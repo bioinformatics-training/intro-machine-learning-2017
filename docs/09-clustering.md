@@ -659,6 +659,12 @@ res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 
 ```
 ## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
 ```
 Failure to converge, so increase number of iterations.
 
@@ -1482,7 +1488,7 @@ imgDF <- data.frame(
 )
 ```
 
-If the data in ```imgDF``` are correct, we should be able to recreate the image:
+If the data in ```imgDF``` are correct, we should be able to display the image using ggplot:
 
 ```r
 ggplot(data = imgDF, aes(x = x, y = y)) + 
@@ -1499,10 +1505,6 @@ ggplot(data = imgDF, aes(x = x, y = y)) +
 
 
 
-
-
-Exercise solutions: \@ref(solutions-clustering)
-
-Solutions to exercises can be found in appendix \@ref(solutions-clustering).
+**Solutions to exercises can be found in appendix \@ref(solutions-clustering).**
 
 

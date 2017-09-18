@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-15">
+<meta name="date" content="2017-09-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -325,18 +325,7 @@ res &lt;-<span class="st"> </span><span class="kw">foreach</span>(
 Figure I.1: Variance within the clusters of pixels. Total within-cluster sum of squares plotted against k.
 </p>
 </div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterColours &lt;-<span class="st"> </span><span class="kw">rgb</span>(res[[<span class="dv">4</span>]]$centers) 
-<span class="kw">ggplot</span>(<span class="dt">data =</span> imgDF, <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) +<span class="st"> </span>
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> clusterColours[res[[<span class="dv">4</span>]]$cluster]) +
-<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;x&quot;</span>) +
-<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;y&quot;</span>) +
-<span class="st">  </span><span class="kw">theme_minimal</span>()</code></pre></div>
-<div class="figure" style="text-align: center"><span id="fig:pixelClustersK4"></span>
-<img src="20-solutions-clustering_files/figure-html/pixelClustersK4-1.png" alt="Result of k-means clustering of pixels based on colour for k=4." width="80%" />
-<p class="caption">
-Figure I.2: Result of k-means clustering of pixels based on colour for k=4.
-</p>
-</div>
+<p>The plot of total within-cluster sum of squares against k (figure <a href="solutions-clustering.html#fig:imageAnalysisElbowPlot">I.1</a>) shows an elbow at k=2, indicating that most of the variance in the image can be described by just two clusters. Let’s plot the clusters for k=2.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterColours &lt;-<span class="st"> </span><span class="kw">rgb</span>(res[[<span class="dv">2</span>]]$centers) 
 <span class="kw">ggplot</span>(<span class="dt">data =</span> imgDF, <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) +<span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> clusterColours[res[[<span class="dv">2</span>]]$cluster]) +
@@ -346,9 +335,25 @@ Figure I.2: Result of k-means clustering of pixels based on colour for k=4.
 <div class="figure" style="text-align: center"><span id="fig:pixelClustersK2"></span>
 <img src="20-solutions-clustering_files/figure-html/pixelClustersK2-1.png" alt="Result of k-means clustering of pixels based on colour for k=2." width="80%" />
 <p class="caption">
-Figure I.3: Result of k-means clustering of pixels based on colour for k=2.
+Figure I.2: Result of k-means clustering of pixels based on colour for k=2.
 </p>
 </div>
+<p>Segmentation of the image with k=2 separates air-spaces from all other objects (figure <a href="solutions-clustering.html#fig:pixelClustersK2">I.2</a>). Therefore, the difference in pixel colour between the air-spaces and other objects accounts for most of the variance in the data-set (image).</p>
+<p>Let’s now take a look at a segmentation of the image using k=4.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterColours &lt;-<span class="st"> </span><span class="kw">rgb</span>(res[[<span class="dv">4</span>]]$centers) 
+<span class="kw">ggplot</span>(<span class="dt">data =</span> imgDF, <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> clusterColours[res[[<span class="dv">4</span>]]$cluster]) +
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;x&quot;</span>) +
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;y&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_minimal</span>()</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:pixelClustersK4"></span>
+<img src="20-solutions-clustering_files/figure-html/pixelClustersK4-1.png" alt="Result of k-means clustering of pixels based on colour for k=4." width="80%" />
+<p class="caption">
+Figure I.3: Result of k-means clustering of pixels based on colour for k=4.
+</p>
+</div>
+<p>K-means clustering with k=4 rapidly and effectively segments the image of the histological section into the biological objects we can see by eye. A manual segmentation of the same image would be very laborious. This exercise highlights the importance of</p>
+<p><em>N.B.</em> the cluster centres provide the mean pixel intensities for the red, green and blue channels and we have used this information to colour the pixels belonging to each cluster (figure <a href="solutions-clustering.html#fig:pixelClustersK4">I.3</a>).</p>
 
 </div>
 </div>

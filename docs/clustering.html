@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-15">
+<meta name="date" content="2017-09-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -813,7 +813,13 @@ Figure 10.18: K-means clustering of the noisy moons data set: scatterplot of clu
 <h4><span class="header-section-number">10.4.4.3</span> Different density</h4>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">diff_density &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/different_density.csv&quot;</span>, <span class="dt">header=</span>F))
 res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})</code></pre></div>
-<pre><code>## Warning: did not converge in 10 iterations</code></pre>
+<pre><code>## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations</code></pre>
 <p>Failure to converge, so increase number of iterations.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">iter.max=</span><span class="dv">20</span>, <span class="dt">nstart=</span><span class="dv">50</span>)})
 <span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
@@ -1361,7 +1367,7 @@ imgDF &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">g =</span> <span class="kw">as.vector</span>(img[,,<span class="dv">2</span>]),
   <span class="dt">b =</span> <span class="kw">as.vector</span>(img[,,<span class="dv">3</span>])
 )</code></pre></div>
-<p>If the data in <code>imgDF</code> are correct, we should be able to recreate the image:</p>
+<p>If the data in <code>imgDF</code> are correct, we should be able to display the image using ggplot:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> imgDF, <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y)) +<span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">colour =</span> <span class="kw">rgb</span>(imgDF[<span class="kw">c</span>(<span class="st">&quot;r&quot;</span>, <span class="st">&quot;g&quot;</span>, <span class="st">&quot;b&quot;</span>)])) +
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;x&quot;</span>) +
@@ -1373,8 +1379,7 @@ imgDF &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
 Figure 10.47: Image of lung tissue recreated from reshaped data.
 </p>
 </div>
-<p>Exercise solutions: <a href="solutions-clustering.html#solutions-clustering">I</a></p>
-<p>Solutions to exercises can be found in appendix <a href="solutions-clustering.html#solutions-clustering">I</a>.</p>
+<p><strong>Solutions to exercises can be found in appendix <a href="solutions-clustering.html#solutions-clustering">I</a>.</strong></p>
 
 </div>
 </div>
