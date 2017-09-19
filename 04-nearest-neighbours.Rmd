@@ -14,6 +14,59 @@ FEATURE SELECTION
 filter methods  /  wrapper methods / genetic algorithms
 
 -->
+## Introduction
+memory based and require no model to be fit
+
+bias and variance
+
+computational load - finding neighbours and storing the entire training set
+
+k-d tree / linear search
+
+system.time k-d tree search vs linear search
+
+library(class)
+
+class::knn
+
+## Algorithm
+
+### Defining nearest
+
+**Euclidean distance:**
+\begin{equation}
+  distance\left(p,q\right)=\sqrt{\sum_{i=1}^{n} (p_i-q_i)^2}
+  (\#eq:euclidean)
+\end{equation}
+
+
+```{r euclideanDistanceDiagram, fig.cap='Euclidean distance.', out.width='75%', fig.asp=0.9, fig.align='center', echo=F}
+par(mai=c(0.8,0.8,0.1,0.1))
+x <- c(0.75,4.5)
+y <- c(2.5,4.5)
+plot(x, y, xlim=range(0,5), ylim=range(0,5), cex=5, col="steelblue", pch=16, cex.lab=1.5)
+segments(x[1], y[1], x[2], y[2], lwd=4, col="grey30")
+text(0.75,2, expression(paste('p(x'[1],'y'[1],')')), cex=1.7)
+text(4.5,4, expression(paste('q(x'[2],'y'[2],')')), cex=1.7)
+text(2.5,0.5, expression(paste('dist(p,q)'==sqrt((x[2]-x[1])^2 + (y[2]-y[1])^2))), cex=1.7)
+```
+
+
+```{r knnClassification, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Illustration of _k_-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object.  By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282"}
+knitr::include_graphics("images/knn_classification.svg")
+```
+
+
+### Search 
+
+
+## Classification
+
+
+## Regression
+
+
+
 
 Parallel processing with doMC
 registerDoMC()
@@ -23,6 +76,20 @@ getDoParWorkers()
 
 ## Example two
 
+## Curse of dimensionality
+Pre-processing data using dimensionality reduction.
+
+
 ## Exercises
+
+### Exercise 1 {#knnEx1}
+Classification
+
+### Exercise 2 {#knnEx2}
+Regression
+
+Alzheimers & gene expression? MMSE and gene expression?
+
+
 
 Solutions to exercises can be found in appendix \@ref(solutions-nearest-neighbours).

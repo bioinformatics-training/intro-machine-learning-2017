@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-17">
+<meta name="date" content="2017-09-19">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -120,9 +120,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.1" data-path="logistic-regression.html"><a href="logistic-regression.html#exercises-1"><i class="fa fa-check"></i><b>4.1</b> Exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html"><i class="fa fa-check"></i><b>5</b> Nearest neighbours</a><ul>
-<li class="chapter" data-level="5.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-one"><i class="fa fa-check"></i><b>5.1</b> Example one</a></li>
-<li class="chapter" data-level="5.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-two"><i class="fa fa-check"></i><b>5.2</b> Example two</a></li>
-<li class="chapter" data-level="5.3" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#exercises-2"><i class="fa fa-check"></i><b>5.3</b> Exercises</a></li>
+<li class="chapter" data-level="5.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#introduction"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#algorithm"><i class="fa fa-check"></i><b>5.2</b> Algorithm</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#defining-nearest"><i class="fa fa-check"></i><b>5.2.1</b> Defining nearest</a></li>
+<li class="chapter" data-level="5.2.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#search"><i class="fa fa-check"></i><b>5.2.2</b> Search</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#classification"><i class="fa fa-check"></i><b>5.3</b> Classification</a></li>
+<li class="chapter" data-level="5.4" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#regression"><i class="fa fa-check"></i><b>5.4</b> Regression</a></li>
+<li class="chapter" data-level="5.5" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-one"><i class="fa fa-check"></i><b>5.5</b> Example one</a></li>
+<li class="chapter" data-level="5.6" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-two"><i class="fa fa-check"></i><b>5.6</b> Example two</a></li>
+<li class="chapter" data-level="5.7" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#curse-of-dimensionality"><i class="fa fa-check"></i><b>5.7</b> Curse of dimensionality</a></li>
+<li class="chapter" data-level="5.8" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#exercises-2"><i class="fa fa-check"></i><b>5.8</b> Exercises</a><ul>
+<li class="chapter" data-level="5.8.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#knnEx1"><i class="fa fa-check"></i><b>5.8.1</b> Exercise 1</a></li>
+<li class="chapter" data-level="5.8.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#knnEx2"><i class="fa fa-check"></i><b>5.8.2</b> Exercise 2</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="decision-trees.html"><a href="decision-trees.html"><i class="fa fa-check"></i><b>6</b> Decision trees and random forests</a><ul>
 <li class="chapter" data-level="6.1" data-path="decision-trees.html"><a href="decision-trees.html#exercises-3"><i class="fa fa-check"></i><b>6.1</b> Exercises</a></li>
@@ -146,7 +157,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="9.3" data-path="dimensionality-reduction.html"><a href="dimensionality-reduction.html#exercises-6"><i class="fa fa-check"></i><b>9.3</b> Exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="10" data-path="clustering.html"><a href="clustering.html"><i class="fa fa-check"></i><b>10</b> Clustering</a><ul>
-<li class="chapter" data-level="10.1" data-path="clustering.html"><a href="clustering.html#introduction"><i class="fa fa-check"></i><b>10.1</b> Introduction</a></li>
+<li class="chapter" data-level="10.1" data-path="clustering.html"><a href="clustering.html#introduction-1"><i class="fa fa-check"></i><b>10.1</b> Introduction</a></li>
 <li class="chapter" data-level="10.2" data-path="clustering.html"><a href="clustering.html#distance-metrics"><i class="fa fa-check"></i><b>10.2</b> Distance metrics</a><ul>
 <li class="chapter" data-level="10.2.1" data-path="clustering.html"><a href="clustering.html#image-segmentation"><i class="fa fa-check"></i><b>10.2.1</b> Image segmentation</a></li>
 </ul></li>
@@ -156,14 +167,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.3.3" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues"><i class="fa fa-check"></i><b>10.3.3</b> Example: gene expression profiling of human tissues</a></li>
 </ul></li>
 <li class="chapter" data-level="10.4" data-path="clustering.html"><a href="clustering.html#k-means"><i class="fa fa-check"></i><b>10.4</b> K-means</a><ul>
-<li class="chapter" data-level="10.4.1" data-path="clustering.html"><a href="clustering.html#algorithm"><i class="fa fa-check"></i><b>10.4.1</b> Algorithm</a></li>
+<li class="chapter" data-level="10.4.1" data-path="clustering.html"><a href="clustering.html#algorithm-1"><i class="fa fa-check"></i><b>10.4.1</b> Algorithm</a></li>
 <li class="chapter" data-level="10.4.2" data-path="clustering.html"><a href="clustering.html#choosing-initial-cluster-centres"><i class="fa fa-check"></i><b>10.4.2</b> Choosing initial cluster centres</a></li>
 <li class="chapter" data-level="10.4.3" data-path="clustering.html"><a href="clustering.html#choosingK"><i class="fa fa-check"></i><b>10.4.3</b> Choosing k</a></li>
 <li class="chapter" data-level="10.4.4" data-path="clustering.html"><a href="clustering.html#example-clustering-synthetic-data-sets-1"><i class="fa fa-check"></i><b>10.4.4</b> Example: clustering synthetic data sets</a></li>
 <li class="chapter" data-level="10.4.5" data-path="clustering.html"><a href="clustering.html#example-gene-expression-profiling-of-human-tissues-1"><i class="fa fa-check"></i><b>10.4.5</b> Example: gene expression profiling of human tissues</a></li>
 </ul></li>
 <li class="chapter" data-level="10.5" data-path="clustering.html"><a href="clustering.html#dbscan"><i class="fa fa-check"></i><b>10.5</b> DBSCAN</a><ul>
-<li class="chapter" data-level="10.5.1" data-path="clustering.html"><a href="clustering.html#algorithm-1"><i class="fa fa-check"></i><b>10.5.1</b> Algorithm</a></li>
+<li class="chapter" data-level="10.5.1" data-path="clustering.html"><a href="clustering.html#algorithm-2"><i class="fa fa-check"></i><b>10.5.1</b> Algorithm</a></li>
 <li class="chapter" data-level="10.5.2" data-path="clustering.html"><a href="clustering.html#implementation-in-r"><i class="fa fa-check"></i><b>10.5.2</b> Implementation in R</a></li>
 <li class="chapter" data-level="10.5.3" data-path="clustering.html"><a href="clustering.html#choosing-parameters"><i class="fa fa-check"></i><b>10.5.3</b> Choosing parameters</a></li>
 <li class="chapter" data-level="10.5.4" data-path="clustering.html"><a href="clustering.html#example-clustering-synthetic-data-sets-2"><i class="fa fa-check"></i><b>10.5.4</b> Example: clustering synthetic data sets</a></li>
@@ -259,17 +270,72 @@ FEATURE SELECTION
 filter methods  /  wrapper methods / genetic algorithms
 
 -->
+<div id="introduction" class="section level2">
+<h2><span class="header-section-number">5.1</span> Introduction</h2>
+<p>memory based and require no model to be fit</p>
+<p>bias and variance</p>
+<p>computational load - finding neighbours and storing the entire training set</p>
+<p>k-d tree / linear search</p>
+<p>system.time k-d tree search vs linear search</p>
+<p>library(class)</p>
+<p>class::knn</p>
+</div>
+<div id="algorithm" class="section level2">
+<h2><span class="header-section-number">5.2</span> Algorithm</h2>
+<div id="defining-nearest" class="section level3">
+<h3><span class="header-section-number">5.2.1</span> Defining nearest</h3>
+<strong>Euclidean distance:</strong>
+<span class="math display" id="eq:euclidean">\[\begin{equation}
+  distance\left(p,q\right)=\sqrt{\sum_{i=1}^{n} (p_i-q_i)^2}
+  \tag{5.1}
+\end{equation}\]</span>
+<div class="figure" style="text-align: center"><span id="fig:euclideanDistanceDiagram"></span>
+<img src="04-nearest-neighbours_files/figure-html/euclideanDistanceDiagram-1.png" alt="Euclidean distance." width="75%" />
+<p class="caption">
+Figure 5.1: Euclidean distance.
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:knnClassification"></span>
+<img src="images/knn_classification.svg" alt="Illustration of _k_-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object.  By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282" width="75%" />
+<p class="caption">
+Figure 5.2: Illustration of <em>k</em>-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object. By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, <a href="https://commons.wikimedia.org/w/index.php?curid=2170282" class="uri">https://commons.wikimedia.org/w/index.php?curid=2170282</a>
+</p>
+</div>
+</div>
+<div id="search" class="section level3">
+<h3><span class="header-section-number">5.2.2</span> Search</h3>
+</div>
+</div>
+<div id="classification" class="section level2">
+<h2><span class="header-section-number">5.3</span> Classification</h2>
+</div>
+<div id="regression" class="section level2">
+<h2><span class="header-section-number">5.4</span> Regression</h2>
 <p>Parallel processing with doMC registerDoMC() getDoParWorkers()</p>
+</div>
 <div id="example-one" class="section level2">
-<h2><span class="header-section-number">5.1</span> Example one</h2>
+<h2><span class="header-section-number">5.5</span> Example one</h2>
 </div>
 <div id="example-two" class="section level2">
-<h2><span class="header-section-number">5.2</span> Example two</h2>
+<h2><span class="header-section-number">5.6</span> Example two</h2>
+</div>
+<div id="curse-of-dimensionality" class="section level2">
+<h2><span class="header-section-number">5.7</span> Curse of dimensionality</h2>
+<p>Pre-processing data using dimensionality reduction.</p>
 </div>
 <div id="exercises-2" class="section level2">
-<h2><span class="header-section-number">5.3</span> Exercises</h2>
+<h2><span class="header-section-number">5.8</span> Exercises</h2>
+<div id="knnEx1" class="section level3">
+<h3><span class="header-section-number">5.8.1</span> Exercise 1</h3>
+<p>Classification</p>
+</div>
+<div id="knnEx2" class="section level3">
+<h3><span class="header-section-number">5.8.2</span> Exercise 2</h3>
+<p>Regression</p>
+<p>Alzheimers &amp; gene expression? MMSE and gene expression?</p>
 <p>Solutions to exercises can be found in appendix <a href="solutions-nearest-neighbours.html#solutions-nearest-neighbours">D</a>.</p>
 
+</div>
 </div>
 </div>
             </section>
