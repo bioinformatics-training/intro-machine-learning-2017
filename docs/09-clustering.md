@@ -656,12 +656,6 @@ plot_clusters(noisy_moons, res, 2)
 diff_density <- as.data.frame(read.csv("data/example_clusters/different_density.csv", header=F))
 res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 ```
-
-```
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-```
 Failure to converge, so increase number of iterations.
 
 ```r
@@ -1279,7 +1273,7 @@ Load library required for calculating silhouette coefficients and plotting silho
 library(cluster)
 ```
 
-We are going to take another look at k-means clustering of the blobs data-set (figure \@ref(fig:kmeansRangeK)). Specifically we are going to see if silhouette analysis supports our original choice of k=3 as the optimum number of clusters (figure \@ref(fig:choosingK)).
+We are going to take another look at k-means clustering of the blobs data-set (figure \@ref(fig:kmeansRangeK)). Specifically we are going to see if silhouette analysis supports our original choice of k=3 as the optimum number of clusters (figure \@ref(fig:choosingKplot)).
 
 Silhouette analysis requires a minimum of two clusters, so we'll try values of k from 2 to 9.
 

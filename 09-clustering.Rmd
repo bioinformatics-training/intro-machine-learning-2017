@@ -931,7 +931,7 @@ Load library required for calculating silhouette coefficients and plotting silho
 library(cluster)
 ```
 
-We are going to take another look at k-means clustering of the blobs data-set (figure \@ref(fig:kmeansRangeK)). Specifically we are going to see if silhouette analysis supports our original choice of k=3 as the optimum number of clusters (figure \@ref(fig:choosingK)).
+We are going to take another look at k-means clustering of the blobs data-set (figure \@ref(fig:kmeansRangeK)). Specifically we are going to see if silhouette analysis supports our original choice of k=3 as the optimum number of clusters (figure \@ref(fig:choosingKplot)).
 
 Silhouette analysis requires a minimum of two clusters, so we'll try values of k from 2 to 9.
 ```{r echo=T}

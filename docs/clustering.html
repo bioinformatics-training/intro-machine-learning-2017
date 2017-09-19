@@ -824,9 +824,7 @@ Figure 10.18: K-means clustering of the noisy moons data set: scatterplot of clu
 <h4><span class="header-section-number">10.4.4.3</span> Different density</h4>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">diff_density &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/different_density.csv&quot;</span>, <span class="dt">header=</span>F))
 res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})</code></pre></div>
-<pre><code>## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations</code></pre>
+<pre><code>## Warning: did not converge in 10 iterations</code></pre>
 <p>Failure to converge, so increase number of iterations.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">iter.max=</span><span class="dv">20</span>, <span class="dt">nstart=</span><span class="dv">50</span>)})
 <span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
@@ -1241,7 +1239,7 @@ http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_anal
 <h3><span class="header-section-number">10.6.2</span> Example - k-means clustering of blobs data set</h3>
 <p>Load library required for calculating silhouette coefficients and plotting silhouettes.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cluster)</code></pre></div>
-<p>We are going to take another look at k-means clustering of the blobs data-set (figure <a href="clustering.html#fig:kmeansRangeK">10.13</a>). Specifically we are going to see if silhouette analysis supports our original choice of k=3 as the optimum number of clusters (figure <a href="#fig:choosingK"><strong>??</strong></a>).</p>
+<p>We are going to take another look at k-means clustering of the blobs data-set (figure <a href="clustering.html#fig:kmeansRangeK">10.13</a>). Specifically we are going to see if silhouette analysis supports our original choice of k=3 as the optimum number of clusters (figure <a href="clustering.html#fig:choosingKplot">10.14</a>).</p>
 <p>Silhouette analysis requires a minimum of two clusters, so we’ll try values of k from 2 to 9.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k &lt;-<span class="st"> </span><span class="dv">2</span>:<span class="dv">9</span></code></pre></div>
 <p>Create a palette of colours for plotting.</p>
