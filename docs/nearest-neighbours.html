@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-19">
+<meta name="date" content="2017-09-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -123,16 +123,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#introduction"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
 <li class="chapter" data-level="5.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#algorithm"><i class="fa fa-check"></i><b>5.2</b> Algorithm</a><ul>
 <li class="chapter" data-level="5.2.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#defining-nearest"><i class="fa fa-check"></i><b>5.2.1</b> Defining nearest</a></li>
-<li class="chapter" data-level="5.2.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#search"><i class="fa fa-check"></i><b>5.2.2</b> Search</a></li>
 </ul></li>
 <li class="chapter" data-level="5.3" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#classification"><i class="fa fa-check"></i><b>5.3</b> Classification</a></li>
 <li class="chapter" data-level="5.4" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#regression"><i class="fa fa-check"></i><b>5.4</b> Regression</a></li>
-<li class="chapter" data-level="5.5" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-one"><i class="fa fa-check"></i><b>5.5</b> Example one</a></li>
-<li class="chapter" data-level="5.6" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-two"><i class="fa fa-check"></i><b>5.6</b> Example two</a></li>
-<li class="chapter" data-level="5.7" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#curse-of-dimensionality"><i class="fa fa-check"></i><b>5.7</b> Curse of dimensionality</a></li>
-<li class="chapter" data-level="5.8" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#exercises-2"><i class="fa fa-check"></i><b>5.8</b> Exercises</a><ul>
-<li class="chapter" data-level="5.8.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#knnEx1"><i class="fa fa-check"></i><b>5.8.1</b> Exercise 1</a></li>
-<li class="chapter" data-level="5.8.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#knnEx2"><i class="fa fa-check"></i><b>5.8.2</b> Exercise 2</a></li>
+<li class="chapter" data-level="5.5" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#caret"><i class="fa fa-check"></i><b>5.5</b> Caret</a></li>
+<li class="chapter" data-level="5.6" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-one"><i class="fa fa-check"></i><b>5.6</b> Example one</a></li>
+<li class="chapter" data-level="5.7" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-two"><i class="fa fa-check"></i><b>5.7</b> Example two</a></li>
+<li class="chapter" data-level="5.8" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#curse-of-dimensionality"><i class="fa fa-check"></i><b>5.8</b> Curse of dimensionality</a></li>
+<li class="chapter" data-level="5.9" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#examples"><i class="fa fa-check"></i><b>5.9</b> Examples</a></li>
+<li class="chapter" data-level="5.10" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#exercises-2"><i class="fa fa-check"></i><b>5.10</b> Exercises</a><ul>
+<li class="chapter" data-level="5.10.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#knnEx1"><i class="fa fa-check"></i><b>5.10.1</b> Exercise 1</a></li>
+<li class="chapter" data-level="5.10.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#knnEx2"><i class="fa fa-check"></i><b>5.10.2</b> Exercise 2</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="decision-trees.html"><a href="decision-trees.html"><i class="fa fa-check"></i><b>6</b> Decision trees and random forests</a><ul>
@@ -269,6 +270,17 @@ SPLOM for displaying datasets with small number of variables
 FEATURE SELECTION
 filter methods  /  wrapper methods / genetic algorithms
 
+Refer to scikit learn
+
+FEATURE SCALING
+
+BIAS-VARIANCE TRADEOFF
+In statistics and machine learning, the bias–variance tradeoff (or dilemma) is the problem of simultaneously minimizing two sources of error that prevent supervised learning algorithms from generalizing beyond their training set[citation needed].:
+
+    The bias is error from erroneous assumptions in the learning algorithm. High bias can cause an algorithm to miss the relevant relations between features and target outputs (underfitting).
+    The variance is error from sensitivity to small fluctuations in the training set. High variance can cause an algorithm to model the random noise in the training data, rather than the intended outputs (overfitting).
+
+
 -->
 <div id="introduction" class="section level2">
 <h2><span class="header-section-number">5.1</span> Introduction</h2>
@@ -279,6 +291,8 @@ filter methods  /  wrapper methods / genetic algorithms
 <p>system.time k-d tree search vs linear search</p>
 <p>library(class)</p>
 <p>class::knn</p>
+<p>importance of centering a scaling</p>
+<p>increase in neighbours - increase in ties</p>
 </div>
 <div id="algorithm" class="section level2">
 <h2><span class="header-section-number">5.2</span> Algorithm</h2>
@@ -296,41 +310,167 @@ Figure 5.1: Euclidean distance.
 </p>
 </div>
 <div class="figure" style="text-align: center"><span id="fig:knnClassification"></span>
-<img src="images/knn_classification.svg" alt="Illustration of _k_-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object.  By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282" width="75%" />
+<img src="images/knn_classification.svg" alt="Illustration of _k_-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object. If k=3 (solid line circle) the test object is assigned to the red triangle class. If k=5 the test object is assigned to the blue square class.  By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282" width="75%" />
 <p class="caption">
-Figure 5.2: Illustration of <em>k</em>-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object. By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, <a href="https://commons.wikimedia.org/w/index.php?curid=2170282" class="uri">https://commons.wikimedia.org/w/index.php?curid=2170282</a>
+Figure 5.2: Illustration of <em>k</em>-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object. If k=3 (solid line circle) the test object is assigned to the red triangle class. If k=5 the test object is assigned to the blue square class. By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, <a href="https://commons.wikimedia.org/w/index.php?curid=2170282" class="uri">https://commons.wikimedia.org/w/index.php?curid=2170282</a>
 </p>
 </div>
-</div>
-<div id="search" class="section level3">
-<h3><span class="header-section-number">5.2.2</span> Search</h3>
 </div>
 </div>
 <div id="classification" class="section level2">
 <h2><span class="header-section-number">5.3</span> Classification</h2>
+<p>Error training vs cv vs test</p>
 </div>
 <div id="regression" class="section level2">
 <h2><span class="header-section-number">5.4</span> Regression</h2>
+</div>
+<div id="caret" class="section level2">
+<h2><span class="header-section-number">5.5</span> Caret</h2>
+<p>pre-processing identification of correlated predictors</p>
 <p>Parallel processing with doMC registerDoMC() getDoParWorkers()</p>
 </div>
 <div id="example-one" class="section level2">
-<h2><span class="header-section-number">5.5</span> Example one</h2>
+<h2><span class="header-section-number">5.6</span> Example one</h2>
+<p>Load data</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;data/example_binary_classification/bin_class_example.rda&quot;</span>)
+<span class="kw">str</span>(xtrain)</code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    400 obs. of  2 variables:
+##  $ V1: num  -0.223 0.944 2.36 1.846 1.732 ...
+##  $ V2: num  -1.153 -0.827 -0.128 2.014 -0.574 ...</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(xtest)</code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    400 obs. of  2 variables:
+##  $ V1: num  2.09 2.3 2.07 1.65 1.18 ...
+##  $ V2: num  -1.009 1.0947 0.1644 0.3243 -0.0277 ...</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(<span class="kw">as.factor</span>(ytrain))</code></pre></div>
+<pre><code>##   0   1 
+## 200 200</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(<span class="kw">as.factor</span>(ytest))</code></pre></div>
+<pre><code>##   0   1 
+## 200 200</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(GGally)
+<span class="kw">library</span>(RColorBrewer)
+point_shapes &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">15</span>,<span class="dv">17</span>)
+point_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">3</span>,<span class="st">&quot;Dark2&quot;</span>)
+point_size =<span class="st"> </span><span class="dv">2</span>
+
+<span class="kw">ggplot</span>(xtrain, <span class="kw">aes</span>(V1,V2)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[ytrain<span class="dv">+1</span>], <span class="dt">shape=</span>point_shapes[ytrain<span class="dv">+1</span>], 
+             <span class="dt">size=</span>point_size) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;train&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>() +
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">25</span>, <span class="dt">face=</span><span class="st">&quot;bold&quot;</span>), <span class="dt">axis.text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">15</span>),
+        <span class="dt">axis.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">20</span>,<span class="dt">face=</span><span class="st">&quot;bold&quot;</span>))
+
+<span class="kw">ggplot</span>(xtest, <span class="kw">aes</span>(V1,V2)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[ytest<span class="dv">+1</span>], <span class="dt">shape=</span>point_shapes[ytest<span class="dv">+1</span>], 
+             <span class="dt">size=</span>point_size) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;test&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>() +
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">25</span>, <span class="dt">face=</span><span class="st">&quot;bold&quot;</span>), <span class="dt">axis.text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">15</span>),
+        <span class="dt">axis.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">20</span>,<span class="dt">face=</span><span class="st">&quot;bold&quot;</span>))</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:simDataBinClassTrainTest"></span>
+<img src="04-nearest-neighbours_files/figure-html/simDataBinClassTrainTest-1.png" alt="Scatterplots of the simulated training and test data sets that will be used in the demonstration of binary classification using _k_-nn" width="50%" /><img src="04-nearest-neighbours_files/figure-html/simDataBinClassTrainTest-2.png" alt="Scatterplots of the simulated training and test data sets that will be used in the demonstration of binary classification using _k_-nn" width="50%" />
+<p class="caption">
+Figure 5.3: Scatterplots of the simulated training and test data sets that will be used in the demonstration of binary classification using <em>k</em>-nn
+</p>
+</div>
+<p>For <em>k</em>-nn classification and regression we will use the <strong>knn</strong> function in the package <strong>class</strong>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(class)</code></pre></div>
+<p><strong>Arguments to knn</strong></p>
+<p><code>train</code> : matrix or data frame of training set cases.</p>
+<p><code>test</code> : matrix or data frame of test set cases. A vector will be interpreted as a row vector for a single case.</p>
+<p><code>cl</code> : factor of true classifications of training set</p>
+<p><code>k</code> : number of neighbours considered.</p>
+<p><code>l</code> : minimum vote for definite decision, otherwise doubt. (More precisely, less than k-l dissenting votes are allowed, even if k is increased by ties.)</p>
+<p><code>prob</code> : If this is true, the proportion of the votes for the winning class are returned as attribute prob.</p>
+<p><code>use.all</code> : controls handling of ties. If true, all distances equal to the kth largest are included. If false, a random selection of distances equal to the kth is chosen to use exactly k neighbours.</p>
+<p>Training data set</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knn1train &lt;-<span class="st"> </span>class::<span class="kw">knn</span>(<span class="dt">train=</span>xtrain, <span class="dt">test=</span>xtrain, <span class="dt">cl=</span>ytrain, <span class="dt">k=</span><span class="dv">1</span>)
+<span class="kw">table</span>(ytrain,knn1train)</code></pre></div>
+<pre><code>##       knn1train
+## ytrain   0   1
+##      0 200   0
+##      1   0 200</code></pre>
+<p>Test data set</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knn1test &lt;-<span class="st"> </span>class::<span class="kw">knn</span>(<span class="dt">train=</span>xtrain, <span class="dt">test=</span>xtest, <span class="dt">cl=</span>ytrain, <span class="dt">k=</span><span class="dv">1</span>)
+<span class="kw">table</span>(ytest, knn1test)</code></pre></div>
+<pre><code>##      knn1test
+## ytest   0   1
+##     0 131  69
+##     1  81 119</code></pre>
+<p>When we have just two dimensions it is easy to visualize the decision boundary generated by the <em>k</em>-nn classifier. Obviously quite unusual to be dealing with just two variables, but we may have reduced a high dimensional dataset to just two dimensions using the techniques that will be discussed in chapter <a href="dimensionality-reduction.html#dimensionality-reduction">9</a>.</p>
+<p>Create a grid so we can predict across the full range of our variables V1 and V2.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gridSize &lt;-<span class="st"> </span><span class="dv">150</span> 
+v1limits &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">min</span>(<span class="kw">c</span>(xtrain[,<span class="dv">1</span>],xtest[,<span class="dv">1</span>])),<span class="kw">max</span>(<span class="kw">c</span>(xtrain[,<span class="dv">1</span>],xtest[,<span class="dv">1</span>])))
+tmpV1 &lt;-<span class="st"> </span><span class="kw">seq</span>(v1limits[<span class="dv">1</span>],v1limits[<span class="dv">2</span>],<span class="dt">len=</span>gridSize)
+v2limits &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">min</span>(<span class="kw">c</span>(xtrain[,<span class="dv">2</span>],xtest[,<span class="dv">2</span>])),<span class="kw">max</span>(<span class="kw">c</span>(xtrain[,<span class="dv">2</span>],xtest[,<span class="dv">2</span>])))
+tmpV2 &lt;-<span class="st"> </span><span class="kw">seq</span>(v2limits[<span class="dv">1</span>],v2limits[<span class="dv">2</span>],<span class="dt">len=</span>gridSize)
+xgrid &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(tmpV1,tmpV2)
+<span class="kw">names</span>(xgrid) &lt;-<span class="st"> </span><span class="kw">names</span>(xtrain)</code></pre></div>
+<p>Predict values of all elements of grid.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knn1grid &lt;-<span class="st"> </span>class::<span class="kw">knn</span>(<span class="dt">train=</span>xtrain, <span class="dt">test=</span>xgrid, <span class="dt">cl=</span>ytrain, <span class="dt">k=</span><span class="dv">1</span>)
+V3 &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">as.vector</span>(knn1grid))
+xgrid2 &lt;-<span class="st"> </span><span class="kw">cbind</span>(xgrid, V3)</code></pre></div>
+<p>Plot</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">point_shapes &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">15</span>,<span class="dv">17</span>)
+point_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">3</span>,<span class="st">&quot;Dark2&quot;</span>)
+point_size =<span class="st"> </span><span class="dv">2</span>
+<span class="co"># grid point 16</span>
+<span class="co"># grid point size =0.2</span>
+
+<span class="kw">ggplot</span>(xgrid, <span class="kw">aes</span>(V1,V2)) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[knn1grid], <span class="dt">shape=</span><span class="dv">16</span>, <span class="dt">size=</span><span class="fl">0.3</span>) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>xtrain, <span class="kw">aes</span>(V1,V2), <span class="dt">col=</span>point_colours[ytrain<span class="dv">+1</span>],
+             <span class="dt">shape=</span>point_shapes[ytrain<span class="dv">+1</span>], <span class="dt">size=</span>point_size) +
+<span class="st">  </span><span class="kw">geom_contour</span>(<span class="dt">data=</span>xgrid2, <span class="kw">aes</span>(<span class="dt">x=</span>V1, <span class="dt">y=</span>V2, <span class="dt">z=</span>V3), <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">5</span>), <span class="dt">col=</span><span class="st">&quot;grey30&quot;</span>) +
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;train&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>() +
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">25</span>, <span class="dt">face=</span><span class="st">&quot;bold&quot;</span>), <span class="dt">axis.text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">15</span>),
+        <span class="dt">axis.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">20</span>,<span class="dt">face=</span><span class="st">&quot;bold&quot;</span>))
+
+<span class="kw">ggplot</span>(xgrid, <span class="kw">aes</span>(V1,V2)) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[knn1grid], <span class="dt">shape=</span><span class="dv">16</span>, <span class="dt">size=</span><span class="fl">0.3</span>) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>xtest, <span class="kw">aes</span>(V1,V2), <span class="dt">col=</span>point_colours[ytest<span class="dv">+1</span>],
+             <span class="dt">shape=</span>point_shapes[ytrain<span class="dv">+1</span>], <span class="dt">size=</span>point_size) +
+<span class="st">  </span><span class="kw">geom_contour</span>(<span class="dt">data=</span>xgrid2, <span class="kw">aes</span>(<span class="dt">x=</span>V1, <span class="dt">y=</span>V2, <span class="dt">z=</span>V3), <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">5</span>), <span class="dt">col=</span><span class="st">&quot;grey30&quot;</span>) +
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;test&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>() +
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">25</span>, <span class="dt">face=</span><span class="st">&quot;bold&quot;</span>), <span class="dt">axis.text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">15</span>),
+        <span class="dt">axis.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">20</span>,<span class="dt">face=</span><span class="st">&quot;bold&quot;</span>))</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:simDataBinClassDecisionBoundaryK1"></span>
+<img src="04-nearest-neighbours_files/figure-html/simDataBinClassDecisionBoundaryK1-1.png" alt="Binary classification of the simulated training and test sets with _k_=1." width="50%" /><img src="04-nearest-neighbours_files/figure-html/simDataBinClassDecisionBoundaryK1-2.png" alt="Binary classification of the simulated training and test sets with _k_=1." width="50%" />
+<p class="caption">
+Figure 5.4: Binary classification of the simulated training and test sets with <em>k</em>=1.
+</p>
+</div>
 </div>
 <div id="example-two" class="section level2">
-<h2><span class="header-section-number">5.6</span> Example two</h2>
+<h2><span class="header-section-number">5.7</span> Example two</h2>
 </div>
 <div id="curse-of-dimensionality" class="section level2">
-<h2><span class="header-section-number">5.7</span> Curse of dimensionality</h2>
+<h2><span class="header-section-number">5.8</span> Curse of dimensionality</h2>
 <p>Pre-processing data using dimensionality reduction.</p>
+<p>transformation functionality in caret</p>
+</div>
+<div id="examples" class="section level2">
+<h2><span class="header-section-number">5.9</span> Examples</h2>
+<p>centre1 &lt;- read.csv(“data/serum_proteomics/male_centre1.csv”) centre2 &lt;- read.csv(“data/serum_proteomics/male_centre2.csv”)</p>
+<p>c1sub &lt;- centre1[,c(1,5,6,9,10)] c2sub &lt;- centre2[,c(1,5,6,9,10)]</p>
+<p>res &lt;- FNN::knn(c1sub[,2:5], c1sub[,2:5], cl=c1sub<span class="math inline">\(Diagnostic_group, k=1) table(c1sub\)</span>Diagnostic_group, res)</p>
+<p>res &lt;- FNN::knn(c1sub[,2:5], c2sub[,2:5], cl=c1sub<span class="math inline">\(Diagnostic_group, k=1) table(c2sub\)</span>Diagnostic_group, res)</p>
+<p>bias / variance trade-off</p>
+<p>include: division into training and test set preprocessing - illustrate with diagram</p>
 </div>
 <div id="exercises-2" class="section level2">
-<h2><span class="header-section-number">5.8</span> Exercises</h2>
+<h2><span class="header-section-number">5.10</span> Exercises</h2>
 <div id="knnEx1" class="section level3">
-<h3><span class="header-section-number">5.8.1</span> Exercise 1</h3>
+<h3><span class="header-section-number">5.10.1</span> Exercise 1</h3>
 <p>Classification</p>
+<p>Try different methods of feature selection</p>
 </div>
 <div id="knnEx2" class="section level3">
-<h3><span class="header-section-number">5.8.2</span> Exercise 2</h3>
+<h3><span class="header-section-number">5.10.2</span> Exercise 2</h3>
 <p>Regression</p>
 <p>Alzheimers &amp; gene expression? MMSE and gene expression?</p>
 <p>Solutions to exercises can be found in appendix <a href="solutions-nearest-neighbours.html#solutions-nearest-neighbours">D</a>.</p>

@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-09-19">
+<meta name="date" content="2017-09-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -123,16 +123,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#introduction"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
 <li class="chapter" data-level="5.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#algorithm"><i class="fa fa-check"></i><b>5.2</b> Algorithm</a><ul>
 <li class="chapter" data-level="5.2.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#defining-nearest"><i class="fa fa-check"></i><b>5.2.1</b> Defining nearest</a></li>
-<li class="chapter" data-level="5.2.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#search"><i class="fa fa-check"></i><b>5.2.2</b> Search</a></li>
 </ul></li>
 <li class="chapter" data-level="5.3" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#classification"><i class="fa fa-check"></i><b>5.3</b> Classification</a></li>
 <li class="chapter" data-level="5.4" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#regression"><i class="fa fa-check"></i><b>5.4</b> Regression</a></li>
-<li class="chapter" data-level="5.5" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-one"><i class="fa fa-check"></i><b>5.5</b> Example one</a></li>
-<li class="chapter" data-level="5.6" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-two"><i class="fa fa-check"></i><b>5.6</b> Example two</a></li>
-<li class="chapter" data-level="5.7" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#curse-of-dimensionality"><i class="fa fa-check"></i><b>5.7</b> Curse of dimensionality</a></li>
-<li class="chapter" data-level="5.8" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#exercises-2"><i class="fa fa-check"></i><b>5.8</b> Exercises</a><ul>
-<li class="chapter" data-level="5.8.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#knnEx1"><i class="fa fa-check"></i><b>5.8.1</b> Exercise 1</a></li>
-<li class="chapter" data-level="5.8.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#knnEx2"><i class="fa fa-check"></i><b>5.8.2</b> Exercise 2</a></li>
+<li class="chapter" data-level="5.5" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#caret"><i class="fa fa-check"></i><b>5.5</b> Caret</a></li>
+<li class="chapter" data-level="5.6" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-one"><i class="fa fa-check"></i><b>5.6</b> Example one</a></li>
+<li class="chapter" data-level="5.7" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#example-two"><i class="fa fa-check"></i><b>5.7</b> Example two</a></li>
+<li class="chapter" data-level="5.8" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#curse-of-dimensionality"><i class="fa fa-check"></i><b>5.8</b> Curse of dimensionality</a></li>
+<li class="chapter" data-level="5.9" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#examples"><i class="fa fa-check"></i><b>5.9</b> Examples</a></li>
+<li class="chapter" data-level="5.10" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#exercises-2"><i class="fa fa-check"></i><b>5.10</b> Exercises</a><ul>
+<li class="chapter" data-level="5.10.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#knnEx1"><i class="fa fa-check"></i><b>5.10.1</b> Exercise 1</a></li>
+<li class="chapter" data-level="5.10.2" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#knnEx2"><i class="fa fa-check"></i><b>5.10.2</b> Exercise 2</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="decision-trees.html"><a href="decision-trees.html"><i class="fa fa-check"></i><b>6</b> Decision trees and random forests</a><ul>
@@ -824,7 +825,13 @@ Figure 10.18: K-means clustering of the noisy moons data set: scatterplot of clu
 <h4><span class="header-section-number">10.4.4.3</span> Different density</h4>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">diff_density &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/different_density.csv&quot;</span>, <span class="dt">header=</span>F))
 res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})</code></pre></div>
-<pre><code>## Warning: did not converge in 10 iterations</code></pre>
+<pre><code>## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations</code></pre>
 <p>Failure to converge, so increase number of iterations.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">iter.max=</span><span class="dv">20</span>, <span class="dt">nstart=</span><span class="dv">50</span>)})
 <span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
