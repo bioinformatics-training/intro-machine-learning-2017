@@ -634,6 +634,24 @@ Figure 5.5: Misclassification errors as a function of neighbourhood size.
 </div>
 <div id="choosing-k" class="section level3">
 <h3><span class="header-section-number">5.2.6</span> Choosing <em>k</em></h3>
+<p>We will use the caret library.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(caret)</code></pre></div>
+<pre><code>## Loading required package: lattice</code></pre>
+<p><a href="http://cran.r-project.org/web/packages/caret/index.html">caret</a> has parallel processing built in. To take advantage of this feature we simply need to load the <a href="http://cran.r-project.org/web/packages/doMC/index.html">doMC</a> package and register workers:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(doMC)</code></pre></div>
+<pre><code>## Loading required package: foreach</code></pre>
+<pre><code>## Loading required package: iterators</code></pre>
+<pre><code>## Loading required package: parallel</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">registerDoMC</span>()</code></pre></div>
+<p>To find out how many cores we have registered we can use:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getDoParWorkers</span>()</code></pre></div>
+<pre><code>## [1] 2</code></pre>
+<strong>Cohen’s Kappa:</strong>
+<span class="math display" id="eq:kappa">\[\begin{equation}
+  Kappa = \frac{O-E}{1-E}
+  \tag{5.2}
+\end{equation}\]</span>
+<p>where <em>O</em> is the observed accuracy and <em>E</em> is the expected accuracy based on the marginal totals of the confusion matrix. Cohen’s Kappa takes values between -1 and 1; a value of zero indicates no agreement between the observed and predicted classes, while a value of one shows perfect concordance of the model prediction and the observed classes. If the prediction is in the opposite direction of the truth, a negative value will be obtained, but large negative values are rare in practice <span class="citation">(Kuhn and Johnson <a href="#ref-Kuhn2013">2013</a>)</span>.</p>
 </div>
 <div id="feature-selection" class="section level3">
 <h3><span class="header-section-number">5.2.7</span> Feature selection</h3>
@@ -694,6 +712,12 @@ preprocessing - illustrate with diagram
 <p>Solutions to exercises can be found in appendix <a href="solutions-nearest-neighbours.html#solutions-nearest-neighbours">D</a>.</p>
 
 </div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Kuhn2013">
+<p>Kuhn, Max, and Kjell Johnson. 2013. <em>Applied Predictive Modeling</em>. New York: Springer.</p>
 </div>
 </div>
             </section>

@@ -330,6 +330,59 @@ ggplot(misclass_errors, aes(x=k, y=error, group=set)) +
 
 ### Choosing _k_
 
+We will use the caret library.
+
+```r
+library(caret)
+```
+
+```
+## Loading required package: lattice
+```
+
+[caret](http://cran.r-project.org/web/packages/caret/index.html) has parallel processing built in. To take advantage of this feature we simply need to load the [doMC](http://cran.r-project.org/web/packages/doMC/index.html) package and register workers: 
+
+```r
+library(doMC)
+```
+
+```
+## Loading required package: foreach
+```
+
+```
+## Loading required package: iterators
+```
+
+```
+## Loading required package: parallel
+```
+
+```r
+registerDoMC()
+```
+
+To find out how many cores we have registered we can use:
+
+```r
+getDoParWorkers()
+```
+
+```
+## [1] 2
+```
+
+
+**Cohen's Kappa:**
+\begin{equation}
+  Kappa = \frac{O-E}{1-E}
+  (\#eq:kappa)
+\end{equation}
+
+where _O_ is the observed accuracy and _E_ is the expected accuracy based on the marginal totals of the confusion matrix. Cohen's Kappa takes values between -1 and 1; a value of zero indicates no agreement between the observed and predicted classes, while a value of one shows perfect concordance of the model prediction and the observed classes. If the prediction is in the opposite direction of the truth, a negative value will be obtained, but large negative values are rare in practice [@Kuhn2013].
+
+
+
 ### Feature selection
 
 
