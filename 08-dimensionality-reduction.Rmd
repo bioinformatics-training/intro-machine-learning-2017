@@ -6,7 +6,7 @@
 # Dimensionality reduction {#dimensionality-reduction}
 >>>>>>> 634734233afdb3dfc9a40a09faa8cc06d917ce62
 
-Systems level measurments of gene expression such as those generated from collections of microarrays and RNA-sequencing experiments are increasingly used to understand complex biologial systems. In the past, studies based on bulk measurments have tended to provide observations for many variables (expression of many genes) but relatively few samples e.g., time points or conditions. This imbalance between the number of variables and the number of observatins is referred to as large p, small n. Further to this, the presence of noise in the system means that statistical analyses can be difficult.
+Systems level measurments of gene expression from collections of microarrays and RNA-sequencing experiments are increasingly used to understand complex biologial systems. In the past, studies based on bulk measurments have tended to provide observations for many variables (expression of many genes) with relatively few samples e.g., time points or conditions. This imbalance between the number of variables and the number of observatins is referred to as large p, small n. Further to this, the presence of noise in the system means that statistical analyses can be difficult.
 
 With the rise of single cell RNA-sequencing (scRNA-seq), the scales of these datasets have shifted, providing measurments of many variables, with many samples, albeit from potentially heterogeneous population. The first scRNA-sequencing was done in 200? (Tang et al., ...) generating only one observation whereas in 2017, it is now routine to generate datasets with tens to hundreds of thousands of cells (Svensson, 2017). Indeed, the recent 10x Genomics million cell experiment (https://community.10xgenomics.com/t5/10x-Blog/Our-1-3-million-single-cell-dataset-is-ready-to-download/ba-p/276) sequenced over 1.3 million cells taken from the cortex, hippocampus and ventricular zone of embryonic mice. A key goal when dealing with datasets of these magnitude is the exploratory analysis to identify key subpopulations that may have been undetected using previous bulk measurements; another key goal lies in the identification the progression inherent to the dataset, by putting the cells into a particular ordering.
 
@@ -182,62 +182,25 @@ points(y2_5,type="p",col="tomato3")
 points(y2_6,type="p",col="tomato4")
 legend(-10, 10, legend=c("Ooc", "Zyg", "2C", "4C","Mor","Blast"), col=c("tomato", "tomato1", "tomato1", "tomato2","tomato3","tomato4"),pch="o", bty="n", cex=0.8)
 
-
 ### Other dimensionality reduction techniques
 
 A large number of alternative dimensionality reduction techniques exist with corresponding codebases in R. These include other nonliner dimensionality reduction techniques such as Gaussian Process Latent Variable Models (GPLVMs; Lawrence 2004; https://github.com/SheffieldML/vargplvm.git) and Isomap. RESOURCES.
 
 ## Dimensionality reduction and pseudotime algorithsm
 
-A 
+Primer on pseudotime.
+
+https://hemberg-lab.github.io/scRNA.seq.course/index.html
+
 tSNE is a particularly useful approach when dealing with large (potentially nonliner) datasets with unknown strucutre. It is frequently used as a starting point for pseudotime algorithms. Reference Martin Hembergs course for intro to pseudotime.
 
 However, as we have seen, there remains some intepretability issues in using these approaches for pseudotime ordering. In partciular the flexibility of the nonlinear warping means that the intepretation of the odering can be difficult. Furthermore, since most algorithms will artifically truncate the ...
 
-An alternative apporach that is particularly useful when dealing with time series annotated datasets attempts to tie the latent dimension to a meanigful parameter. Specifically, these approaches attempt to reduce teh dimension down to a single dimension, with that dimension anchored into to time points (Figure CX). Consequently, this approach
+An alternative apporach that is particularly useful when dealing with time series annotated datasets attempts to tie the latent dimension to a meanigful parameter. Specifically, these approaches attempt to reduce teh dimension down to a single dimension, with that dimension anchored into to time points (Figure CX). Consequently, this approach ... An example of this type of pseudotime ordering can be found in the DeLorean package of (Reid and Wernisch, 2016). Of course, ...
 
-An example of this type of pseudotime ordering can be found in the DeLorean package of (Reid and Wernisch, 2016). Of course, ...
-
-Pick out a few genes, say 30 or so and run DeLorean for 10000 iterations. 
-
-
-library("DeLorean")
-
-
-
-
-
-
-TEXT dump
-
-We first need to build an intuition for what is going on. A good illustrative example can be found in Ringnér (2008) where they have a simple two dimensional system, in which we have measured the expression of GATA3 and XBP1. MORE DETAILS. We can follow this experiment. First let's read in the expresion levels of from our dataset and plot the origianl data. The data is located as file XXXX and can be loaded in using the command:
-
-> y1<- load('')
-plot the data
-
-In Figure 1(a), below, we can directly visualise the behaviour of the system, by plotting the expression of these two genes, with the the x-axis representing the expression of GATA3, and the y-axis represents the expression of XBP1.
-
-Within R, principle component analysis can be easily applied to datasets using the inbuilt function prcomp. We can generate the principle components using the following line of code:
-
-> Y <- prcomp(X, scale = FALSE)
-
-explain options. Also explain the output variables.
-
-We can now plot the data, again, this time using the principle component axes. Note that all we have done, in this case, is find a new set of coordinates in which to represent the data, the x-axis now captures the maximal amount of variation, whilst the y-axis captures the next most amount of variation. Since we started witha 2 dimensional system, we have two principle components. For a N-dimensional system, we would end up with N principle components that indicate decreasing amount of variation.
-
-For our system we can check the amounnt of variation within the system using the comman
-
-> ...
-
-We can see that, in our case, principle component 1 captures the majority of the varition in the dataset, with principle component 2 capturing relatively litte. In this sense, principle component 2 is not *really* informative, and for the sake of intepretability we can choose to discard it. By doing so, we have reduced the dimension to a single one dimensional system.
+https://cran.r-project.org/web/packages/DeLorean/index.htmllibrary(DeLorean)
 
 <<<<<<< HEAD
-At this stage it is important to understand that although we have reduced the dimension of the system, the intepretation of the new axis requires some considerations. Wheras before we had a simpler intepretation, where each axis represented the expression level of a single gene, the new principle component axis is actually represents some linear combination of various genes. It can often be informative to look at what these genes are. 
-=======
-### GPLVMs with informative priors
-
-
-## Exercises
 
 Solutions to exercises can be found in appendix \@ref(solutions-dimensionality-reduction).
 >>>>>>> 634734233afdb3dfc9a40a09faa8cc06d917ce62

@@ -4,23 +4,31 @@ Solutions to exercises of chapter \@ref(dimensionality-reduction).
 
 ## Exercise 8.1
 
+We can read the data in using the following command:
+
 D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/PGC_transcriptomics/PGC_transcriptomics.csv", header = TRUE, sep = ",", row.names=1)
+
+This reads in the corresponding spreadsheet into the R environment as a data frame variable. We can interogate the data as follows:
+
+> D[1,]
+
+prints 
+
 
 ## Exercise 8.2
 
 B <- prcomp(t(D[4:nrow(D),1:ncol(D)]), center = TRUE, scale. = FALSE)
-
 
 y1 <- B$x[which(D[1,]==-1),1:2]
 y2 <- B$x[which(D[1,]==0),1:2]
 y3 <- B$x[which(D[1,]==1),1:2]
 y4 <- B$x[which(D[1,]==2),1:2]
 
-plot(y1,type="p",col="red",xlim=c(-45, 45),ylim=c(-45, 45))
+plot(y1,type="p",col="red",xlim=c(-100, 100),ylim=c(-50, 50))
 points(y2,type="p",col="black")
 points(y3,type="p",col="blue")
-points(y4,type="p",col="green", legend=c("Line 1"))
-legend(-40, 40, legend=c("ESC", "preimp", "PGC", "soma"), col=c("red", "black", "blue", "green"), pch="o", bty="n", cex=0.8)
+points(y4,type="p",col="green")
+legend(-95, 50, legend=c("ESC", "preimp", "PGC", "soma"), col=c("red", "black", "blue", "green"), pch="o", bty="n", cex=0.8)
 
 ## Exercise 8.3
 
@@ -31,7 +39,18 @@ text(B$rotation[,1:2], genenames, , cex = .4)
 
 ## Excercise 8.4. 
 
-Does the data sepearate well? Perform k-means cluster analysis on the data.
+clust <- kmeans(B$x[,1:2], 4, iter.max = 1000)
+
+Labels <- vector("character", ncol(D))
+
+Labels[which(D[1,]==-1)] = "ESC"
+Labels[which(D[1,]==0)] = "preimp"
+Labels[which(D[1,]==1)] = "PGC"
+Labels[which(D[1,]==2)] = "soma"
+
+rbind(Labels,clust$cluster)
+
+Notes: PGCs fall into one or more sepearate clusters. Soma seperate out well. ESCs and pre-implantation tend to fall into identical clusters. 
 
 ## Excercise 8.5.
 
@@ -58,9 +77,7 @@ points(y3,type="p",col="blue")
 points(y4,type="p",col="green")
 legend(-40, 40, legend=c("ESC", "preimp", "PGC", "soma"), col=c("red", "black", "blue", "green"),pch="o", bty="n", cex=0.8)
 
-
 ## Excercise 8.7.
-
 
 y2_1 <- tsne_model_1$Y[which(D[1,]==0 & D[3,]==1),1:2]
 y2_2 <- tsne_model_1$Y[which(D[1,]==0 & D[3,]==2),1:2]
@@ -76,3 +93,20 @@ points(y2_4,type="p",col="tomato2")
 points(y2_5,type="p",col="tomato3")
 points(y2_6,type="p",col="tomato4")
 legend(-10, 10, legend=c("Ooc", "Zyg", "2C", "4C","Mor","Blast"), col=c("tomato", "tomato1", "tomato1", "tomato2","tomato3","tomato4"),pch="o", bty="n", cex=0.8)
+
+## Excercise 8.8.
+
+Type  <- D[1,which(D[1,]==0 & D[3,]<7 & D[3,]>-1)]
+TPs    <- D[3,which(D[1,]==0 & D[3,]<7 & D[3,]>-1)]
+Labels <- vector("character", length(which(D[1,]==0 & D[3,]<7 & D[3,]>-1)))
+
+Labels[which(Type==0 & TPs==1)] = "Oocyte"
+Labels[which(Type==0 & TPs==2)] = "Zygote"
+Labels[which(Type==0 & TPs==3)] = "2C"
+Labels[which(Type==0 & TPs==4)] = "4C"
+Labels[which(Type==0 & TPs==5)] = "morula"
+Labels[which(Type==0 & TPs==6)] = "blast"
+
+clust <- kmeans(tsne_model_1$Y[which(D[1,]==0 & D[3,]<7 & D[3,]>-1),1:2], 4, iter.max = 1000)
+
+rbind(Labels,clust$cluster)
