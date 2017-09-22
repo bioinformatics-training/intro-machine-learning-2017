@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 # Linear and non linear (logistic) regression
+=======
+# Linear and non linear logistic regression {#logistic-regression}
+>>>>>>> 634734233afdb3dfc9a40a09faa8cc06d917ce62
 
 <!-- Chris -->
 
 
+<<<<<<< HEAD
 A large component of machine learning algor involveds either regression analysis or classification analysis. Within regression analysis we wish to find how one (or) more variables are influenced by another set of variables. Within classificaiton algorithms, the aim is to find out how a set of variables map to a discrete set of outputs. 
 
 Within this chapter we will cover linear and nonlinear regression and classification using examples from plant datasets. In particular we will be investigating the expression levels of the model plant Arabidopsis thaliana following infection with the necrotophic pathogen Botrytis cineara. Botrytis cinerea ...
@@ -101,3 +106,8 @@ library(caret)
 ## GP classification
 
 Example GP regression using kernlab
+=======
+## Exercises
+
+Solutions to exercises can be found in appendix \@ref(solutions-logistic-regression).
+>>>>>>> 634734233afdb3dfc9a40a09faa8cc06d917ce62

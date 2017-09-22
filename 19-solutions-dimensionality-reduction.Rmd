@@ -1,0 +1,78 @@
+# Solutions ch. 9 - Dimensionality reduction {#solutions-dimensionality-reduction}
+
+Solutions to exercises of chapter \@ref(dimensionality-reduction).
+
+## Exercise 8.1
+
+D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/PGC_transcriptomics/PGC_transcriptomics.csv", header = TRUE, sep = ",", row.names=1)
+
+## Exercise 8.2
+
+B <- prcomp(t(D[4:nrow(D),1:ncol(D)]), center = TRUE, scale. = FALSE)
+
+
+y1 <- B$x[which(D[1,]==-1),1:2]
+y2 <- B$x[which(D[1,]==0),1:2]
+y3 <- B$x[which(D[1,]==1),1:2]
+y4 <- B$x[which(D[1,]==2),1:2]
+
+plot(y1,type="p",col="red",xlim=c(-45, 45),ylim=c(-45, 45))
+points(y2,type="p",col="black")
+points(y3,type="p",col="blue")
+points(y4,type="p",col="green", legend=c("Line 1"))
+legend(-40, 40, legend=c("ESC", "preimp", "PGC", "soma"), col=c("red", "black", "blue", "green"), pch="o", bty="n", cex=0.8)
+
+## Exercise 8.3
+
+plot(B$rotation[,1:2],type="n",xlim=c(-0, 0.07),ylim=c(-0.04, -0.1))
+genenames <- rownames(D)
+genenames <- genenames[4:nrow(D)]
+text(B$rotation[,1:2], genenames, , cex = .4)
+
+## Excercise 8.4. 
+
+Does the data sepearate well? Perform k-means cluster analysis on the data.
+
+## Excercise 8.5.
+
+Perform a differential expression analysis between blastocyst cells and the PGCs.
+
+
+## Excercise 8.6. 
+
+Load in the single cell dataset from section ??? and run tSNE. Note: try a variety of perplexity values.
+
+D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/PGC_transcriptomics/PGC_transcriptomics.csv", header = TRUE, sep = ",", row.names=1)
+
+
+tsne_model_1 = Rtsne(as.matrix(t(D)), check_duplicates=FALSE, pca=TRUE, perplexity=100, theta=0.5, dims=2)
+
+y1 <- tsne_model_1$Y[which(D[1,]==-1),1:2]
+y2 <- tsne_model_1$Y[which(D[1,]==0),1:2]
+y3 <- tsne_model_1$Y[which(D[1,]==1),1:2]
+y4 <- tsne_model_1$Y[which(D[1,]==2),1:2]
+
+plot(y1,type="p",col="red",xlim=c(-45, 45),ylim=c(-45, 45))
+points(y2,type="p",col="black")
+points(y3,type="p",col="blue")
+points(y4,type="p",col="green")
+legend(-40, 40, legend=c("ESC", "preimp", "PGC", "soma"), col=c("red", "black", "blue", "green"),pch="o", bty="n", cex=0.8)
+
+
+## Excercise 8.7.
+
+
+y2_1 <- tsne_model_1$Y[which(D[1,]==0 & D[3,]==1),1:2]
+y2_2 <- tsne_model_1$Y[which(D[1,]==0 & D[3,]==2),1:2]
+y2_3 <- tsne_model_1$Y[which(D[1,]==0 & D[3,]==3),1:2]
+y2_4 <- tsne_model_1$Y[which(D[1,]==0 & D[3,]==4),1:2]
+y2_5 <- tsne_model_1$Y[which(D[1,]==0 & D[3,]==5),1:2]
+y2_6 <- tsne_model_1$Y[which(D[1,]==0 & D[3,]==6),1:2]
+
+plot(y2_1,type="p",col="tomato",xlim=c(-10, 0),ylim=c(-10, 10))
+points(y2_2,type="p",col="tomato1")
+points(y2_3,type="p",col="tomato1")
+points(y2_4,type="p",col="tomato2")
+points(y2_5,type="p",col="tomato3")
+points(y2_6,type="p",col="tomato4")
+legend(-10, 10, legend=c("Ooc", "Zyg", "2C", "4C","Mor","Blast"), col=c("tomato", "tomato1", "tomato1", "tomato2","tomato3","tomato4"),pch="o", bty="n", cex=0.8)

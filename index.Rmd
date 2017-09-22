@@ -1,6 +1,6 @@
 --- 
 title: "An Introduction to Machine Learning"
-author: "Sudhakaran Prabakaran, Matthew Wayland and Christopher Penfold"
+author: "Sudhakaran Prabakaran, Matt Wayland and Chris Penfold"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
