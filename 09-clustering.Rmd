@@ -143,7 +143,7 @@ Single <- c(0,hclustSingle$height)
 Complete <- c(0,hclustComplete$height)
 Average <- c(0,hclustAverage$height)
 Groups <- c("A,B,C,D,E", "(A,B),C,D,E", "(A,B),(C,E),D", "(A,B)(C,D,E)", "(A,B,C,D,E)")
-distanceMerge <- as.data.frame(cbind(Groups,Single,Complete,Average))
+distanceMerge <- data.frame(Groups,Single,Complete,Average)
 knitr::kable(
   distanceMerge, caption = 'Merge distances for objects in the example distance matrix using three different linkage methods.',
   booktabs = TRUE
@@ -981,7 +981,7 @@ avgS <- sapply(s, function(x){mean(x[,3])})
 ```
 Now we have the data we need to produce a barplot.
 ```{r silhouetteAllK, fig.cap='Barplot of the average silhouette coefficients resulting from k-means clustering of the blobs data-set using values of k from 1-9.', out.width='75%', fig.asp=0.7, fig.align='center', echo=T}
-dat <- as.data.frame(cbind(k, avgS))
+dat <- data.frame(k, avgS)
 ggplot(data=dat, aes(x=k, y=avgS)) + 
          geom_bar(stat="identity", fill="steelblue") +
   geom_text(aes(label=round(avgS,2)), vjust=1.6, color="white", size=3.5)+

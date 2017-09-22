@@ -11,7 +11,6 @@ cran_packages <- c("ggplot2",
 "dbscan",
 "cluster",
 "methods",
-"FNN",
 "devtools")
 
 # vector of bioconductor packages to be installed
