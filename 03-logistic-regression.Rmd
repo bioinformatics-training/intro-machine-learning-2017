@@ -1,3 +1,103 @@
-# Linear and non linear logistic regression
+# Linear and non linear (logistic) regression
 
 <!-- Chris -->
+
+
+A large component of machine learning algor involveds either regression analysis or classification analysis. Within regression analysis we wish to find how one (or) more variables are influenced by another set of variables. Within classificaiton algorithms, the aim is to find out how a set of variables map to a discrete set of outputs. 
+
+Within this chapter we will cover linear and nonlinear regression and classification using examples from plant datasets. In particular we will be investigating the expression levels of the model plant Arabidopsis thaliana following infection with the necrotophic pathogen Botrytis cineara. Botrytis cinerea ...
+
+The processed data is available on GEO under accession number ... and can be loaded using the GEOquery function. Due to time constraints a pre-processed version of data has been downloaded in the text file (...). The dataset is tab delimited text file with the fist two columns containging the gene names and microarray probe IDs, with the 
+
+MxN matrix
+
+Excercise 1.1. Load in the data and plot the gene expresison of the genes. Note that 
+
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+library(caret)
+library(mlbench)
+set.seed(1)
+
+## Regression {#regression}
+
+One of the simplest models to fit to data involves linear regression. Within linear regression we assume we have a simple model with the following form:
+
+$y = mx + c$
+
+For a given set of data, we will typically have a set of observations $\mathbf{x} = \{x_1,x_2,\ldots,x_n\}$ with a corresponding set of observations,  $\mathbf{y} = \{y_1,y_2,\ldots,y_n\}$, with the aim we can fit 
+
+Can do linear/polynomial regression in caret.
+
+Maybe regress gene expression against a regulator? Possible arc into networks. Better bet would be higher dimensional regression, and then look at parameters?
+
+## Polynomial regression {#polynomial}
+
+More complex
+
+$y = ax + bx^2 + c$
+
+$y = \sum_i a_i x^t + c$
+
+## Gaussian process regression
+
+Define nonlinear. Show with some examples. May need to bypass standard definitions due to time constraints. These can be supplementary along with the maths. Here focus on use. 
+
+$y = f(x)$
+
+where $f(x)$ represents some potentially nonlinear function. Gaussian process regression represents a way to estimate a distribution over functions ... 
+
+Example GP regression using kernlab
+
+## Fitting time series data using GPs and ML
+
+As with most machine learning approaches, GPs have been incorporated into easy to use packages. For example, we could repeat our example using caret package with the code:
+
+To illustrate example Gaussian Processes let's try to fit a function to a dataset. 
+
+D <- read.delim("/Users/christopher_penfold/Desktop/Misc/IDEAs_Sept_2015/Botrytis-Combo3-NDS.txt",sep="\t")
+
+## Differential expression analysis 
+
+Differential expression analysis is a way of determininig whether two sets of data are different. For example, if one measured the expression of a set of genes in two conditions, you could use an appropriate statistical test to determin whether the expression of those genes varied significantly in the two conditions. The most often used test are either Student's t-test or rank based test. Both tests however, are not appropriate for time series data, in which we have temporal information. 
+
+Gaussian processes represent a useufl way of test for the differences in genes expression for time series observations. Here we are using the machine learning approaches to fit a model, first to the one time series, the to the second time series, and finally to a combination of the time series. A related example of this kind of approach was introduced by Stegle et al. (2010), with extensions introduced by Rattray et al. (2016) and Penfold, Sybirna et al. (2017).
+
+Let's introduce 
+
+## Gaussian Processes for time local models
+
+
+Stegle et al. Rattray et al.
+
+install.packages("devtools")
+library(devtools)
+install_github("ManchesterBioinference/DEtime")
+
+import(DEtime)
+
+library(DEtime)
+
+### inport simulated dataset
+data(SimulatedData)
+
+### go on with the perturbation time point inference
+res <- DEtime_infer(ControlTimes = ControlTimes, ControlData = ControlData, PerturbedTimes = PerturbedTimes, PerturbedData = PerturbedData)
+
+### Print a summary of the results
+print_DEtime(res)
+### plot results for all the genes
+plot_DEtime(res)
+
+## Classificaiton
+
+Importance of classifiers.
+
+Infer regulators that identify infection levels in plants.
+
+## Logistic regression
+
+library(caret)
+
+## GP classification
+
+Example GP regression using kernlab
