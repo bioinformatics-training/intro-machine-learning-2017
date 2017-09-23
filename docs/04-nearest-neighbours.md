@@ -835,7 +835,7 @@ In this situation it is important to centre and scale each predictor. A predicto
 
 
 #### Resolving skewness
-Many of the predictors exhibit skewness, for example:
+Many of the predictors in the segmentation data set exhibit skewness, _i.e._ the distribution of their values is asymmetric, for example:
 
 ```r
 qplot(segmentationTrain$IntenCoocASMCh3, binwidth=0.1) + 
@@ -848,8 +848,37 @@ qplot(segmentationTrain$IntenCoocASMCh3, binwidth=0.1) +
 <p class="caption">(\#fig:segDataSkewness)Example of a predictor from the segmentation data set showing skewness.</p>
 </div>
 
+[caret](http://cran.r-project.org/web/packages/caret/index.html) provides various methods for transforming skewed variables to normality, including the Box-Cox (@BoxCox) and Yeo-Johnson (@YeoJohnson) transformations.
+
 #### Removal of correlated predictors
 
+Many of the variables in the segmentation data set are highly correlated.
+
+
+```r
+library(corrplot)
+corMat <- cor(segmentationTrain[,3:60])
+corrplot(corMat, order="hclust", tl.cex=0.4)
+```
+
+<div class="figure" style="text-align: center">
+<img src="04-nearest-neighbours_files/figure-html/segDataCorrelogram-1.png" alt="Correlogram of the segmentation data set." width="75%" />
+<p class="caption">(\#fig:segDataCorrelogram)Correlogram of the segmentation data set.</p>
+</div>
+
+
+```r
+highCorr <- findCorrelation(corMat, cutoff=0.75)
+length(highCorr)
+```
+
+```
+## [1] 31
+```
+
+```r
+segmentationTrain <- segmentationTrain[,-highCorr]
+```
 
 #### Dimensionality reduction
 In the case of data-sets comprised of many highly correlated variables, an alternative to removing correlated predictors is the transformation of the entire data set to a lower dimensional space, using a technique such as principal component analysis (PCA). Methods for dimensionality reduction will be explored in chapter \@ref(dimensionality-reduction).

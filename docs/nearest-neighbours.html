@@ -1029,7 +1029,7 @@ nzv</code></pre></div>
 </div>
 <div id="resolving-skewness" class="section level4">
 <h4><span class="header-section-number">5.2.7.5</span> Resolving skewness</h4>
-<p>Many of the predictors exhibit skewness, for example:</p>
+<p>Many of the predictors in the segmentation data set exhibit skewness, <em>i.e.</em> the distribution of their values is asymmetric, for example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">qplot</span>(segmentationTrain$IntenCoocASMCh3, <span class="dt">binwidth=</span><span class="fl">0.1</span>) +<span class="st"> </span>
 <span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;IntenCoocASMCh3&quot;</span>) +
 <span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
@@ -1039,9 +1039,24 @@ nzv</code></pre></div>
 Figure 5.10: Example of a predictor from the segmentation data set showing skewness.
 </p>
 </div>
+<p><a href="http://cran.r-project.org/web/packages/caret/index.html">caret</a> provides various methods for transforming skewed variables to normality, including the Box-Cox (<span class="citation">Box and Cox (<a href="#ref-BoxCox">1964</a>)</span>) and Yeo-Johnson (<span class="citation">Yeo and Johnson (<a href="#ref-YeoJohnson">2000</a>)</span>) transformations.</p>
 </div>
 <div id="removal-of-correlated-predictors" class="section level4">
 <h4><span class="header-section-number">5.2.7.6</span> Removal of correlated predictors</h4>
+<p>Many of the variables in the segmentation data set are highly correlated.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(corrplot)
+corMat &lt;-<span class="st"> </span><span class="kw">cor</span>(segmentationTrain[,<span class="dv">3</span>:<span class="dv">60</span>])
+<span class="kw">corrplot</span>(corMat, <span class="dt">order=</span><span class="st">&quot;hclust&quot;</span>, <span class="dt">tl.cex=</span><span class="fl">0.4</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:segDataCorrelogram"></span>
+<img src="04-nearest-neighbours_files/figure-html/segDataCorrelogram-1.png" alt="Correlogram of the segmentation data set." width="75%" />
+<p class="caption">
+Figure 5.11: Correlogram of the segmentation data set.
+</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">highCorr &lt;-<span class="st"> </span><span class="kw">findCorrelation</span>(corMat, <span class="dt">cutoff=</span><span class="fl">0.75</span>)
+<span class="kw">length</span>(highCorr)</code></pre></div>
+<pre><code>## [1] 31</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">segmentationTrain &lt;-<span class="st"> </span>segmentationTrain[,-highCorr]</code></pre></div>
 </div>
 <div id="dimensionality-reduction" class="section level4">
 <h4><span class="header-section-number">5.2.7.7</span> Dimensionality reduction</h4>
@@ -1127,6 +1142,12 @@ preprocessing - illustrate with diagram
 </div>
 <div id="ref-Hill2007">
 <p>Hill, Andrew A., Peter LaPan, Yizheng Li, and Steve Haney. 2007. “Impact of Image Segmentation on High-Content Screening Data Quality for Sk-Br-3 Cells.” <em>BMC Bioinformatics</em> 8 (1): 340. doi:<a href="https://doi.org/10.1186/1471-2105-8-340">10.1186/1471-2105-8-340</a>.</p>
+</div>
+<div id="ref-BoxCox">
+<p>Box, G. E. P., and D. R. Cox. 1964. “An analysis of transformations (with discussion).” <em>Journal of the Royal Statistical Society B</em> 26: 211–52.</p>
+</div>
+<div id="ref-YeoJohnson">
+<p>Yeo, I. K., and R. Johnson. 2000. “A new family of power transformations to improve normality or symmetry.” <em>Biometrika</em> 87: 954–59.</p>
 </div>
 </div>
             </section>

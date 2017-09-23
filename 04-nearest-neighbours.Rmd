@@ -452,17 +452,22 @@ qplot(segmentationTrain$IntenCoocASMCh3, binwidth=0.1) +
   theme_bw()
 ```
 
+[caret](http://cran.r-project.org/web/packages/caret/index.html) provides various methods for transforming skewed variables to normality, including the Box-Cox (@BoxCox) and Yeo-Johnson (@YeoJohnson) transformations.
+
 #### Removal of correlated predictors
 
+Many of the variables in the segmentation data set are highly correlated.
+
+```{r segDataCorrelogram, fig.cap='Correlogram of the segmentation data set.', out.width='75%', fig.asp=1, fig.align='center', echo=T}
+library(corrplot)
+corMat <- cor(segmentationTrain[,3:60])
+corrplot(corMat, order="hclust", tl.cex=0.4)
+```
+
 ```{r echo=T}
-corU <- cor(segmentationTrain[,3:60])
-
-preProc <- preProcess(segmentationTrain[,3:60], method=("YeoJohnson"))
-
-
-
-
-
+highCorr <- findCorrelation(corMat, cutoff=0.75)
+length(highCorr)
+segmentationTrain <- segmentationTrain[,-highCorr]
 ```
 
 #### Dimensionality reduction
