@@ -21,7 +21,12 @@ In section X we discuss how dimensionality reduction tecniques can be combiend w
 
 The most widely used form of dimensionality reduction is based on principle component analysis (PCA), which was introduced by Pearson in the early 1900's (cite), and indepedently discovered by Hotelling (1930). PCA has a long history of use in the biological sciences with early uses in the analysis of gene expression data (Vohradsky et al. 1997, Craig et al. 1997, Hilsenbeck et al. 1999).
 
-PCA is not a dimensionality reduction technique per se, but an alternative way of representing the data that more naturally captures the variance in the system. Specifically, it finds a new co-ordinate system, so that the new x-axis (the first principle component) is aligned along the direcion of greatest variance, with the y-axis aligned along the direction of second greatest variance (the second principle component), and so forth (Figure 1). At this stage there has been no inherent reduction in the dimensionality of the system, we have simply found a more natural way to represent the data.
+PCA is not a dimensionality reduction technique per se, but an alternative way of representing the data that more naturally captures the variance in the system. Specifically, it finds a new co-ordinate system, so that the new x-axis (the first principle component) is aligned along the direcion of greatest variance, with the y-axis aligned along the direction of second greatest variance (the second principle component), and so forth (Figure Figure \@ref(fig:PCAfig). At this stage there has been no inherent reduction in the dimensionality of the system, we have simply found a more natural way to represent the data.
+
+```{r PCAfig, fig.cap='Illustration of PCA', out.width='80%', fig.asp=.75, fig.align='center'}
+par(mar = c(4, 4, .1, .1))
+plot(pressure, type = 'b', pch = 19)
+```
 
 So why is this useuful? In many biological systems, we find that most of the variance in the system can be captured by relatively few principle components. That is, later principle components tend to be uninformative, and can be discarded. Typically, we might visualise on the first two or three principle components, allowing us to visualise a high-dimensional system in two or three dimensions.
 
