@@ -523,24 +523,74 @@ Figure 5.3: Scatterplots of the simulated training and test data sets that will 
 <li><code>prob</code> : If this is true, the proportion of the votes for the winning class are returned as attribute prob.</li>
 <li><code>use.all</code> : controls handling of ties. If true, all distances equal to the kth largest are included. If false, a random selection of distances equal to the kth is chosen to use exactly k neighbours.</li>
 </ul>
-<p>Perform <em>k</em>-nn on the training set with <em>k</em>=1</p>
+<p>Let us perform <em>k</em>-nn on the training set with <em>k</em>=1. We will use the <strong>confusionMatrix</strong> function from the <a href="http://cran.r-project.org/web/packages/caret/index.html">caret</a> package to summarize performance of the classifier.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(caret)</code></pre></div>
+<pre><code>## Loading required package: lattice</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knn1train &lt;-<span class="st"> </span>class::<span class="kw">knn</span>(<span class="dt">train=</span>xtrain, <span class="dt">test=</span>xtrain, <span class="dt">cl=</span>ytrain, <span class="dt">k=</span><span class="dv">1</span>)
-<span class="kw">table</span>(ytrain,knn1train)</code></pre></div>
-<pre><code>##       knn1train
-## ytrain   0   1
-##      0 200   0
-##      1   0 200</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="st">&quot;KNN prediction error for training set: &quot;</span>, <span class="dv">1</span>-<span class="kw">mean</span>(<span class="kw">as.numeric</span>(<span class="kw">as.vector</span>(knn1train))==ytrain), <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</code></pre></div>
-<pre><code>## KNN prediction error for training set:  0</code></pre>
-<p>Test data set</p>
+<span class="kw">confusionMatrix</span>(knn1train, ytrain)</code></pre></div>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction   0   1
+##          0 200   0
+##          1   0 200
+##                                      
+##                Accuracy : 1          
+##                  95% CI : (0.9908, 1)
+##     No Information Rate : 0.5        
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
+##                                      
+##                   Kappa : 1          
+##  Mcnemar&#39;s Test P-Value : NA         
+##                                      
+##             Sensitivity : 1.0        
+##             Specificity : 1.0        
+##          Pos Pred Value : 1.0        
+##          Neg Pred Value : 1.0        
+##              Prevalence : 0.5        
+##          Detection Rate : 0.5        
+##    Detection Prevalence : 0.5        
+##       Balanced Accuracy : 1.0        
+##                                      
+##        &#39;Positive&#39; Class : 0          
+## </code></pre>
+<!--
+table(ytrain,knn1train)
+cat("KNN prediction error for training set: ", 1-mean(as.numeric(as.vector(knn1train))==ytrain), "\n")
+-->
+<p>Now let use the training set to predict on the test set.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knn1test &lt;-<span class="st"> </span>class::<span class="kw">knn</span>(<span class="dt">train=</span>xtrain, <span class="dt">test=</span>xtest, <span class="dt">cl=</span>ytrain, <span class="dt">k=</span><span class="dv">1</span>)
-<span class="kw">table</span>(ytest, knn1test)</code></pre></div>
-<pre><code>##      knn1test
-## ytest   0   1
-##     0 131  69
-##     1  81 119</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="st">&quot;KNN prediction error for test set: &quot;</span>, <span class="dv">1</span>-<span class="kw">mean</span>(<span class="kw">as.numeric</span>(<span class="kw">as.vector</span>(knn1test))==ytest), <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</code></pre></div>
-<pre><code>## KNN prediction error for test set:  0.375</code></pre>
+<span class="kw">confusionMatrix</span>(knn1test, ytest)</code></pre></div>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction   0   1
+##          0 131  81
+##          1  69 119
+##                                           
+##                Accuracy : 0.625           
+##                  95% CI : (0.5755, 0.6726)
+##     No Information Rate : 0.5             
+##     P-Value [Acc &gt; NIR] : 3.266e-07       
+##                                           
+##                   Kappa : 0.25            
+##  Mcnemar&#39;s Test P-Value : 0.3691          
+##                                           
+##             Sensitivity : 0.6550          
+##             Specificity : 0.5950          
+##          Pos Pred Value : 0.6179          
+##          Neg Pred Value : 0.6330          
+##              Prevalence : 0.5000          
+##          Detection Rate : 0.3275          
+##    Detection Prevalence : 0.5300          
+##       Balanced Accuracy : 0.6250          
+##                                           
+##        &#39;Positive&#39; Class : 0               
+## </code></pre>
+<!--
+table(ytest, knn1test)
+cat("KNN prediction error for test set: ", 1-mean(as.numeric(as.vector(knn1test))==ytest), "\n")
+-->
 </div>
 <div id="plotting-decision-boundaries" class="section level3">
 <h3><span class="header-section-number">5.2.4</span> Plotting decision boundaries</h3>
@@ -636,7 +686,6 @@ Figure 5.5: Misclassification errors as a function of neighbourhood size.
 <h3><span class="header-section-number">5.2.6</span> Choosing <em>k</em></h3>
 <p>We will use the caret library.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(caret)</code></pre></div>
-<pre><code>## Loading required package: lattice</code></pre>
 <p><a href="http://cran.r-project.org/web/packages/caret/index.html">caret</a> has automatic parallel processing built in. To take advantage of this feature we simply need to load the <a href="http://cran.r-project.org/web/packages/doMC/index.html">doMC</a> package and register workers:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(doMC)</code></pre></div>
 <pre><code>## Loading required package: foreach</code></pre>
@@ -717,6 +766,35 @@ knnFit</code></pre></div>
 Figure 5.6: Accuracy (repeated cross-validation) as a function of neighbourhood size.
 </p>
 </div>
+<p>We can now evaluate how our model performs on the test set.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test_pred &lt;-<span class="st"> </span><span class="kw">predict</span>(knnFit, xtest)
+<span class="kw">confusionMatrix</span>(test_pred, ytest)</code></pre></div>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction   0   1
+##          0 154  68
+##          1  46 132
+##                                          
+##                Accuracy : 0.715          
+##                  95% CI : (0.668, 0.7588)
+##     No Information Rate : 0.5            
+##     P-Value [Acc &gt; NIR] : &lt;2e-16         
+##                                          
+##                   Kappa : 0.43           
+##  Mcnemar&#39;s Test P-Value : 0.0492         
+##                                          
+##             Sensitivity : 0.7700         
+##             Specificity : 0.6600         
+##          Pos Pred Value : 0.6937         
+##          Neg Pred Value : 0.7416         
+##              Prevalence : 0.5000         
+##          Detection Rate : 0.3850         
+##    Detection Prevalence : 0.5550         
+##       Balanced Accuracy : 0.7150         
+##                                          
+##        &#39;Positive&#39; Class : 0              
+## </code></pre>
 </div>
 <div id="feature-selection" class="section level3">
 <h3><span class="header-section-number">5.2.7</span> Feature selection</h3>
