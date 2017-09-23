@@ -524,7 +524,10 @@ transformations <- preProcess(segDataTrain,
                               cutoff=0.75)
 segDataTrain <- predict(transformations, segDataTrain)
 
+str(segDataTrain)
+```
 
+```{r echo=T}
 knnFit <- train(segDataTrain, segClassTrain, 
                 method="knn",
                 tuneGrid=tuneParam,
