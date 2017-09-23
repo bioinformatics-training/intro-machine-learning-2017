@@ -1,20 +1,23 @@
 <<<<<<< HEAD
 # Linear and non linear (logistic) regression
 =======
-# Linear and non linear logistic regression {#logistic-regression}
+# Linear and non linear regression and classification {#logistic-regression}
 >>>>>>> 634734233afdb3dfc9a40a09faa8cc06d917ce62
 
 <!-- Chris -->
 
 
 <<<<<<< HEAD
-A large component of machine learning algor involveds either regression analysis or classification analysis. Within regression analysis we wish to find how one (or) more variables are influenced by another set of variables. Within classificaiton algorithms, the aim is to find out how a set of variables map to a discrete set of outputs. 
 
-Within this chapter we will cover linear and nonlinear regression and classification using examples from plant datasets. In particular we will be investigating the expression levels of the model plant Arabidopsis thaliana following infection with the necrotophic pathogen Botrytis cineara. Botrytis cinerea ...
+A large component of machine learning involveds either regression analysis or classification analysis. Within regression analysis we wish to find how a particular continuous variable of interest, y, is influenced by another set of variables, x. Conceptually, this involves identifying a function that tells us the value of y given a observed x, for example, how the expression of a particular gene, y_i, changes over time, or as a function of the expression of itse regulators. In general, many applications in ML can be represented in terms of regression, including differential expression analysis and network inference.
+
+Classificaiton algorithms, on the other hand, deal with discrete (categorical) valued outpus. The aim, here is to the ability to learn how different input values, x, map to a particular group (category), and ultimately to assign categories to a new set of observations for which catagories have no yet been assigned.
+
+Within this chapter we will cover linear and nonlinear regression and classification using examples taken from plant datasets infected with pathogens. In particular we will be investigating the expression levels of the model plant Arabidopsis thaliana following infection with the necrotophic pathogen Botrytis cineara. Botrytis cinerea ...
 
 The processed data is available on GEO under accession number GSE39597. Due to time constraints a pre-processed version of data is available from /data/Arabidopsis/Arabidopsis_Botrytis.csv. The dataset is tab delimited text file with the fist columns containig gene names for 163 marker genes. Columns 2 through 49 contain processed gene expression values (see Windram et al., for full details). The first 24 columns of the data matrix represent contain the control gene expression in Arabidopsis leaves at time points 2h through 48h at 2 hourly intervals; the second 24 columns contain the gene expression levels in Arabidopsis leaves following infection with the necrotophic fungus, Botyris cinerea. 
 
-Excercise 1.1. Load in the data and plot the gene expresison of the genes.
+Excercise 1.1. Load in the data and plot the gene expresison of the genes, to visualise ...
 
 ```{r echo=F}
 genenames <- colnames(D)
@@ -83,6 +86,11 @@ https://www.r-bloggers.com/gaussian-process-regression-with-r/
 Define nonlinear. Show with some examples. May need to bypass standard definitions due to time constraints. These can be supplementary along with the maths. Here focus on use. 
 
 $y = f(x)$
+
+f ̄ = k⊤(K+σ2I)−1y, (2.25) ∗∗n
+V[f∗] = k(x∗, x∗) − k⊤∗ (K + σn2 I)−1k∗.
+
+logp(y|X) = −1y⊤(K+σ2I)−1y−1log|K+σ2I|−nlog2π
 
 where $f(x)$ represents some potentially nonlinear function. Gaussian process regression represents a way to estimate a distribution over functions ... 
 
@@ -227,7 +235,6 @@ As with most machine learning approaches, GPs have been incorporated into easy t
 
 To illustrate example Gaussian Processes let's try to fit a function to a dataset. 
 
-D <- read.delim("/Users/christopher_penfold/Desktop/Misc/IDEAs_Sept_2015/Botrytis-Combo3-NDS.txt",sep="\t")
 
 ## Differential expression analysis 
 
@@ -249,6 +256,23 @@ install_github("ManchesterBioinference/DEtime")
 import(DEtime)
 
 library(DEtime)
+
+
+res <- DEtime_infer(ControlTimes = Xs, ControlData = D[1:24,2], PerturbedTimes = Xs, PerturbedData = D[25:48,2])
+print_DEtime
+plot_DEtime(res)
+
+res_rank <- DEtime_rank(ControlTimes = ControlTimes, ControlData = ControlData, PerturbedTimes, PerturbedData=PerturbedData, savefile=TRUE)
+idx <- which(res_rank[,2]>1)
+
+
+res <- DEtime_infer(ControlTimes = Xs, ControlData = t(D[1:24,]), PerturbedTimes = Xs, PerturbedData = t(D[25:48,]))
+print_DEtime
+plot_DEtime(res)
+
+hist(as.numeric(res$result[,2]))
+
+hist(as.numeric(res$result[,2]),breaks=20)
 
 ### inport simulated dataset
 data(SimulatedData)
