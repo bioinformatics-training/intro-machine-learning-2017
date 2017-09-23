@@ -324,7 +324,12 @@ We can plot accuracy (determined from repeated cross-validation) as a function o
 plot(knnFit)
 ```
 
-We can now evaluate how our classifier performs on the test set.
+We can also plot other performance metrics, such as Cohen's Kappa, using the **metric** argument.
+```{r cvKappaFunK, fig.cap='Cohen\'s Kappa (repeated cross-validation) as a function of neighbourhood size.', out.width='100%', fig.asp=0.6, fig.align='center', echo=T}
+plot(knnFit, metric="Kappa")
+```
+
+Let us now evaluate how our classifier performs on the test set.
 ```{r echo=T}
 test_pred <- predict(knnFit, xtest)
 confusionMatrix(test_pred, ytest)
@@ -376,11 +381,17 @@ ggplot(xgrid, aes(V1,V2)) +
         axis.title=element_text(size=20,face="bold"))
 ```
 
+### Data pre-processing
+Cell segmentation example [@Hill2007]
+
+```{r imageSegmentationHCS, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340"}
+knitr::include_graphics("images/Hill_2007_cell_segmentation.jpg")
+```
 
 ### Feature selection
 
 
-
+Data pre-processing
 
 
 

@@ -510,7 +510,18 @@ plot(knnFit)
 <p class="caption">(\#fig:cvAccuracyFunK)Accuracy (repeated cross-validation) as a function of neighbourhood size.</p>
 </div>
 
-We can now evaluate how our classifier performs on the test set.
+We can also plot other performance metrics, such as Cohen's Kappa, using the **metric** argument.
+
+```r
+plot(knnFit, metric="Kappa")
+```
+
+<div class="figure" style="text-align: center">
+<img src="04-nearest-neighbours_files/figure-html/cvKappaFunK-1.png" alt="Cohen's Kappa (repeated cross-validation) as a function of neighbourhood size." width="100%" />
+<p class="caption">(\#fig:cvKappaFunK)Cohen's Kappa (repeated cross-validation) as a function of neighbourhood size.</p>
+</div>
+
+Let us now evaluate how our classifier performs on the test set.
 
 ```r
 test_pred <- predict(knnFit, xtest)
@@ -599,11 +610,18 @@ ggplot(xgrid, aes(V1,V2)) +
 <p class="caption">(\#fig:simDataBinClassDecisionBoundaryK83)Binary classification of the simulated training and test sets with _k_=83.</p>
 </div>
 
+### Data pre-processing
+Cell segmentation example [@Hill2007]
+
+<div class="figure" style="text-align: center">
+<img src="images/Hill_2007_cell_segmentation.jpg" alt="Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340" width="75%" />
+<p class="caption">(\#fig:imageSegmentationHCS)Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340</p>
+</div>
 
 ### Feature selection
 
 
-
+Data pre-processing
 
 
 

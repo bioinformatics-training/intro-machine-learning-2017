@@ -130,7 +130,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.2.4" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#plotting-decision-boundaries"><i class="fa fa-check"></i><b>5.2.4</b> Plotting decision boundaries</a></li>
 <li class="chapter" data-level="5.2.5" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#bias-variance-tradeoff"><i class="fa fa-check"></i><b>5.2.5</b> Bias-variance tradeoff</a></li>
 <li class="chapter" data-level="5.2.6" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#choosing-k"><i class="fa fa-check"></i><b>5.2.6</b> Choosing <em>k</em></a></li>
-<li class="chapter" data-level="5.2.7" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#feature-selection"><i class="fa fa-check"></i><b>5.2.7</b> Feature selection</a></li>
+<li class="chapter" data-level="5.2.7" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#data-pre-processing"><i class="fa fa-check"></i><b>5.2.7</b> Data pre-processing</a></li>
+<li class="chapter" data-level="5.2.8" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#feature-selection"><i class="fa fa-check"></i><b>5.2.8</b> Feature selection</a></li>
 </ul></li>
 <li class="chapter" data-level="5.3" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#regression"><i class="fa fa-check"></i><b>5.3</b> Regression</a></li>
 <li class="chapter" data-level="5.4" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#exercises-2"><i class="fa fa-check"></i><b>5.4</b> Exercises</a><ul>
@@ -764,7 +765,15 @@ knnFit</code></pre></div>
 Figure 5.6: Accuracy (repeated cross-validation) as a function of neighbourhood size.
 </p>
 </div>
-<p>We can now evaluate how our classifier performs on the test set.</p>
+<p>We can also plot other performance metrics, such as Cohen’s Kappa, using the <strong>metric</strong> argument.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(knnFit, <span class="dt">metric=</span><span class="st">&quot;Kappa&quot;</span>)</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:cvKappaFunK"></span>
+<img src="04-nearest-neighbours_files/figure-html/cvKappaFunK-1.png" alt="Cohen's Kappa (repeated cross-validation) as a function of neighbourhood size." width="100%" />
+<p class="caption">
+Figure 5.7: Cohen’s Kappa (repeated cross-validation) as a function of neighbourhood size.
+</p>
+</div>
+<p>Let us now evaluate how our classifier performs on the test set.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test_pred &lt;-<span class="st"> </span><span class="kw">predict</span>(knnFit, xtest)
 <span class="kw">confusionMatrix</span>(test_pred, ytest)</code></pre></div>
 <pre><code>## Confusion Matrix and Statistics
@@ -832,12 +841,23 @@ point_size =<span class="st"> </span><span class="dv">2</span>
 <div class="figure" style="text-align: center"><span id="fig:simDataBinClassDecisionBoundaryK83"></span>
 <img src="04-nearest-neighbours_files/figure-html/simDataBinClassDecisionBoundaryK83-1.png" alt="Binary classification of the simulated training and test sets with _k_=83." width="50%" /><img src="04-nearest-neighbours_files/figure-html/simDataBinClassDecisionBoundaryK83-2.png" alt="Binary classification of the simulated training and test sets with _k_=83." width="50%" />
 <p class="caption">
-Figure 5.7: Binary classification of the simulated training and test sets with <em>k</em>=83.
+Figure 5.8: Binary classification of the simulated training and test sets with <em>k</em>=83.
+</p>
+</div>
+</div>
+<div id="data-pre-processing" class="section level3">
+<h3><span class="header-section-number">5.2.7</span> Data pre-processing</h3>
+<p>Cell segmentation example <span class="citation">(Hill et al. <a href="#ref-Hill2007">2007</a>)</span></p>
+<div class="figure" style="text-align: center"><span id="fig:imageSegmentationHCS"></span>
+<img src="images/Hill_2007_cell_segmentation.jpg" alt="Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340" width="75%" />
+<p class="caption">
+Figure 5.9: Image segmentation in high content screening. Images <strong>b</strong> and <strong>c</strong> are examples of well-segmented cells; <strong>d</strong> and <strong>e</strong> show poor-segmentation. Source: Hill(2007) <a href="https://doi.org/10.1186/1471-2105-8-340" class="uri">https://doi.org/10.1186/1471-2105-8-340</a>
 </p>
 </div>
 </div>
 <div id="feature-selection" class="section level3">
-<h3><span class="header-section-number">5.2.7</span> Feature selection</h3>
+<h3><span class="header-section-number">5.2.8</span> Feature selection</h3>
+<p>Data pre-processing</p>
 <p>Error training vs cv vs test</p>
 </div>
 </div>
@@ -901,6 +921,9 @@ preprocessing - illustrate with diagram
 <div id="refs" class="references">
 <div id="ref-Kuhn2013">
 <p>Kuhn, Max, and Kjell Johnson. 2013. <em>Applied Predictive Modeling</em>. New York: Springer.</p>
+</div>
+<div id="ref-Hill2007">
+<p>Hill, Andrew A., Peter LaPan, Yizheng Li, and Steve Haney. 2007. “Impact of Image Segmentation on High-Content Screening Data Quality for Sk-Br-3 Cells.” <em>BMC Bioinformatics</em> 8 (1): 340. doi:<a href="https://doi.org/10.1186/1471-2105-8-340">10.1186/1471-2105-8-340</a>.</p>
 </div>
 </div>
             </section>
