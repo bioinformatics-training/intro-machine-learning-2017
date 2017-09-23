@@ -93,10 +93,8 @@ As a nonparemtric approach, Gaussian processes essentially encode all ..
 
 https://www.r-bloggers.com/gaussian-process-regression-with-r/
 
-f ̄ = k⊤(K+σ2I)−1y, (2.25) ∗∗n
-V[f∗] = k(x∗, x∗) − k⊤∗ (K + σn2 I)−1k∗.
-
-logp(y|X) = −1y⊤(K+σ2I)−1y−1log|K+σ2I|−nlog2π
+$f_* = k_*^\top(K)^{-1} y$
+$f_* = k(x_*,x_*)^{-1} - k_*^\top (K)^{-1} k_*$
 
 Although the most complete GP toolboxes can be found in Matlab and Python, some GP toolboxes exist in R. In particular, notable resources such as https://www.r-bloggers.com/gaussian-process-regression-with-r/First have implemented a variety of of the gpml package. To better understand GPs we first load in some required packages.
 
@@ -109,7 +107,7 @@ require(ggplot2)
 
 Following https://www.r-bloggers.com/gaussian-process-regression-with-r/ we can define an R function to calculate the covariance function:
 
-$C(x,x^\prime) = \sigma^2 exp\biggl{(}\frac{=0.5 (x-x^\prime)^2}{l^2}\biggr{)}$. We can implement this:
+$C(x,x^\prime) = \sigma^2 exp\biggl{(}\frac{(x-x^\prime)^2}{2l^2}\biggr{)}$. We can implement this:
 
 ```{r echo=T}
 calcSigma <- function(X1,X2,l=1,sig=1) {
@@ -249,6 +247,7 @@ Differential expression analysis is a way of determininig whether two sets of da
 
 Gaussian processes represent a useufl way of test for the differences in genes expression for time series observations. Here we are using the machine learning approaches to fit a model, first to the one time series, the to the second time series, and finally to a combination of the time series. A related example of this kind of approach was introduced by Stegle et al. (2010), with extensions introduced by Rattray et al. (2016) and Penfold, Sybirna et al. (2017).
 
+Excercise 3.1: Use GPs for model selection.
 
 ### Differential expression analysis 
 
