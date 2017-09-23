@@ -287,8 +287,6 @@ Plot
 point_shapes <- c(15,17)
 point_colours <- brewer.pal(3,"Dark2")
 point_size = 2
-# grid point 16
-# grid point size =0.2
 
 ggplot(xgrid, aes(V1,V2)) +
   geom_point(col=point_colours[knn1grid], shape=16, size=0.3) +
@@ -322,8 +320,7 @@ The bias–variance tradeoff is the problem of simultaneously minimizing two sou
 * The bias is error from erroneous assumptions in the learning algorithm. High bias can cause an algorithm to miss the relevant relations between features and target outputs (underfitting).
 * The variance is error from sensitivity to small fluctuations in the training set. High variance can cause an algorithm to model the random noise in the training data, rather than the intended outputs (overfitting).
 
-
-Logarithmic spaced sequence function from [emdbook](https://cran.r-project.org/package=emdbook) package.
+To demonstrate this phenomenon, let us look at the performance of the _k_-nn classifier over a range of values of _k_.  First we will define a function to create a sequence of log spaced values. This is the **lseq** function from the [emdbook](https://cran.r-project.org/package=emdbook) package:
 
 ```r
 lseq <- function(from, to, length.out) {
@@ -513,7 +510,7 @@ plot(knnFit)
 <p class="caption">(\#fig:cvAccuracyFunK)Accuracy (repeated cross-validation) as a function of neighbourhood size.</p>
 </div>
 
-We can now evaluate how our model performs on the test set.
+We can now evaluate how our classifier performs on the test set.
 
 ```r
 test_pred <- predict(knnFit, xtest)
@@ -548,6 +545,60 @@ confusionMatrix(test_pred, ytest)
 ##        'Positive' Class : 0              
 ## 
 ```
+
+Scatterplots with decision boundaries can be plotted using the methods described earlier. First create a grid so we can predict across the full range of our variables V1 and V2:
+
+```r
+gridSize <- 150 
+v1limits <- c(min(c(xtrain[,1],xtest[,1])),max(c(xtrain[,1],xtest[,1])))
+tmpV1 <- seq(v1limits[1],v1limits[2],len=gridSize)
+v2limits <- c(min(c(xtrain[,2],xtest[,2])),max(c(xtrain[,2],xtest[,2])))
+tmpV2 <- seq(v2limits[1],v2limits[2],len=gridSize)
+xgrid <- expand.grid(tmpV1,tmpV2)
+names(xgrid) <- names(xtrain)
+```
+
+Predict values of all elements of grid.
+
+```r
+knn1grid <- predict(knnFit, xgrid)
+V3 <- as.numeric(as.vector(knn1grid))
+xgrid <- cbind(xgrid, V3)
+```
+
+Plot
+
+```r
+point_shapes <- c(15,17)
+point_colours <- brewer.pal(3,"Dark2")
+point_size = 2
+
+ggplot(xgrid, aes(V1,V2)) +
+  geom_point(col=point_colours[knn1grid], shape=16, size=0.3) +
+  geom_point(data=xtrain, aes(V1,V2), col=point_colours[ytrain+1],
+             shape=point_shapes[ytrain+1], size=point_size) +
+  geom_contour(data=xgrid, aes(x=V1, y=V2, z=V3), breaks=0.5, col="grey30") +
+  ggtitle("train") +
+  theme_bw() +
+  theme(plot.title = element_text(size=25, face="bold"), axis.text=element_text(size=15),
+        axis.title=element_text(size=20,face="bold"))
+
+ggplot(xgrid, aes(V1,V2)) +
+  geom_point(col=point_colours[knn1grid], shape=16, size=0.3) +
+  geom_point(data=xtest, aes(V1,V2), col=point_colours[ytest+1],
+             shape=point_shapes[ytrain+1], size=point_size) +
+  geom_contour(data=xgrid, aes(x=V1, y=V2, z=V3), breaks=0.5, col="grey30") +
+  ggtitle("test") +
+  theme_bw() +
+  theme(plot.title = element_text(size=25, face="bold"), axis.text=element_text(size=15),
+        axis.title=element_text(size=20,face="bold"))
+```
+
+<div class="figure" style="text-align: center">
+<img src="04-nearest-neighbours_files/figure-html/simDataBinClassDecisionBoundaryK83-1.png" alt="Binary classification of the simulated training and test sets with _k_=83." width="50%" /><img src="04-nearest-neighbours_files/figure-html/simDataBinClassDecisionBoundaryK83-2.png" alt="Binary classification of the simulated training and test sets with _k_=83." width="50%" />
+<p class="caption">(\#fig:simDataBinClassDecisionBoundaryK83)Binary classification of the simulated training and test sets with _k_=83.</p>
+</div>
+
 
 ### Feature selection
 

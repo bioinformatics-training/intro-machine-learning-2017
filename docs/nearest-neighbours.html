@@ -611,8 +611,6 @@ xgrid &lt;-<span class="st"> </span><span class="kw">cbind</span>(xgrid, V3)</co
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">point_shapes &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">15</span>,<span class="dv">17</span>)
 point_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">3</span>,<span class="st">&quot;Dark2&quot;</span>)
 point_size =<span class="st"> </span><span class="dv">2</span>
-<span class="co"># grid point 16</span>
-<span class="co"># grid point size =0.2</span>
 
 <span class="kw">ggplot</span>(xgrid, <span class="kw">aes</span>(V1,V2)) +
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[knn1grid], <span class="dt">shape=</span><span class="dv">16</span>, <span class="dt">size=</span><span class="fl">0.3</span>) +
@@ -647,7 +645,7 @@ Figure 5.4: Binary classification of the simulated training and test sets with <
 <li>The bias is error from erroneous assumptions in the learning algorithm. High bias can cause an algorithm to miss the relevant relations between features and target outputs (underfitting).</li>
 <li>The variance is error from sensitivity to small fluctuations in the training set. High variance can cause an algorithm to model the random noise in the training data, rather than the intended outputs (overfitting).</li>
 </ul>
-<p>Logarithmic spaced sequence function from <a href="https://cran.r-project.org/package=emdbook">emdbook</a> package.</p>
+<p>To demonstrate this phenomenon, let us look at the performance of the <em>k</em>-nn classifier over a range of values of <em>k</em>. First we will define a function to create a sequence of log spaced values. This is the <strong>lseq</strong> function from the <a href="https://cran.r-project.org/package=emdbook">emdbook</a> package:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lseq &lt;-<span class="st"> </span>function(from, to, length.out) {
   <span class="kw">exp</span>(<span class="kw">seq</span>(<span class="kw">log</span>(from), <span class="kw">log</span>(to), <span class="dt">length.out =</span> length.out))
 }</code></pre></div>
@@ -766,7 +764,7 @@ knnFit</code></pre></div>
 Figure 5.6: Accuracy (repeated cross-validation) as a function of neighbourhood size.
 </p>
 </div>
-<p>We can now evaluate how our model performs on the test set.</p>
+<p>We can now evaluate how our classifier performs on the test set.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test_pred &lt;-<span class="st"> </span><span class="kw">predict</span>(knnFit, xtest)
 <span class="kw">confusionMatrix</span>(test_pred, ytest)</code></pre></div>
 <pre><code>## Confusion Matrix and Statistics
@@ -795,6 +793,48 @@ Figure 5.6: Accuracy (repeated cross-validation) as a function of neighbourhood 
 ##                                          
 ##        &#39;Positive&#39; Class : 0              
 ## </code></pre>
+<p>Scatterplots with decision boundaries can be plotted using the methods described earlier. First create a grid so we can predict across the full range of our variables V1 and V2:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gridSize &lt;-<span class="st"> </span><span class="dv">150</span> 
+v1limits &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">min</span>(<span class="kw">c</span>(xtrain[,<span class="dv">1</span>],xtest[,<span class="dv">1</span>])),<span class="kw">max</span>(<span class="kw">c</span>(xtrain[,<span class="dv">1</span>],xtest[,<span class="dv">1</span>])))
+tmpV1 &lt;-<span class="st"> </span><span class="kw">seq</span>(v1limits[<span class="dv">1</span>],v1limits[<span class="dv">2</span>],<span class="dt">len=</span>gridSize)
+v2limits &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">min</span>(<span class="kw">c</span>(xtrain[,<span class="dv">2</span>],xtest[,<span class="dv">2</span>])),<span class="kw">max</span>(<span class="kw">c</span>(xtrain[,<span class="dv">2</span>],xtest[,<span class="dv">2</span>])))
+tmpV2 &lt;-<span class="st"> </span><span class="kw">seq</span>(v2limits[<span class="dv">1</span>],v2limits[<span class="dv">2</span>],<span class="dt">len=</span>gridSize)
+xgrid &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(tmpV1,tmpV2)
+<span class="kw">names</span>(xgrid) &lt;-<span class="st"> </span><span class="kw">names</span>(xtrain)</code></pre></div>
+<p>Predict values of all elements of grid.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knn1grid &lt;-<span class="st"> </span><span class="kw">predict</span>(knnFit, xgrid)
+V3 &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">as.vector</span>(knn1grid))
+xgrid &lt;-<span class="st"> </span><span class="kw">cbind</span>(xgrid, V3)</code></pre></div>
+<p>Plot</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">point_shapes &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">15</span>,<span class="dv">17</span>)
+point_colours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">3</span>,<span class="st">&quot;Dark2&quot;</span>)
+point_size =<span class="st"> </span><span class="dv">2</span>
+
+<span class="kw">ggplot</span>(xgrid, <span class="kw">aes</span>(V1,V2)) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[knn1grid], <span class="dt">shape=</span><span class="dv">16</span>, <span class="dt">size=</span><span class="fl">0.3</span>) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>xtrain, <span class="kw">aes</span>(V1,V2), <span class="dt">col=</span>point_colours[ytrain<span class="dv">+1</span>],
+             <span class="dt">shape=</span>point_shapes[ytrain<span class="dv">+1</span>], <span class="dt">size=</span>point_size) +
+<span class="st">  </span><span class="kw">geom_contour</span>(<span class="dt">data=</span>xgrid, <span class="kw">aes</span>(<span class="dt">x=</span>V1, <span class="dt">y=</span>V2, <span class="dt">z=</span>V3), <span class="dt">breaks=</span><span class="fl">0.5</span>, <span class="dt">col=</span><span class="st">&quot;grey30&quot;</span>) +
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;train&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>() +
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">25</span>, <span class="dt">face=</span><span class="st">&quot;bold&quot;</span>), <span class="dt">axis.text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">15</span>),
+        <span class="dt">axis.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">20</span>,<span class="dt">face=</span><span class="st">&quot;bold&quot;</span>))
+
+<span class="kw">ggplot</span>(xgrid, <span class="kw">aes</span>(V1,V2)) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">col=</span>point_colours[knn1grid], <span class="dt">shape=</span><span class="dv">16</span>, <span class="dt">size=</span><span class="fl">0.3</span>) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>xtest, <span class="kw">aes</span>(V1,V2), <span class="dt">col=</span>point_colours[ytest<span class="dv">+1</span>],
+             <span class="dt">shape=</span>point_shapes[ytrain<span class="dv">+1</span>], <span class="dt">size=</span>point_size) +
+<span class="st">  </span><span class="kw">geom_contour</span>(<span class="dt">data=</span>xgrid, <span class="kw">aes</span>(<span class="dt">x=</span>V1, <span class="dt">y=</span>V2, <span class="dt">z=</span>V3), <span class="dt">breaks=</span><span class="fl">0.5</span>, <span class="dt">col=</span><span class="st">&quot;grey30&quot;</span>) +
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;test&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>() +
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">25</span>, <span class="dt">face=</span><span class="st">&quot;bold&quot;</span>), <span class="dt">axis.text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">15</span>),
+        <span class="dt">axis.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">20</span>,<span class="dt">face=</span><span class="st">&quot;bold&quot;</span>))</code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:simDataBinClassDecisionBoundaryK83"></span>
+<img src="04-nearest-neighbours_files/figure-html/simDataBinClassDecisionBoundaryK83-1.png" alt="Binary classification of the simulated training and test sets with _k_=83." width="50%" /><img src="04-nearest-neighbours_files/figure-html/simDataBinClassDecisionBoundaryK83-2.png" alt="Binary classification of the simulated training and test sets with _k_=83." width="50%" />
+<p class="caption">
+Figure 5.7: Binary classification of the simulated training and test sets with <em>k</em>=83.
+</p>
+</div>
 </div>
 <div id="feature-selection" class="section level3">
 <h3><span class="header-section-number">5.2.7</span> Feature selection</h3>
