@@ -69,23 +69,23 @@ Can do linear/polynomial regression in caret.
 
 Maybe regress gene expression against a regulator? Possible arc into networks. Better bet would be higher dimensional regression, and then look at parameters?
 
-## Polynomial regression {#polynomial}
-
 More complex
 
 $y = ax + bx^2 + c$
 
 $y = \sum_i a_i x^t + c$
 
-
-
 ## Gaussian process regression
 
-https://www.r-bloggers.com/gaussian-process-regression-with-r/
+Overfitting.
 
 Define nonlinear. Show with some examples. May need to bypass standard definitions due to time constraints. These can be supplementary along with the maths. Here focus on use. 
 
 $y = f(x)$
+
+As a nonparemtric approach, Gaussian processes essentially encode all ..
+
+https://www.r-bloggers.com/gaussian-process-regression-with-r/
 
 f ̄ = k⊤(K+σ2I)−1y, (2.25) ∗∗n
 V[f∗] = k(x∗, x∗) − k⊤∗ (K + σn2 I)−1k∗.
@@ -94,72 +94,138 @@ logp(y|X) = −1y⊤(K+σ2I)−1y−1log|K+σ2I|−nlog2π
 
 where $f(x)$ represents some potentially nonlinear function. Gaussian process regression represents a way to estimate a distribution over functions ... 
 
-Some maths and demos. 
+The most comprehensive GP toolboxes are Matlab and Python, however, we can illustrate GPs in R. First we need to load in some packages:
 
+```{r echo=T}
 require(MASS)
 require(plyr)
 require(reshape2)
 require(ggplot2)
-calcSigma <- function(X1,X2,l=1) {
+```
+
+Following blog linke we can define a function to calculate the covariance function:
+
+```{r echo=T}
+calcSigma <- function(X1,X2,l=1,sigma=1) {
   Sigma <- matrix(rep(0, length(X1)*length(X2)), nrow=length(X1))
   for (i in 1:nrow(Sigma)) {
     for (j in 1:ncol(Sigma)) {
-      Sigma[i,j] <- exp(-0.5*(abs(X1[i]-X2[j])/l)^2)
+      Sigma[i,j] <- sigma*exp(-0.5*(abs(X1[i]-X2[j])/l)^2)
     }
   }
   return(Sigma)
 }
+```
 
-x.star <- seq(-5,5,len=50)
-sigma <- calcSigma(x.star,x.star)
-
-n.samples <- 3
-values <- matrix(rep(0,length(x.star)*n.samples), ncol=n.samples)
-for (i in 1:n.samples) {
-  # Each column represents a sample from a multivariate normal distribution
-  # with zero mean and covariance sigma
-  values[,i] <- mvrnorm(1, rep(0, length(x.star)), sigma)
-}
-values <- cbind(x=x.star,as.data.frame(values))
-values <- melt(values,id="x")
+We ca
 
 
-calcSigma <- function(X1,X2,l=1) {
-  Sigma <- matrix(rep(0, length(X1)*length(X2)), nrow=length(X1))
-  for (i in 1:nrow(Sigma)) {
-    for (j in 1:ncol(Sigma)) {
-      Sigma[i,j] <- exp(-0.5*(abs(X1[i]-X2[j])/l)^2)
-    }
-  }
-  return(Sigma)
-}
+```{r echo=T}
+x.star <- seq(-5,5,len=500) #Define a set of points at which to evaluate the functions
+sigma  <- calcSigma(x.star,x.star) #Evaluate the covariance function at those locations, to give the covariance matrix.
+```
 
-x.star <- seq(-5,5,len=50)
+We can generate samples from the prior and take a look at them:
 
-# Calculate the covariance matrix
-sigma <- calcSigma(x.star,x.star)
+```{r echo=T}
+y1 <- mvrnorm(1, rep(0, length(x.star)), sigma)
+y2 <- mvrnorm(1, rep(0, length(x.star)), sigma)
+y3 <- mvrnorm(1, rep(0, length(x.star)), sigma)
+```
 
-# Generate a number of functions from the process
-n.samples <- 3
-values <- matrix(rep(0,length(x.star)*n.samples), ncol=n.samples)
-for (i in 1:n.samples) {
-  # Each column represents a sample from a multivariate normal distribution
-  # with zero mean and covariance sigma
-  values[,i] <- mvrnorm(1, rep(0, length(x.star)), sigma)
-}
-values <- cbind(x=x.star,as.data.frame(values))
-values <- melt(values,id="x")
-ggplot(values,aes(x=x,y=value)) +
-  geom_rect(xmin=-Inf, xmax=Inf, ymin=-2, ymax=2, fill="grey80") +
-  geom_line(aes(group=variable)) +
-  theme_bw() +
-  scale_y_continuous(lim=c(-2.5,2.5), name="output, f(x)") +
-  xlab("input, x")
+What about inference? What is the GP doing? Essentially, the GP is representing the data in terms of the observation data and the hyperperameters. For simplicity, let's assume we have a function y = sin(x), and we have some observations. For example, we have an observation at x=-2.
+
+```{r echo=T}
+f <- data.frame(x=c(-2),
+                y=sin(c(-2)))
+```
+
+```{r echo=T}
+x <- f$x
+k.xx <- calcSigma(x,x)
+k.xxs <- calcSigma(x,x.star)
+k.xsx <- calcSigma(x.star,x)
+k.xsxs <- calcSigma(x.star,x.star)
+
+f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y  #Mean
+cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs #Var
+
+plot(x.star,sin(x.star),type = 'l',col="red",ylim=c(-2.2, 2.2))
+points(f,type='o')
+lines(x.star,f.star.bar,type = 'l')
+lines(x.star,f.star.bar+2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="black")
+lines(x.star,f.star.bar-2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="black")
+```
+
+We can start to add more observations. Here's what the posterior fit looks like if we include 4 observations (at x in [-4,-2,0,1]):
+
+```{r echo=F}
+f <- data.frame(x=c(-4,-2,0,1),
+                y=sin(c(-4,-2,0,1)))
+x <- f$x
+k.xx <- calcSigma(x,x)
+k.xxs <- calcSigma(x,x.star)
+k.xsx <- calcSigma(x.star,x)
+k.xsxs <- calcSigma(x.star,x.star)
+
+f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y  #Mean
+cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs #Var
+
+plot(x.star,sin(x.star),type = 'l',col="red",ylim=c(-2.2, 2.2))
+points(f,type='o')
+lines(x.star,f.star.bar,type = 'l')
+lines(x.star,f.star.bar+2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="black")
+lines(x.star,f.star.bar-2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="black")
+```
+
+And with 7 observations:
+
+```{r echo=F}
+f <- data.frame(x=c(-4,-3,-2,-1,0,1,2),
+                y=sin(c(-4,-3,-2,-1,0,1,2)))
+x <- f$x
+k.xx <- calcSigma(x,x)
+k.xxs <- calcSigma(x,x.star)
+k.xsx <- calcSigma(x.star,x)
+k.xsxs <- calcSigma(x.star,x.star)
+
+f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y  #Mean
+cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs #Var
+
+plot(x.star,sin(x.star),type = 'l',col="red",ylim=c(-2.2, 2.2))
+points(f,type='o')
+lines(x.star,f.star.bar,type = 'l')
+lines(x.star,f.star.bar+2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="black")
+lines(x.star,f.star.bar-2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="black")
+```
+
+We can see that the posterior GP starts to resemble the true underlying function very well. Over most of the x axis the mean of the GP lies very close to the true function and, perhaps more importantly, we have an treatment for the uncertainty. With the GP we can see where the model is relatively sure of the behaviour of the function, and we can see where the model is uncertain. We might, for example want to get observations at x = 4, where the posterior errorbars are greatest.
+
+Another key aspect of GP regression is the ability to evaluate marginal likelihood, sometimes called the "model evidence".  
+
+L = 
+```{r echo=T}
+calcML <- function(f,l=1,sigma=1) {
   
-  
-  
-  f <- data.frame(x=c(-4,-3,-1,0,2),
-                y=c(-2,0,1,2,-1))
+  f2 <- t(f)
+  yt <- f2[2,]
+  y  <- f[,2]
+  K <- calcSigma(f[,1],f[,1])
+  ML <- -0.5*yt%*%ginv(K)%*%y-0.5*log(det(K))-(length(f[,1])/2)*log(2*pi);
+  return(ML)
+}
+```
+
+
+c(2, 4, 3, 1, 5, 7), # the data elements 
++   nrow=2,              # number of rows 
++   ncol=3,              # number of columns 
++   byrow = TRUE)
+
+
+
+#### Tuning of hyperparameters
+
 
 # Calculate the covariance matrices
 # using the same x.star values as above
@@ -173,6 +239,20 @@ k.xsxs <- calcSigma(x.star,x.star)
 # in the book.
 f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y
 cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs
+
+If we have more datapoints, this allows us to become more certain about the behaviour of the system.
+
+plot(f.star.bar,type = 'l')
+lines(f.star.bar+2*sqrt(diag(cov.f.star)),type = 'l')
+lines(f.star.bar-2*sqrt(diag(cov.f.star)),type = 'l')
+
+ggplot(values,aes(x=x,y=value)) +
+  geom_rect(xmin=-Inf, xmax=Inf, ymin=-2, ymax=2, fill="grey80") +
+  geom_line(aes(group=variable)) +
+  theme_bw() +
+  scale_y_continuous(lim=c(-2.5,2.5), name="output, f(x)") +
+  xlab("input, x")
+
 
 # This time we'll plot more samples.  We could of course
 # simply plot a +/- 2 standard deviation confidence interval
