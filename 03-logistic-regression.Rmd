@@ -12,11 +12,17 @@ A large component of machine learning algor involveds either regression analysis
 
 Within this chapter we will cover linear and nonlinear regression and classification using examples from plant datasets. In particular we will be investigating the expression levels of the model plant Arabidopsis thaliana following infection with the necrotophic pathogen Botrytis cineara. Botrytis cinerea ...
 
-The processed data is available on GEO under accession number ... and can be loaded using the GEOquery function. Due to time constraints a pre-processed version of data has been downloaded in the text file (...). The dataset is tab delimited text file with the fist two columns containging the gene names and microarray probe IDs, with the 
+The processed data is available on GEO under accession number GSE39597. Due to time constraints a pre-processed version of data is available from /data/Arabidopsis/Arabidopsis_Botrytis.csv. The dataset is tab delimited text file with the fist columns containig gene names for 163 marker genes. Columns 2 through 49 contain processed gene expression values (see Windram et al., for full details). The first 24 columns of the data matrix represent contain the control gene expression in Arabidopsis leaves at time points 2h through 48h at 2 hourly intervals; the second 24 columns contain the gene expression levels in Arabidopsis leaves following infection with the necrotophic fungus, Botyris cinerea. 
 
-MxN matrix
+Excercise 1.1. Load in the data and plot the gene expresison of the genes.
 
-Excercise 1.1. Load in the data and plot the gene expresison of the genes. Note that 
+```{r echo=F}
+genenames <- colnames(D)
+geneindex <- 34
+D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/Arabidopsis/Arabidopsis_Botrytis_transpose.csv", header = TRUE, sep = ",", row.names=1)
+plot(t(D[geneindex,1:24]),type="p",col="black",ylim=c(min(D[geneindex,])-0.2, max(D[geneindex,]+0.2)),main=genenames[geneindex])
+points(t(D[geneindex,25:ncol(D)]),type="p",col="red")
+```
 
 install.packages("caret", dependencies = c("Depends", "Suggests"))
 library(caret)
@@ -31,6 +37,31 @@ $y = mx + c$
 
 For a given set of data, we will typically have a set of observations $\mathbf{x} = \{x_1,x_2,\ldots,x_n\}$ with a corresponding set of observations,  $\mathbf{y} = \{y_1,y_2,\ldots,y_n\}$, with the aim we can fit 
 
+plot(Xs,D[geneindex,25:ncol(D)])
+
+plot(Xs,D[geneindex,25:ncol(D)])
+Xs <- seq(from = 2, to = 48, by = 2)
+linmod <- train(y~., data=data.frame(x=Xs,y=D[geneindex,25:ncol(D)]), method = "lm")
+
+
+targetgene = "AT2G28890"
+
+ind=which(colnames(D)==targetgene)
+Xs <- seq(from = 2, to = 48, by = 2)
+Yvec <- D[25:nrow(D),ind]
+
+lm(AT2G28890~Time, data = D)
+
+lmFit<-train(AT2G28890~Time, data = D, method = "lm")
+predictedValues<-predict(lmFit)
+
+plot(Xs,D[25:nrow(D),ind],type="p",col="black",ylim=c(min(D[,ind])-0.2, max(D[,ind]+0.2)),main=genenames[ind])
+points(D$Time,predictedValues,type="l",col="black")
+
+summary(lmFit)
+
+model = train(AT2G28890~Time, data = D, method="rpart")
+
 Can do linear/polynomial regression in caret.
 
 Maybe regress gene expression against a regulator? Possible arc into networks. Better bet would be higher dimensional regression, and then look at parameters?
@@ -43,7 +74,11 @@ $y = ax + bx^2 + c$
 
 $y = \sum_i a_i x^t + c$
 
+
+
 ## Gaussian process regression
+
+https://www.r-bloggers.com/gaussian-process-regression-with-r/
 
 Define nonlinear. Show with some examples. May need to bypass standard definitions due to time constraints. These can be supplementary along with the maths. Here focus on use. 
 
@@ -51,7 +86,140 @@ $y = f(x)$
 
 where $f(x)$ represents some potentially nonlinear function. Gaussian process regression represents a way to estimate a distribution over functions ... 
 
+Some maths and demos. 
+
+require(MASS)
+require(plyr)
+require(reshape2)
+require(ggplot2)
+calcSigma <- function(X1,X2,l=1) {
+  Sigma <- matrix(rep(0, length(X1)*length(X2)), nrow=length(X1))
+  for (i in 1:nrow(Sigma)) {
+    for (j in 1:ncol(Sigma)) {
+      Sigma[i,j] <- exp(-0.5*(abs(X1[i]-X2[j])/l)^2)
+    }
+  }
+  return(Sigma)
+}
+
+x.star <- seq(-5,5,len=50)
+sigma <- calcSigma(x.star,x.star)
+
+n.samples <- 3
+values <- matrix(rep(0,length(x.star)*n.samples), ncol=n.samples)
+for (i in 1:n.samples) {
+  # Each column represents a sample from a multivariate normal distribution
+  # with zero mean and covariance sigma
+  values[,i] <- mvrnorm(1, rep(0, length(x.star)), sigma)
+}
+values <- cbind(x=x.star,as.data.frame(values))
+values <- melt(values,id="x")
+
+
+calcSigma <- function(X1,X2,l=1) {
+  Sigma <- matrix(rep(0, length(X1)*length(X2)), nrow=length(X1))
+  for (i in 1:nrow(Sigma)) {
+    for (j in 1:ncol(Sigma)) {
+      Sigma[i,j] <- exp(-0.5*(abs(X1[i]-X2[j])/l)^2)
+    }
+  }
+  return(Sigma)
+}
+
+x.star <- seq(-5,5,len=50)
+
+# Calculate the covariance matrix
+sigma <- calcSigma(x.star,x.star)
+
+# Generate a number of functions from the process
+n.samples <- 3
+values <- matrix(rep(0,length(x.star)*n.samples), ncol=n.samples)
+for (i in 1:n.samples) {
+  # Each column represents a sample from a multivariate normal distribution
+  # with zero mean and covariance sigma
+  values[,i] <- mvrnorm(1, rep(0, length(x.star)), sigma)
+}
+values <- cbind(x=x.star,as.data.frame(values))
+values <- melt(values,id="x")
+ggplot(values,aes(x=x,y=value)) +
+  geom_rect(xmin=-Inf, xmax=Inf, ymin=-2, ymax=2, fill="grey80") +
+  geom_line(aes(group=variable)) +
+  theme_bw() +
+  scale_y_continuous(lim=c(-2.5,2.5), name="output, f(x)") +
+  xlab("input, x")
+  
+  
+  
+  f <- data.frame(x=c(-4,-3,-1,0,2),
+                y=c(-2,0,1,2,-1))
+
+# Calculate the covariance matrices
+# using the same x.star values as above
+x <- f$x
+k.xx <- calcSigma(x,x)
+k.xxs <- calcSigma(x,x.star)
+k.xsx <- calcSigma(x.star,x)
+k.xsxs <- calcSigma(x.star,x.star)
+
+# These matrix calculations correspond to equation (2.19)
+# in the book.
+f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y
+cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs
+
+# This time we'll plot more samples.  We could of course
+# simply plot a +/- 2 standard deviation confidence interval
+# as in the book but I want to show the samples explicitly here.
+n.samples <- 50
+values <- matrix(rep(0,length(x.star)*n.samples), ncol=n.samples)
+for (i in 1:n.samples) {
+  values[,i] <- mvrnorm(1, f.star.bar, cov.f.star)
+}
+values <- cbind(x=x.star,as.data.frame(values))
+values <- melt(values,id="x")
+
+# Plot the results including the mean function
+# and constraining data points
+fig2b <- ggplot(values,aes(x=x,y=value)) +
+  geom_line(aes(group=variable), colour="grey80") +
+  geom_line(data=NULL,aes(x=x.star,y=f.star.bar),colour="red", size=1) + 
+  geom_point(data=f,aes(x=x,y=y)) +
+  theme_bw() +
+  scale_y_continuous(lim=c(-3,3), name="output, f(x)") +
+  xlab("input, x")
+
+# 3. Now assume that each of the observed data points have some
+# normally-distributed noise.
+
+# The standard deviation of the noise
+sigma.n <- 0.1
+
+# Recalculate the mean and covariance functions
+f.bar.star <- k.xsx%*%solve(k.xx + sigma.n^2*diag(1, ncol(k.xx)))%*%f$y
+cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx + sigma.n^2*diag(1, ncol(k.xx)))%*%k.xxs
+
+# Recalulate the sample functions
+values <- matrix(rep(0,length(x.star)*n.samples), ncol=n.samples)
+for (i in 1:n.samples) {
+  values[,i] <- mvrnorm(1, f.bar.star, cov.f.star)
+}
+values <- cbind(x=x.star,as.data.frame(values))
+values <- melt(values,id="x")
+  
+  
+  
+ggplot(values, aes(x=x,y=value)) + 
+   geom_point(data=f,aes(x=x,y=y)) +
+  xlab("input, x")
+
+
+
 Example GP regression using kernlab
+
+gausspr(Xs, D[25:nrow(D),35], type="classification", kernel="rbfdot",kpar=list(sigma = 0.1),var=1, tol=0.001, cross=0, fit=TRUE, ... , subset, na.action = na.omit)
+
+gpmodel<-gausspr(Xs, D[25:nrow(D),35], type="regression", kernel="rbfdot",kpar=list(sigma = 0.1),var=1, tol=0.001, cross=0, fit=TRUE)
+
+
 
 ## Fitting time series data using GPs and ML
 
@@ -103,9 +271,17 @@ Infer regulators that identify infection levels in plants.
 
 library(caret)
 
+In linear regression we tried to predict the value of y(i)
+ for the i
+‘th example x(i)
+ using a linear function y=hθ(x)=θ⊤x.
+. This is clearly not a great solution for predicting binary-valued labels (y(i)∈{0,1})
+. In logistic regression we use a different hypothesis class to try to predict the probability that a given example belongs to the “1” class versus the probability that it belongs to the “0” class. Specifically, we will try to learn a function of the form:
+
 ## GP classification
 
 Example GP regression using kernlab
+
 =======
 ## Exercises
 
