@@ -106,11 +106,11 @@ require(ggplot2)
 Following blog linke we can define a function to calculate the covariance function:
 
 ```{r echo=T}
-calcSigma <- function(X1,X2,l=1,sigma=1) {
+calcSigma <- function(X1,X2,l=1,sig=1) {
   Sigma <- matrix(rep(0, length(X1)*length(X2)), nrow=length(X1))
   for (i in 1:nrow(Sigma)) {
     for (j in 1:ncol(Sigma)) {
-      Sigma[i,j] <- sigma*exp(-0.5*(abs(X1[i]-X2[j])/l)^2)
+      Sigma[i,j] <- sig*exp(-0.5*(abs(X1[i]-X2[j])/l)^2)
     }
   }
   return(Sigma)
@@ -201,111 +201,37 @@ lines(x.star,f.star.bar-2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="
 
 We can see that the posterior GP starts to resemble the true underlying function very well. Over most of the x axis the mean of the GP lies very close to the true function and, perhaps more importantly, we have an treatment for the uncertainty. With the GP we can see where the model is relatively sure of the behaviour of the function, and we can see where the model is uncertain. We might, for example want to get observations at x = 4, where the posterior errorbars are greatest.
 
-Another key aspect of GP regression is the ability to evaluate marginal likelihood, sometimes called the "model evidence".  
+Another key aspect of GP regression is the ability to evaluate marginal likelihood, sometimes called the "model evidence". We can calculate the marginal likelihood using the snippet of code below:
 
-L = 
 ```{r echo=T}
-calcML <- function(f,l=1,sigma=1) {
-  
+calcML <- function(f,l=1,sig=1) {
   f2 <- t(f)
   yt <- f2[2,]
   y  <- f[,2]
-  K <- calcSigma(f[,1],f[,1])
-  ML <- -0.5*yt%*%ginv(K)%*%y-0.5*log(det(K))-(length(f[,1])/2)*log(2*pi);
+  K <- calcSigma(f[,1],f[,1],l,sig)
+  ML <- -0.5*yt%*%ginv(K)%*%y -0.5*log(det(K)) -(length(f[,1])/2)*log(2*pi);
   return(ML)
 }
 ```
 
+Crucially, by optimising the marginal we can automatically select the hyperparameters.
 
-c(2, 4, 3, 1, 5, 7), # the data elements 
-+   nrow=2,              # number of rows 
-+   ncol=3,              # number of columns 
-+   byrow = TRUE)
+```{r echo=T}
 
+par <- seq(0.1,10,by=0.05)
 
-
-#### Tuning of hyperparameters
-
-
-# Calculate the covariance matrices
-# using the same x.star values as above
-x <- f$x
-k.xx <- calcSigma(x,x)
-k.xxs <- calcSigma(x,x.star)
-k.xsx <- calcSigma(x.star,x)
-k.xsxs <- calcSigma(x.star,x.star)
-
-# These matrix calculations correspond to equation (2.19)
-# in the book.
-f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y
-cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs
-
-If we have more datapoints, this allows us to become more certain about the behaviour of the system.
-
-plot(f.star.bar,type = 'l')
-lines(f.star.bar+2*sqrt(diag(cov.f.star)),type = 'l')
-lines(f.star.bar-2*sqrt(diag(cov.f.star)),type = 'l')
-
-ggplot(values,aes(x=x,y=value)) +
-  geom_rect(xmin=-Inf, xmax=Inf, ymin=-2, ymax=2, fill="grey80") +
-  geom_line(aes(group=variable)) +
-  theme_bw() +
-  scale_y_continuous(lim=c(-2.5,2.5), name="output, f(x)") +
-  xlab("input, x")
-
-
-# This time we'll plot more samples.  We could of course
-# simply plot a +/- 2 standard deviation confidence interval
-# as in the book but I want to show the samples explicitly here.
-n.samples <- 50
-values <- matrix(rep(0,length(x.star)*n.samples), ncol=n.samples)
-for (i in 1:n.samples) {
-  values[,i] <- mvrnorm(1, f.star.bar, cov.f.star)
+for(i in 1:length(par)) {
+    ML[i] <- calcML(f,par[i],1)
 }
-values <- cbind(x=x.star,as.data.frame(values))
-values <- melt(values,id="x")
 
-# Plot the results including the mean function
-# and constraining data points
-fig2b <- ggplot(values,aes(x=x,y=value)) +
-  geom_line(aes(group=variable), colour="grey80") +
-  geom_line(data=NULL,aes(x=x.star,y=f.star.bar),colour="red", size=1) + 
-  geom_point(data=f,aes(x=x,y=y)) +
-  theme_bw() +
-  scale_y_continuous(lim=c(-3,3), name="output, f(x)") +
-  xlab("input, x")
+plot(par, ML,type = 'l',col="red")
 
-# 3. Now assume that each of the observed data points have some
-# normally-distributed noise.
-
-# The standard deviation of the noise
-sigma.n <- 0.1
-
-# Recalculate the mean and covariance functions
-f.bar.star <- k.xsx%*%solve(k.xx + sigma.n^2*diag(1, ncol(k.xx)))%*%f$y
-cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx + sigma.n^2*diag(1, ncol(k.xx)))%*%k.xxs
-
-# Recalulate the sample functions
-values <- matrix(rep(0,length(x.star)*n.samples), ncol=n.samples)
-for (i in 1:n.samples) {
-  values[,i] <- mvrnorm(1, f.bar.star, cov.f.star)
-}
-values <- cbind(x=x.star,as.data.frame(values))
-values <- melt(values,id="x")
-  
-  
-  
-ggplot(values, aes(x=x,y=value)) + 
-   geom_point(data=f,aes(x=x,y=y)) +
-  xlab("input, x")
+```
 
 
+#### Model Selection
 
-Example GP regression using kernlab
-
-gausspr(Xs, D[25:nrow(D),35], type="classification", kernel="rbfdot",kpar=list(sigma = 0.1),var=1, tol=0.001, cross=0, fit=TRUE, ... , subset, na.action = na.omit)
-
-gpmodel<-gausspr(Xs, D[25:nrow(D),35], type="regression", kernel="rbfdot",kpar=list(sigma = 0.1),var=1, tol=0.001, cross=0, fit=TRUE)
+The marginal likelihood can additionally be used as a basis for selecting models. For example studies by Stegle et al. (2010) used Gaussian processes to identify differential expression between two time series e.g., between a control time series and an infection time series. 
 
 
 
