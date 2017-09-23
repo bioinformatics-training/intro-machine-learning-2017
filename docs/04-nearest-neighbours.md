@@ -432,6 +432,7 @@ tc <- trainControl(method="repeatedcv",
 ```
 
 There are two options for choosing the values of _k_ to be evaluated by the **train** function:
+
 1. Pass a data.frame of values of _k_ to the **tuneGrid** argument of **train**.
 2. Specify the number of different levels of _k_ using the **tuneLength** function and allow **train** to pick the actual values.
 
@@ -611,23 +612,264 @@ ggplot(xgrid, aes(V1,V2)) +
 </div>
 
 ### Data pre-processing
-Cell segmentation example [@Hill2007]
+
+#### Cell segmentation data set
+Pre-processing will be demonstrated using the cell segmentation data of [@Hill2007]
 
 <div class="figure" style="text-align: center">
 <img src="images/Hill_2007_cell_segmentation.jpg" alt="Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340" width="75%" />
 <p class="caption">(\#fig:imageSegmentationHCS)Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340</p>
 </div>
 
+This data set is one of several included in [caret](http://cran.r-project.org/web/packages/caret/index.html).
+
+```r
+data(segmentationData)
+str(segmentationData)
+```
+
+```
+## 'data.frame':	2019 obs. of  61 variables:
+##  $ Cell                   : int  207827637 207932307 207932463 207932470 207932455 207827656 207827659 207827661 207932479 207932480 ...
+##  $ Case                   : Factor w/ 2 levels "Test","Train": 1 2 2 2 1 1 1 1 1 1 ...
+##  $ Class                  : Factor w/ 2 levels "PS","WS": 1 1 2 1 1 2 2 1 2 2 ...
+##  $ AngleCh1               : num  143.25 133.75 106.65 69.15 2.89 ...
+##  $ AreaCh1                : int  185 819 431 298 285 172 177 251 495 384 ...
+##  $ AvgIntenCh1            : num  15.7 31.9 28 19.5 24.3 ...
+##  $ AvgIntenCh2            : num  4.95 206.88 116.32 102.29 112.42 ...
+##  $ AvgIntenCh3            : num  9.55 69.92 63.94 28.22 20.47 ...
+##  $ AvgIntenCh4            : num  2.21 164.15 106.7 31.03 40.58 ...
+##  $ ConvexHullAreaRatioCh1 : num  1.12 1.26 1.05 1.2 1.11 ...
+##  $ ConvexHullPerimRatioCh1: num  0.92 0.797 0.935 0.866 0.957 ...
+##  $ DiffIntenDensityCh1    : num  29.5 31.9 32.5 26.7 31.6 ...
+##  $ DiffIntenDensityCh3    : num  13.8 43.1 36 22.9 21.7 ...
+##  $ DiffIntenDensityCh4    : num  6.83 79.31 51.36 26.39 25.03 ...
+##  $ EntropyIntenCh1        : num  4.97 6.09 5.88 5.42 5.66 ...
+##  $ EntropyIntenCh3        : num  4.37 6.64 6.68 5.44 5.29 ...
+##  $ EntropyIntenCh4        : num  2.72 7.88 7.14 5.78 5.24 ...
+##  $ EqCircDiamCh1          : num  15.4 32.3 23.4 19.5 19.1 ...
+##  $ EqEllipseLWRCh1        : num  3.06 1.56 1.38 3.39 2.74 ...
+##  $ EqEllipseOblateVolCh1  : num  337 2233 802 725 608 ...
+##  $ EqEllipseProlateVolCh1 : num  110 1433 583 214 222 ...
+##  $ EqSphereAreaCh1        : num  742 3279 1727 1195 1140 ...
+##  $ EqSphereVolCh1         : num  1901 17654 6751 3884 3621 ...
+##  $ FiberAlign2Ch3         : num  1 1.49 1.3 1.22 1.49 ...
+##  $ FiberAlign2Ch4         : num  1 1.35 1.52 1.73 1.38 ...
+##  $ FiberLengthCh1         : num  27 64.3 21.1 43.1 34.7 ...
+##  $ FiberWidthCh1          : num  7.41 13.17 21.14 7.4 8.48 ...
+##  $ IntenCoocASMCh3        : num  0.01118 0.02805 0.00686 0.03096 0.02277 ...
+##  $ IntenCoocASMCh4        : num  0.05045 0.01259 0.00614 0.01103 0.07969 ...
+##  $ IntenCoocContrastCh3   : num  40.75 8.23 14.45 7.3 15.85 ...
+##  $ IntenCoocContrastCh4   : num  13.9 6.98 16.7 13.39 3.54 ...
+##  $ IntenCoocEntropyCh3    : num  7.2 6.82 7.58 6.31 6.78 ...
+##  $ IntenCoocEntropyCh4    : num  5.25 7.1 7.67 7.2 5.5 ...
+##  $ IntenCoocMaxCh3        : num  0.0774 0.1532 0.0284 0.1628 0.1274 ...
+##  $ IntenCoocMaxCh4        : num  0.172 0.0739 0.0232 0.0775 0.2785 ...
+##  $ KurtIntenCh1           : num  -0.6567 -0.2488 -0.2935 0.6259 0.0421 ...
+##  $ KurtIntenCh3           : num  -0.608 -0.331 1.051 0.128 0.952 ...
+##  $ KurtIntenCh4           : num  0.726 -0.265 0.151 -0.347 -0.195 ...
+##  $ LengthCh1              : num  26.2 47.2 28.1 37.9 36 ...
+##  $ NeighborAvgDistCh1     : num  370 174 158 206 205 ...
+##  $ NeighborMinDistCh1     : num  99.1 30.1 34.9 33.1 27 ...
+##  $ NeighborVarDistCh1     : num  128 81.4 90.4 116.9 111 ...
+##  $ PerimCh1               : num  68.8 154.9 84.6 101.1 86.5 ...
+##  $ ShapeBFRCh1            : num  0.665 0.54 0.724 0.589 0.6 ...
+##  $ ShapeLWRCh1            : num  2.46 1.47 1.33 2.83 2.73 ...
+##  $ ShapeP2ACh1            : num  1.88 2.26 1.27 2.55 2.02 ...
+##  $ SkewIntenCh1           : num  0.455 0.399 0.472 0.882 0.517 ...
+##  $ SkewIntenCh3           : num  0.46 0.62 0.971 1 1.177 ...
+##  $ SkewIntenCh4           : num  1.233 0.527 0.325 0.604 0.926 ...
+##  $ SpotFiberCountCh3      : int  1 4 2 4 1 1 0 2 1 1 ...
+##  $ SpotFiberCountCh4      : num  5 12 7 8 8 5 5 8 12 8 ...
+##  $ TotalIntenCh1          : int  2781 24964 11552 5545 6603 53779 43950 4401 7593 6512 ...
+##  $ TotalIntenCh2          : num  701 160998 47511 28870 30306 ...
+##  $ TotalIntenCh3          : int  1690 54675 26344 8042 5569 21234 20929 4136 6488 7503 ...
+##  $ TotalIntenCh4          : int  392 128368 43959 8843 11037 57231 46187 373 24325 23162 ...
+##  $ VarIntenCh1            : num  12.5 18.8 17.3 13.8 15.4 ...
+##  $ VarIntenCh3            : num  7.61 56.72 37.67 30.01 20.5 ...
+##  $ VarIntenCh4            : num  2.71 118.39 49.47 24.75 45.45 ...
+##  $ WidthCh1               : num  10.6 32.2 21.2 13.4 13.2 ...
+##  $ XCentroid              : int  42 215 371 487 283 191 180 373 236 303 ...
+##  $ YCentroid              : int  14 347 252 295 159 127 138 181 467 468 ...
+```
+
+The second column of **segmentationData** is a factor showing how the observations were characterized into training and test sets in the original study. This column is irrelevant here, because we will perform our own partitioning of the data, and so can be deleted:
+
+```r
+segmentationData$Case <- NULL
+```
+
+Following removal of the *Case* column, **segmentationData** has 60 columns. The first column of is a unique identifier for each cell. The second column contains the class labels: *PS* (poorly-segmented) and *WS* (well-segmented). The remaining 58 columns are the features.
+
+#### Data splitting
+The first step in the analysis is to partition the data into training and test sets, using the **createDataPartition** function in [caret](http://cran.r-project.org/web/packages/caret/index.html).
+
+```r
+set.seed(42)
+trainIndex <- createDataPartition(y=segmentationData$Class, times=1, p=0.5, list=F)
+segmentationTrain <- segmentationData[trainIndex,]
+segmentationTest <- segmentationData[-trainIndex,] 
+```
+
+This results in balanced class distributions within the splits:
+
+```r
+summary(segmentationTrain$Class)
+```
+
+```
+##  PS  WS 
+## 650 360
+```
+
+```r
+summary(segmentationTest$Class)
+```
+
+```
+##  PS  WS 
+## 650 359
+```
+
+_**N.B. The test set is set aside for now. It will be used only ONCE, to test the final model.**_
+
+#### Removal of zero and near zero-variance predictors
+The function **nearZeroVar** identifies predictors that have one unique value. It also diagnoses predictors having both of the following characteristics:
+
+* very few unique values relative to the number of samples
+* the ratio of the frequency of the most common value to the frequency of the 2nd most common value is large.
+
+Such _zero and near zero-variance predictors_ have a deleterious impact on modelling and may lead to unstable fits.
+
+
+```r
+nzv <- nearZeroVar(segmentationTrain[,2:60], saveMetrics=T)
+nzv
+```
+
+```
+##                         freqRatio percentUnique zeroVar   nzv
+## Class                    1.805556     0.1980198   FALSE FALSE
+## AngleCh1                 1.000000   100.0000000   FALSE FALSE
+## AreaCh1                  1.083333    37.3267327   FALSE FALSE
+## AvgIntenCh1              1.000000   100.0000000   FALSE FALSE
+## AvgIntenCh2              3.000000    99.8019802   FALSE FALSE
+## AvgIntenCh3              1.000000   100.0000000   FALSE FALSE
+## AvgIntenCh4              2.000000    99.9009901   FALSE FALSE
+## ConvexHullAreaRatioCh1   1.000000    98.9108911   FALSE FALSE
+## ConvexHullPerimRatioCh1  1.000000   100.0000000   FALSE FALSE
+## DiffIntenDensityCh1      1.000000   100.0000000   FALSE FALSE
+## DiffIntenDensityCh3      1.000000   100.0000000   FALSE FALSE
+## DiffIntenDensityCh4      1.000000   100.0000000   FALSE FALSE
+## EntropyIntenCh1          1.000000   100.0000000   FALSE FALSE
+## EntropyIntenCh3          1.000000   100.0000000   FALSE FALSE
+## EntropyIntenCh4          1.000000   100.0000000   FALSE FALSE
+## EqCircDiamCh1            1.083333    37.3267327   FALSE FALSE
+## EqEllipseLWRCh1          1.000000    99.8019802   FALSE FALSE
+## EqEllipseOblateVolCh1    1.000000   100.0000000   FALSE FALSE
+## EqEllipseProlateVolCh1   1.000000   100.0000000   FALSE FALSE
+## EqSphereAreaCh1          1.083333    37.3267327   FALSE FALSE
+## EqSphereVolCh1           1.083333    37.3267327   FALSE FALSE
+## FiberAlign2Ch3           1.304348    94.8514851   FALSE FALSE
+## FiberAlign2Ch4           7.285714    94.3564356   FALSE FALSE
+## FiberLengthCh1           1.000000    95.8415842   FALSE FALSE
+## FiberWidthCh1            1.000000    95.8415842   FALSE FALSE
+## IntenCoocASMCh3          1.000000   100.0000000   FALSE FALSE
+## IntenCoocASMCh4          1.000000   100.0000000   FALSE FALSE
+## IntenCoocContrastCh3     1.000000   100.0000000   FALSE FALSE
+## IntenCoocContrastCh4     1.000000   100.0000000   FALSE FALSE
+## IntenCoocEntropyCh3      1.000000   100.0000000   FALSE FALSE
+## IntenCoocEntropyCh4      1.000000   100.0000000   FALSE FALSE
+## IntenCoocMaxCh3          1.250000    94.1584158   FALSE FALSE
+## IntenCoocMaxCh4          1.250000    94.3564356   FALSE FALSE
+## KurtIntenCh1             1.000000   100.0000000   FALSE FALSE
+## KurtIntenCh3             1.000000   100.0000000   FALSE FALSE
+## KurtIntenCh4             1.000000   100.0000000   FALSE FALSE
+## LengthCh1                2.000000    99.9009901   FALSE FALSE
+## NeighborAvgDistCh1       1.000000   100.0000000   FALSE FALSE
+## NeighborMinDistCh1       1.166667    41.0891089   FALSE FALSE
+## NeighborVarDistCh1       1.000000   100.0000000   FALSE FALSE
+## PerimCh1                 1.000000    63.7623762   FALSE FALSE
+## ShapeBFRCh1              1.000000   100.0000000   FALSE FALSE
+## ShapeLWRCh1              1.000000   100.0000000   FALSE FALSE
+## ShapeP2ACh1              1.000000    99.7029703   FALSE FALSE
+## SkewIntenCh1             1.000000   100.0000000   FALSE FALSE
+## SkewIntenCh3             1.000000   100.0000000   FALSE FALSE
+## SkewIntenCh4             1.000000   100.0000000   FALSE FALSE
+## SpotFiberCountCh3        1.212000     1.2871287   FALSE FALSE
+## SpotFiberCountCh4        1.152778     3.2673267   FALSE FALSE
+## TotalIntenCh1            1.000000    98.7128713   FALSE FALSE
+## TotalIntenCh2            1.500000    99.0099010   FALSE FALSE
+## TotalIntenCh3            1.000000    99.1089109   FALSE FALSE
+## TotalIntenCh4            1.000000    99.6039604   FALSE FALSE
+## VarIntenCh1              1.000000   100.0000000   FALSE FALSE
+## VarIntenCh3              1.000000   100.0000000   FALSE FALSE
+## VarIntenCh4              1.000000   100.0000000   FALSE FALSE
+## WidthCh1                 1.000000   100.0000000   FALSE FALSE
+## XCentroid                1.111111    41.5841584   FALSE FALSE
+## YCentroid                1.000000    35.7425743   FALSE FALSE
+```
+
+#### Centring and scaling
+The variables in this data set are on different scales, for example:
+
+```r
+summary(segmentationTrain$IntenCoocASMCh4)
+```
+
+```
+##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+## 0.004874 0.017250 0.049460 0.101600 0.121200 0.867800
+```
+
+```r
+summary(segmentationTrain$TotalIntenCh2)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##       1   15850   49650   53140   72300  362500
+```
+
+In this situation it is important to centre and scale each predictor. A predictor variable is centered by subtracting the mean of the predictor from each value. To scale a predictor variable, each value is divided by its standard deviation. After centring and scaling the predictor variable has a mean of 0 and a standard deviation of 1. Centring and scaling will be peformed within the cross-validation process.
+
+
+#### Resolving skewness
+Many of the predictors exhibit skewness, for example:
+
+```r
+qplot(segmentationTrain$IntenCoocASMCh3, binwidth=0.1) + 
+  xlab("IntenCoocASMCh3") +
+  theme_bw()
+```
+
+<div class="figure" style="text-align: center">
+<img src="04-nearest-neighbours_files/figure-html/segDataSkewness-1.png" alt="Example of a predictor from the segmentation data set showing skewness." width="75%" />
+<p class="caption">(\#fig:segDataSkewness)Example of a predictor from the segmentation data set showing skewness.</p>
+</div>
+
+#### Removal of correlated predictors
+
+
+#### Dimensionality reduction
+In the case of data-sets comprised of many highly correlated variables, an alternative to removing correlated predictors is the transformation of the entire data set to a lower dimensional space, using a technique such as principal component analysis (PCA). Methods for dimensionality reduction will be explored in chapter \@ref(dimensionality-reduction).
+
+
+
 ### Feature selection
 
-
-Data pre-processing
-
+#### Cross-validated performance without feature selection
 
 
+#### Methods
 
-Error
-training vs cv vs test
+
+#### Univariate (_t_-test) filter
+
+
+#### Recursive feature elimination
+
+
 
 ## Regression
 <!--

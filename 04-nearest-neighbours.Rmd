@@ -291,6 +291,7 @@ tc <- trainControl(method="repeatedcv",
 ```
 
 There are two options for choosing the values of _k_ to be evaluated by the **train** function:
+
 1. Pass a data.frame of values of _k_ to the **tuneGrid** argument of **train**.
 2. Specify the number of different levels of _k_ using the **tuneLength** function and allow **train** to pick the actual values.
 
@@ -382,22 +383,107 @@ ggplot(xgrid, aes(V1,V2)) +
 ```
 
 ### Data pre-processing
-Cell segmentation example [@Hill2007]
+
+#### Cell segmentation data set
+Pre-processing will be demonstrated using the cell segmentation data of [@Hill2007]
 
 ```{r imageSegmentationHCS, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340"}
 knitr::include_graphics("images/Hill_2007_cell_segmentation.jpg")
 ```
 
+This data set is one of several included in [caret](http://cran.r-project.org/web/packages/caret/index.html).
+```{r echo=T}
+data(segmentationData)
+str(segmentationData)
+```
+
+The second column of **segmentationData** is a factor showing how the observations were characterized into training and test sets in the original study. This column is irrelevant here, because we will perform our own partitioning of the data, and so can be deleted:
+```{r echo=T}
+segmentationData$Case <- NULL
+```
+
+Following removal of the *Case* column, **segmentationData** has 60 columns. The first column of is a unique identifier for each cell. The second column contains the class labels: *PS* (poorly-segmented) and *WS* (well-segmented). The remaining 58 columns are the features.
+
+#### Data splitting
+The first step in the analysis is to partition the data into training and test sets, using the **createDataPartition** function in [caret](http://cran.r-project.org/web/packages/caret/index.html).
+```{r echo=T}
+set.seed(42)
+trainIndex <- createDataPartition(y=segmentationData$Class, times=1, p=0.5, list=F)
+segmentationTrain <- segmentationData[trainIndex,]
+segmentationTest <- segmentationData[-trainIndex,] 
+```
+
+This results in balanced class distributions within the splits:
+```{r echo=T}
+summary(segmentationTrain$Class)
+summary(segmentationTest$Class)
+```
+
+_**N.B. The test set is set aside for now. It will be used only ONCE, to test the final model.**_
+
+#### Removal of zero and near zero-variance predictors
+The function **nearZeroVar** identifies predictors that have one unique value. It also diagnoses predictors having both of the following characteristics:
+
+* very few unique values relative to the number of samples
+* the ratio of the frequency of the most common value to the frequency of the 2nd most common value is large.
+
+Such _zero and near zero-variance predictors_ have a deleterious impact on modelling and may lead to unstable fits.
+
+```{r echo=T}
+nzv <- nearZeroVar(segmentationTrain[,2:60], saveMetrics=T)
+nzv
+```
+
+#### Centring and scaling
+The variables in this data set are on different scales, for example:
+```{r echo=T}
+summary(segmentationTrain$IntenCoocASMCh4)
+summary(segmentationTrain$TotalIntenCh2)
+```
+
+In this situation it is important to centre and scale each predictor. A predictor variable is centered by subtracting the mean of the predictor from each value. To scale a predictor variable, each value is divided by its standard deviation. After centring and scaling the predictor variable has a mean of 0 and a standard deviation of 1. Centring and scaling will be peformed within the cross-validation process.
+
+
+#### Resolving skewness
+Many of the predictors in the segmentation data set exhibit skewness, _i.e._ the distribution of their values is asymmetric, for example:
+```{r segDataSkewness, fig.cap='Example of a predictor from the segmentation data set showing skewness.', out.width='75%', fig.asp=0.9, fig.align='center', echo=T}
+qplot(segmentationTrain$IntenCoocASMCh3, binwidth=0.1) + 
+  xlab("IntenCoocASMCh3") +
+  theme_bw()
+```
+
+#### Removal of correlated predictors
+
+```{r echo=T}
+corU <- cor(segmentationTrain[,3:60])
+
+preProc <- preProcess(segmentationTrain[,3:60], method=("YeoJohnson"))
+
+
+
+
+
+```
+
+#### Dimensionality reduction
+In the case of data-sets comprised of many highly correlated variables, an alternative to removing correlated predictors is the transformation of the entire data set to a lower dimensional space, using a technique such as principal component analysis (PCA). Methods for dimensionality reduction will be explored in chapter \@ref(dimensionality-reduction).
+
+
+
 ### Feature selection
 
-
-Data pre-processing
-
+#### Cross-validated performance without feature selection
 
 
+#### Methods
 
-Error
-training vs cv vs test
+
+#### Univariate (_t_-test) filter
+
+
+#### Recursive feature elimination
+
+
 
 ## Regression
 <!--
