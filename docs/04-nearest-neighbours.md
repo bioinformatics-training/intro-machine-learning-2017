@@ -332,6 +332,11 @@ Get log spaced sequence of length 20, round and then remove any duplicates resul
 
 ```r
 s <- unique(round(lseq(1,400,20)))
+length(s)
+```
+
+```
+## [1] 19
 ```
 
 
@@ -692,29 +697,31 @@ str(segmentationData)
 ##  $ XCentroid              : int  42 215 371 487 283 191 180 373 236 303 ...
 ##  $ YCentroid              : int  14 347 252 295 159 127 138 181 467 468 ...
 ```
+The first column of **segmentationData** is a unique identifier for each cell and the second column is a factor indicating how the observations were characterized into training and test sets in the original study; these two variables are irrelevant for the purposes of this demonstration and so can be discarded. 
 
-The second column of **segmentationData** is a factor showing how the observations were characterized into training and test sets in the original study. This column is irrelevant here, because we will perform our own partitioning of the data, and so can be deleted:
+The third column *Case* contains the class labels: *PS* (poorly-segmented) and *WS* (well-segmented). Columns 4-61 are the 58 measurements available to be used as predictors. Let's put the class labels in a vector and the predictors in their own data.frame.
 
 ```r
-segmentationData$Case <- NULL
+segClass <- segmentationData$Class
+segData <- segmentationData[,4:61]
 ```
-
-Following removal of the *Case* column, **segmentationData** has 60 columns. The first column of is a unique identifier for each cell. The second column contains the class labels: *PS* (poorly-segmented) and *WS* (well-segmented). The remaining 58 columns are the features.
 
 #### Data splitting
 The first step in the analysis is to partition the data into training and test sets, using the **createDataPartition** function in [caret](http://cran.r-project.org/web/packages/caret/index.html).
 
 ```r
 set.seed(42)
-trainIndex <- createDataPartition(y=segmentationData$Class, times=1, p=0.5, list=F)
-segmentationTrain <- segmentationData[trainIndex,]
-segmentationTest <- segmentationData[-trainIndex,] 
+trainIndex <- createDataPartition(y=segClass, times=1, p=0.5, list=F)
+segDataTrain <- segData[trainIndex,]
+segDataTest <- segData[-trainIndex,]
+segClassTrain <- segClass[trainIndex]
+segClassTest <- segClass[-trainIndex]
 ```
 
 This results in balanced class distributions within the splits:
 
 ```r
-summary(segmentationTrain$Class)
+summary(segClassTrain)
 ```
 
 ```
@@ -723,7 +730,7 @@ summary(segmentationTrain$Class)
 ```
 
 ```r
-summary(segmentationTest$Class)
+summary(segClassTest)
 ```
 
 ```
@@ -743,78 +750,77 @@ Such _zero and near zero-variance predictors_ have a deleterious impact on model
 
 
 ```r
-nzv <- nearZeroVar(segmentationTrain[,2:60], saveMetrics=T)
+nzv <- nearZeroVar(segDataTrain, saveMetrics=T)
 nzv
 ```
 
 ```
 ##                         freqRatio percentUnique zeroVar   nzv
-## Class                    1.805556     0.1980198   FALSE FALSE
-## AngleCh1                 1.000000   100.0000000   FALSE FALSE
-## AreaCh1                  1.083333    37.3267327   FALSE FALSE
-## AvgIntenCh1              1.000000   100.0000000   FALSE FALSE
-## AvgIntenCh2              3.000000    99.8019802   FALSE FALSE
-## AvgIntenCh3              1.000000   100.0000000   FALSE FALSE
-## AvgIntenCh4              2.000000    99.9009901   FALSE FALSE
-## ConvexHullAreaRatioCh1   1.000000    98.9108911   FALSE FALSE
-## ConvexHullPerimRatioCh1  1.000000   100.0000000   FALSE FALSE
-## DiffIntenDensityCh1      1.000000   100.0000000   FALSE FALSE
-## DiffIntenDensityCh3      1.000000   100.0000000   FALSE FALSE
-## DiffIntenDensityCh4      1.000000   100.0000000   FALSE FALSE
-## EntropyIntenCh1          1.000000   100.0000000   FALSE FALSE
-## EntropyIntenCh3          1.000000   100.0000000   FALSE FALSE
-## EntropyIntenCh4          1.000000   100.0000000   FALSE FALSE
-## EqCircDiamCh1            1.083333    37.3267327   FALSE FALSE
-## EqEllipseLWRCh1          1.000000    99.8019802   FALSE FALSE
-## EqEllipseOblateVolCh1    1.000000   100.0000000   FALSE FALSE
-## EqEllipseProlateVolCh1   1.000000   100.0000000   FALSE FALSE
-## EqSphereAreaCh1          1.083333    37.3267327   FALSE FALSE
-## EqSphereVolCh1           1.083333    37.3267327   FALSE FALSE
-## FiberAlign2Ch3           1.304348    94.8514851   FALSE FALSE
-## FiberAlign2Ch4           7.285714    94.3564356   FALSE FALSE
-## FiberLengthCh1           1.000000    95.8415842   FALSE FALSE
-## FiberWidthCh1            1.000000    95.8415842   FALSE FALSE
-## IntenCoocASMCh3          1.000000   100.0000000   FALSE FALSE
-## IntenCoocASMCh4          1.000000   100.0000000   FALSE FALSE
-## IntenCoocContrastCh3     1.000000   100.0000000   FALSE FALSE
-## IntenCoocContrastCh4     1.000000   100.0000000   FALSE FALSE
-## IntenCoocEntropyCh3      1.000000   100.0000000   FALSE FALSE
-## IntenCoocEntropyCh4      1.000000   100.0000000   FALSE FALSE
-## IntenCoocMaxCh3          1.250000    94.1584158   FALSE FALSE
-## IntenCoocMaxCh4          1.250000    94.3564356   FALSE FALSE
-## KurtIntenCh1             1.000000   100.0000000   FALSE FALSE
-## KurtIntenCh3             1.000000   100.0000000   FALSE FALSE
-## KurtIntenCh4             1.000000   100.0000000   FALSE FALSE
-## LengthCh1                2.000000    99.9009901   FALSE FALSE
-## NeighborAvgDistCh1       1.000000   100.0000000   FALSE FALSE
-## NeighborMinDistCh1       1.166667    41.0891089   FALSE FALSE
-## NeighborVarDistCh1       1.000000   100.0000000   FALSE FALSE
-## PerimCh1                 1.000000    63.7623762   FALSE FALSE
-## ShapeBFRCh1              1.000000   100.0000000   FALSE FALSE
-## ShapeLWRCh1              1.000000   100.0000000   FALSE FALSE
-## ShapeP2ACh1              1.000000    99.7029703   FALSE FALSE
-## SkewIntenCh1             1.000000   100.0000000   FALSE FALSE
-## SkewIntenCh3             1.000000   100.0000000   FALSE FALSE
-## SkewIntenCh4             1.000000   100.0000000   FALSE FALSE
-## SpotFiberCountCh3        1.212000     1.2871287   FALSE FALSE
-## SpotFiberCountCh4        1.152778     3.2673267   FALSE FALSE
-## TotalIntenCh1            1.000000    98.7128713   FALSE FALSE
-## TotalIntenCh2            1.500000    99.0099010   FALSE FALSE
-## TotalIntenCh3            1.000000    99.1089109   FALSE FALSE
-## TotalIntenCh4            1.000000    99.6039604   FALSE FALSE
-## VarIntenCh1              1.000000   100.0000000   FALSE FALSE
-## VarIntenCh3              1.000000   100.0000000   FALSE FALSE
-## VarIntenCh4              1.000000   100.0000000   FALSE FALSE
-## WidthCh1                 1.000000   100.0000000   FALSE FALSE
-## XCentroid                1.111111    41.5841584   FALSE FALSE
-## YCentroid                1.000000    35.7425743   FALSE FALSE
+## AngleCh1                 1.000000    100.000000   FALSE FALSE
+## AreaCh1                  1.083333     37.326733   FALSE FALSE
+## AvgIntenCh1              1.000000    100.000000   FALSE FALSE
+## AvgIntenCh2              3.000000     99.801980   FALSE FALSE
+## AvgIntenCh3              1.000000    100.000000   FALSE FALSE
+## AvgIntenCh4              2.000000     99.900990   FALSE FALSE
+## ConvexHullAreaRatioCh1   1.000000     98.910891   FALSE FALSE
+## ConvexHullPerimRatioCh1  1.000000    100.000000   FALSE FALSE
+## DiffIntenDensityCh1      1.000000    100.000000   FALSE FALSE
+## DiffIntenDensityCh3      1.000000    100.000000   FALSE FALSE
+## DiffIntenDensityCh4      1.000000    100.000000   FALSE FALSE
+## EntropyIntenCh1          1.000000    100.000000   FALSE FALSE
+## EntropyIntenCh3          1.000000    100.000000   FALSE FALSE
+## EntropyIntenCh4          1.000000    100.000000   FALSE FALSE
+## EqCircDiamCh1            1.083333     37.326733   FALSE FALSE
+## EqEllipseLWRCh1          1.000000    100.000000   FALSE FALSE
+## EqEllipseOblateVolCh1    1.000000    100.000000   FALSE FALSE
+## EqEllipseProlateVolCh1   1.000000    100.000000   FALSE FALSE
+## EqSphereAreaCh1          1.083333     37.326733   FALSE FALSE
+## EqSphereVolCh1           1.083333     37.326733   FALSE FALSE
+## FiberAlign2Ch3           1.304348     94.950495   FALSE FALSE
+## FiberAlign2Ch4           7.285714     94.455446   FALSE FALSE
+## FiberLengthCh1           1.000000     95.841584   FALSE FALSE
+## FiberWidthCh1            1.000000     95.841584   FALSE FALSE
+## IntenCoocASMCh3          1.000000    100.000000   FALSE FALSE
+## IntenCoocASMCh4          1.000000    100.000000   FALSE FALSE
+## IntenCoocContrastCh3     1.000000    100.000000   FALSE FALSE
+## IntenCoocContrastCh4     1.000000    100.000000   FALSE FALSE
+## IntenCoocEntropyCh3      1.000000    100.000000   FALSE FALSE
+## IntenCoocEntropyCh4      1.000000    100.000000   FALSE FALSE
+## IntenCoocMaxCh3          1.250000     94.158416   FALSE FALSE
+## IntenCoocMaxCh4          1.250000     94.356436   FALSE FALSE
+## KurtIntenCh1             1.000000    100.000000   FALSE FALSE
+## KurtIntenCh3             1.000000    100.000000   FALSE FALSE
+## KurtIntenCh4             1.000000    100.000000   FALSE FALSE
+## LengthCh1                1.000000    100.000000   FALSE FALSE
+## NeighborAvgDistCh1       1.000000    100.000000   FALSE FALSE
+## NeighborMinDistCh1       1.166667     41.089109   FALSE FALSE
+## NeighborVarDistCh1       1.000000    100.000000   FALSE FALSE
+## PerimCh1                 1.000000     63.762376   FALSE FALSE
+## ShapeBFRCh1              1.000000    100.000000   FALSE FALSE
+## ShapeLWRCh1              1.000000    100.000000   FALSE FALSE
+## ShapeP2ACh1              1.000000     99.801980   FALSE FALSE
+## SkewIntenCh1             1.000000    100.000000   FALSE FALSE
+## SkewIntenCh3             1.000000    100.000000   FALSE FALSE
+## SkewIntenCh4             1.000000    100.000000   FALSE FALSE
+## SpotFiberCountCh3        1.212000      1.287129   FALSE FALSE
+## SpotFiberCountCh4        1.152778      3.267327   FALSE FALSE
+## TotalIntenCh1            1.000000     98.712871   FALSE FALSE
+## TotalIntenCh2            1.500000     99.009901   FALSE FALSE
+## TotalIntenCh3            1.000000     99.108911   FALSE FALSE
+## TotalIntenCh4            1.000000     99.603960   FALSE FALSE
+## VarIntenCh1              1.000000    100.000000   FALSE FALSE
+## VarIntenCh3              1.000000    100.000000   FALSE FALSE
+## VarIntenCh4              1.000000    100.000000   FALSE FALSE
+## WidthCh1                 1.000000    100.000000   FALSE FALSE
+## XCentroid                1.111111     41.584158   FALSE FALSE
+## YCentroid                1.000000     35.742574   FALSE FALSE
 ```
 
 #### Centring and scaling
 The variables in this data set are on different scales, for example:
 
 ```r
-summary(segmentationTrain$IntenCoocASMCh4)
+summary(segDataTrain$IntenCoocASMCh4)
 ```
 
 ```
@@ -823,7 +829,7 @@ summary(segmentationTrain$IntenCoocASMCh4)
 ```
 
 ```r
-summary(segmentationTrain$TotalIntenCh2)
+summary(segDataTrain$TotalIntenCh2)
 ```
 
 ```
@@ -838,7 +844,7 @@ In this situation it is important to centre and scale each predictor. A predicto
 Many of the predictors in the segmentation data set exhibit skewness, _i.e._ the distribution of their values is asymmetric, for example:
 
 ```r
-qplot(segmentationTrain$IntenCoocASMCh3, binwidth=0.1) + 
+qplot(segDataTrain$IntenCoocASMCh3, binwidth=0.1) + 
   xlab("IntenCoocASMCh3") +
   theme_bw()
 ```
@@ -857,7 +863,7 @@ Many of the variables in the segmentation data set are highly correlated.
 
 ```r
 library(corrplot)
-corMat <- cor(segmentationTrain[,3:60])
+corMat <- cor(segDataTrain)
 corrplot(corMat, order="hclust", tl.cex=0.4)
 ```
 
@@ -866,6 +872,9 @@ corrplot(corMat, order="hclust", tl.cex=0.4)
 <p class="caption">(\#fig:segDataCorrelogram)Correlogram of the segmentation data set.</p>
 </div>
 
+The **preProcess** function in [caret](http://cran.r-project.org/web/packages/caret/index.html) has an option, **corr** to remove highly correlated variables. It considers the absolute values of pair-wise correlations. If two variables are highly correlated, **preProcess** looks at the mean absolute correlation of each variable and removes the variable with the largest mean absolute correlation.
+
+<!--
 
 ```r
 highCorr <- findCorrelation(corMat, cutoff=0.75)
@@ -877,8 +886,9 @@ length(highCorr)
 ```
 
 ```r
-segmentationTrain <- segmentationTrain[,-highCorr]
+segDataTrain <- segDataTrain[,-highCorr]
 ```
+-->
 
 #### Dimensionality reduction
 In the case of data-sets comprised of many highly correlated variables, an alternative to removing correlated predictors is the transformation of the entire data set to a lower dimensional space, using a technique such as principal component analysis (PCA). Methods for dimensionality reduction will be explored in chapter \@ref(dimensionality-reduction).
@@ -889,6 +899,275 @@ In the case of data-sets comprised of many highly correlated variables, an alter
 
 #### Cross-validated performance without feature selection
 
+Generate a list of seeds.
+
+```r
+set.seed(42)
+seeds <- vector(mode = "list", length = 101)
+for(i in 1:100) seeds[[i]] <- sample.int(1000, 50)
+seeds[[101]] <- sample.int(1000,1)
+```
+
+Create a list of computational options for resampling. 
+
+```r
+tc <- trainControl(method="repeatedcv",
+                   number = 10,
+                   repeats = 10,
+                   #preProcOptions=list(cutoff=0.75),
+                   seeds = seeds)
+```
+
+Create a grid of values of _k_ for evaluation.
+
+```r
+tuneParam <- data.frame(k=seq(5,500,10))
+```
+
+To deal with the issues of scaling, skewness and highly correlated predictors identified earlier, we need to pre-process the data. We will use the Yeo-Johnson transformation to reduce skewness, because it can deal with the zero values present in some of the predictors. Ideally the pre-processing procedures would be performed within each cross-validation loop, using the following command:
+```
+knnFit <- train(segDataTrain, segClassTrain, 
+                method="knn",
+                preProcess = c("YeoJohnson", "center", "scale", "corr"),
+                tuneGrid=tuneParam,
+                trControl=tc)
+```
+
+However, this is time-consuming, so for the purposes of this demonstration we will pre-process the entire training data-set before proceeding with training and cross-validation.
+
+```r
+transformations <- preProcess(segDataTrain, 
+                              method=c("YeoJohnson", "center", "scale", "corr"),
+                              cutoff=0.75)
+```
+
+```
+## Warning in preProcess.default(segDataTrain, method = c("YeoJohnson", "center", : correlation matrix could not be computed:
+##  1correlation matrix could not be computed:
+##  0.0399656535611045correlation matrix could not be computed:
+##  -0.01401782480921correlation matrix could not be computed:
+##  -0.0187837923574354correlation matrix could not be computed:
+##  -0.0469667994444209correlation matrix could not be computed:
+##  0.0664826691953978correlation matrix could not be computed:
+##  0.0223565721289271correlation matrix could not be computed:
+##  -0.00247772318389345correlation matrix could not be computed:
+##  0.0158846522500652correlation matrix could not be computed:
+##  0.00830273006378069correlation matrix could not be computed:
+##  -0.0319505487556941correlation matrix could not be computed:
+##  -0.00277246165172196correlation matrix could not be computed:
+##  -0.0322190133174334correlation matrix could not be computed:
+##  0.0468199666151097correlation matrix could not be computed:
+##  0.0299932287943623correlation matrix could not be computed:
+##  0.0918419175907328correlation matrix could not be computed:
+##  0.0558685742029219correlation matrix could not be computed:
+##  0.0133466796175919correlation matrix could not be computed:
+##  -0.0213670544225047correlation matrix could not be computed:
+##  -0.0232262680891569correlation matrix could not be computed:
+##  0.0301963741169544correlation matrix could not be computed:
+##  -0.0280243705254885correlation matrix could not be computed:
+##  0.0244036442525391correlation matrix could not be computed:
+##  0.024780655197781correlation matrix could not be computed:
+##  -0.0407219843256941correlation matrix could not be computed:
+##  -0.0533602991100316correlation matrix could not be computed:
+##  -0.0124087897538399correlation matrix could not be computed:
+##  0.0399656535611045correlation matrix could not be computed:
+##  1correlation matrix could not be computed:
+##  0.318091534789045correlation matrix could not be computed:
+##  -0.470231685498673correlation matrix could not be computed:
+##  0.055382594927069correlation matrix could not be computed:
+##  0.035598844977434correlation matrix could not be computed:
+##  0.460443788379738correlation matrix could not be computed:
+##  -0.0558076756121481correlation matrix could not be computed:
+##  -0.277694139449617correlation matrix could not be computed:
+##  -0.0293761742332339correlation matrix could not be computed:
+##  0.249664372997467correlation matrix could not be computed:
+##  -0.16917572282694correlation matrix could not be computed:
+##  0.0322471147419416correlation matrix could not be computed:
+##  -0.101256549239793correlation matrix could not be computed:
+##  0.0638580820509881correlation matrix could not be computed:
+##  -0.177214629644544correlation matrix could not be computed:
+##  0.686157099237658correlation matrix could not be computed:
+##  -0.0546898613425807correlation matrix could not be computed:
+##  -0.407902478526775correlation matrix could not be computed:
+##  -0.352556540885133correlation matrix could not be computed:
+##  0.162203563532878correlation matrix could not be computed:
+##  0.258689286813188correlation matrix could not be computed:
+##  0.0627589823761482correlation matrix could not be computed:
+##  0.200696051349995correlation matrix could not be computed:
+##  -0.587953133695097correlation matrix could not be computed:
+##  -0.0414660401973205correlation matrix could not be computed:
+##  -0.0410869166878906correlation matrix could not be computed:
+##  -0.01401782480921correlation matrix could not be computed:
+##  0.318091534789045correlation matrix could not be computed:
+##  1correlation matrix could not be computed:
+##  0.0401164967247637correlation matrix could not be computed:
+##  -0.0745419614292381correlation matrix could not be computed:
+##  -0.0184566818541376correlation matrix could not be computed:
+##  0.447124911392658correlation matrix could not be computed:
+##  -0.105101207667655correlation matrix could not be computed:
+##  -0.362983563583841correlation matrix could not be computed:
+##  -0.172535893520489correlation matrix could not be computed:
+##  0.205784228528686correlation matrix could not be computed:
+##  -0.0903719189552464correlation matrix could not be computed:
+##  0.113109221450124correlation matrix could not be computed:
+##  -0.0819609323500842correlation matrix could not be computed:
+##  -0.00178251160156081correlation matrix could not be computed:
+##  -0.030074256266626correlation matrix could not be computed:
+##  0.244748161385148correlation matrix could not be computed:
+##  -0.107471608862106correlation matrix could not be computed:
+##  -0.26334864008133correlation matrix could not be computed:
+##  0.0466343302834301correlation matrix could not be computed:
+##  0.598015583208681correlation matrix could not be computed:
+##  0.7494069213488correlation matrix could not be computed:
+##  0.417970438924964correlation matrix could not be computed:
+##  0.422081633586389correlation matrix could not be computed:
+##  0.085200962920973correlation matrix could not be computed:
+##  -0.0738112201896686correlation matrix could not be computed:
+##  -0.111061084309888correlation matrix could not be computed:
+##  -0.0187837923574354correlation matrix could not be computed:
+##  -0.470231685498673correlation matrix could not be computed:
+##  0.0401164967247637correlation matrix could not be computed:
+##  1correlation matrix could not be computed:
+##  -0.157347704337933correlation matrix could not be computed:
+##  -0.106522474751295correlation matrix could not be computed:
+##  0.165008370707857correlation matrix could not be computed:
+##  -0.0195849997833145correlation matrix could not be computed:
+##  0.0951362164884144correlation matrix could not be computed:
+##  0.0535153101671921correlation matrix could not be computed:
+##  -0.0154835939577822correlation matrix could not be computed:
+##  0.0589554920926267correlation matrix could not be computed:
+##  0.0549635093457417correlation matrix could not be computed:
+##  0.0670739356526949correlation matrix could not be computed:
+##  -0.0180392602603926correlation matrix could not be computed:
+##  0.213254628529682correlation matrix could not be computed:
+##  -0.2623111448356correlation matrix could not be computed:
+##  0.138260790696054correlation matrix could not be computed:
+##  0.120150938779494correlation matrix could not be computed:
+##  0.634679620706067correlation matrix could not be computed:
+##  0.161942779298141correlation matrix could not be computed:
+##  -0.00487468617059258correlation matrix could not be computed:
+##  -0.0970325280281872correlation matrix could not be computed:
+##  -0.0970548286549872correlation matrix could not be computed:
+##  0.735251459967222correlation matrix could not be computed:
+##  -0.0233788546169213correlation matrix could not be computed:
+##  -0.0197966674798393correlation matrix could not be computed:
+##  -0.0469667994444209correlation matrix could not be computed:
+##  0.055382594927069correlation matrix could not be computed:
+##  -0.0745419614292381correlation matrix could not be computed:
+##  -0.157347704337933correlation matrix could not be computed:
+##  1correlation matrix could not be computed:
+##  0.199810214471052correlation matrix could not be computed:
+##  -0.135247528988592correlation matrix could not be computed:
+##  0.119795047970913correlation matrix could not be computed:
+##  -0.0189278632588467correlation matrix could not be computed:
+##  -0.0918743581123067correlation matrix could not be computed:
+##  -9.74037259693129e-05correlation matrix could not be computed:
+##  -0.0366381613541393correlation matrix could not be computed:
+##  -0.00771253996116994correlation matrix could not be computed:
+##  0.0639324730558175correlation matrix could not be computed:
+##  -0.0194537384769147correlation matrix could not be computed:
+##  -0.0662474651007067correlation matrix could not be computed:
+##  -0.0609953763465428correlation matrix could not be computed:
+##  0.0578353480403023correlation matrix could not be computed:
+##  -0.012630413972657correlation matrix could not be computed:
+##  -0.0426034016046167correlation matrix could not be computed:
+##  -0.0901980312669627correlation matrix could not be computed:
+##  -0.0332098741188583correlation matrix could not be computed:
+##  -0.00689801411436046correlation matrix could not be computed:
+##  0.00721523296110747correlation matrix could not be computed:
+##  -0.162519164311792correlation matrix could not be computed:
+##  0.0294872457484293correlation matrix could not be computed:
+##  -0.00655744260658358correlation matrix c
+```
+
+```r
+segDataTrain <- predict(transformations, segDataTrain)
+
+
+knnFit <- train(segDataTrain, segClassTrain, 
+                method="knn",
+                tuneGrid=tuneParam,
+                trControl=tc)
+knnFit
+```
+
+```
+## k-Nearest Neighbors 
+## 
+## 1010 samples
+##   27 predictor
+##    2 classes: 'PS', 'WS' 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold, repeated 10 times) 
+## Summary of sample sizes: 909, 909, 909, 909, 909, 909, ... 
+## Resampling results across tuning parameters:
+## 
+##   k    Accuracy   Kappa    
+##     5  0.7844554  0.5355021
+##    15  0.8063366  0.5858762
+##    25  0.8071287  0.5860760
+##    35  0.8083168  0.5885382
+##    45  0.8043564  0.5777211
+##    55  0.8035644  0.5750911
+##    65  0.8024752  0.5728325
+##    75  0.7998020  0.5672303
+##    85  0.7979208  0.5622155
+##    95  0.7993069  0.5651879
+##   105  0.7975248  0.5609526
+##   115  0.8006931  0.5682550
+##   125  0.8002970  0.5666480
+##   135  0.8020792  0.5695054
+##   145  0.8040594  0.5738518
+##   155  0.8011881  0.5663541
+##   165  0.8005941  0.5640214
+##   175  0.7985149  0.5589314
+##   185  0.7967327  0.5546004
+##   195  0.7971287  0.5555960
+##   205  0.7982178  0.5573946
+##   215  0.7984158  0.5568846
+##   225  0.7962376  0.5516424
+##   235  0.7990099  0.5564413
+##   245  0.7976238  0.5525981
+##   255  0.7985149  0.5540280
+##   265  0.7976238  0.5513190
+##   275  0.7967327  0.5486973
+##   285  0.7979208  0.5508728
+##   295  0.8001980  0.5546946
+##   305  0.8003960  0.5539966
+##   315  0.8000990  0.5522283
+##   325  0.7980198  0.5464552
+##   335  0.7978218  0.5453697
+##   345  0.7966337  0.5415395
+##   355  0.7957426  0.5383734
+##   365  0.7937624  0.5328159
+##   375  0.7913861  0.5258660
+##   385  0.7892079  0.5194483
+##   395  0.7888119  0.5171381
+##   405  0.7872277  0.5120041
+##   415  0.7858416  0.5072424
+##   425  0.7817822  0.4949439
+##   435  0.7792079  0.4870700
+##   445  0.7742574  0.4725344
+##   455  0.7642574  0.4426034
+##   465  0.7605941  0.4275338
+##   475  0.7552475  0.4081788
+##   485  0.7481188  0.3841416
+##   495  0.7381188  0.3521300
+## 
+## Accuracy was used to select the optimal model using  the largest value.
+## The final value used for the model was k = 35.
+```
+
+
+```r
+plot(knnFit)
+```
+
+<div class="figure" style="text-align: center">
+<img src="04-nearest-neighbours_files/figure-html/cvAccuracySegDataHighCorRem-1.png" alt="Accuracy (repeated cross-validation) as a function of neighbourhood size for the segmentation training data with highly correlated predictors removed." width="100%" />
+<p class="caption">(\#fig:cvAccuracySegDataHighCorRem)Accuracy (repeated cross-validation) as a function of neighbourhood size for the segmentation training data with highly correlated predictors removed.</p>
+</div>
 
 #### Methods
 

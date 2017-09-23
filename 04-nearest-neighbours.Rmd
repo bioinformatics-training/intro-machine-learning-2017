@@ -222,6 +222,7 @@ lseq <- function(from, to, length.out) {
 Get log spaced sequence of length 20, round and then remove any duplicates resulting from rounding.
 ```{r echo=T}
 s <- unique(round(lseq(1,400,20)))
+length(s)
 ```
 
 ```{r echo=T}
@@ -396,27 +397,29 @@ This data set is one of several included in [caret](http://cran.r-project.org/we
 data(segmentationData)
 str(segmentationData)
 ```
+The first column of **segmentationData** is a unique identifier for each cell and the second column is a factor indicating how the observations were characterized into training and test sets in the original study; these two variables are irrelevant for the purposes of this demonstration and so can be discarded. 
 
-The second column of **segmentationData** is a factor showing how the observations were characterized into training and test sets in the original study. This column is irrelevant here, because we will perform our own partitioning of the data, and so can be deleted:
+The third column *Case* contains the class labels: *PS* (poorly-segmented) and *WS* (well-segmented). Columns 4-61 are the 58 measurements available to be used as predictors. Let's put the class labels in a vector and the predictors in their own data.frame.
 ```{r echo=T}
-segmentationData$Case <- NULL
+segClass <- segmentationData$Class
+segData <- segmentationData[,4:61]
 ```
-
-Following removal of the *Case* column, **segmentationData** has 60 columns. The first column of is a unique identifier for each cell. The second column contains the class labels: *PS* (poorly-segmented) and *WS* (well-segmented). The remaining 58 columns are the features.
 
 #### Data splitting
 The first step in the analysis is to partition the data into training and test sets, using the **createDataPartition** function in [caret](http://cran.r-project.org/web/packages/caret/index.html).
 ```{r echo=T}
 set.seed(42)
-trainIndex <- createDataPartition(y=segmentationData$Class, times=1, p=0.5, list=F)
-segmentationTrain <- segmentationData[trainIndex,]
-segmentationTest <- segmentationData[-trainIndex,] 
+trainIndex <- createDataPartition(y=segClass, times=1, p=0.5, list=F)
+segDataTrain <- segData[trainIndex,]
+segDataTest <- segData[-trainIndex,]
+segClassTrain <- segClass[trainIndex]
+segClassTest <- segClass[-trainIndex]
 ```
 
 This results in balanced class distributions within the splits:
 ```{r echo=T}
-summary(segmentationTrain$Class)
-summary(segmentationTest$Class)
+summary(segClassTrain)
+summary(segClassTest)
 ```
 
 _**N.B. The test set is set aside for now. It will be used only ONCE, to test the final model.**_
@@ -430,15 +433,15 @@ The function **nearZeroVar** identifies predictors that have one unique value. I
 Such _zero and near zero-variance predictors_ have a deleterious impact on modelling and may lead to unstable fits.
 
 ```{r echo=T}
-nzv <- nearZeroVar(segmentationTrain[,2:60], saveMetrics=T)
+nzv <- nearZeroVar(segDataTrain, saveMetrics=T)
 nzv
 ```
 
 #### Centring and scaling
 The variables in this data set are on different scales, for example:
 ```{r echo=T}
-summary(segmentationTrain$IntenCoocASMCh4)
-summary(segmentationTrain$TotalIntenCh2)
+summary(segDataTrain$IntenCoocASMCh4)
+summary(segDataTrain$TotalIntenCh2)
 ```
 
 In this situation it is important to centre and scale each predictor. A predictor variable is centered by subtracting the mean of the predictor from each value. To scale a predictor variable, each value is divided by its standard deviation. After centring and scaling the predictor variable has a mean of 0 and a standard deviation of 1. Centring and scaling will be peformed within the cross-validation process.
@@ -447,7 +450,7 @@ In this situation it is important to centre and scale each predictor. A predicto
 #### Resolving skewness
 Many of the predictors in the segmentation data set exhibit skewness, _i.e._ the distribution of their values is asymmetric, for example:
 ```{r segDataSkewness, fig.cap='Example of a predictor from the segmentation data set showing skewness.', out.width='75%', fig.asp=0.9, fig.align='center', echo=T}
-qplot(segmentationTrain$IntenCoocASMCh3, binwidth=0.1) + 
+qplot(segDataTrain$IntenCoocASMCh3, binwidth=0.1) + 
   xlab("IntenCoocASMCh3") +
   theme_bw()
 ```
@@ -460,15 +463,19 @@ Many of the variables in the segmentation data set are highly correlated.
 
 ```{r segDataCorrelogram, fig.cap='Correlogram of the segmentation data set.', out.width='75%', fig.asp=1, fig.align='center', echo=T}
 library(corrplot)
-corMat <- cor(segmentationTrain[,3:60])
+corMat <- cor(segDataTrain)
 corrplot(corMat, order="hclust", tl.cex=0.4)
 ```
 
+The **preProcess** function in [caret](http://cran.r-project.org/web/packages/caret/index.html) has an option, **corr** to remove highly correlated variables. It considers the absolute values of pair-wise correlations. If two variables are highly correlated, **preProcess** looks at the mean absolute correlation of each variable and removes the variable with the largest mean absolute correlation.
+
+<!--
 ```{r echo=T}
 highCorr <- findCorrelation(corMat, cutoff=0.75)
 length(highCorr)
-segmentationTrain <- segmentationTrain[,-highCorr]
+segDataTrain <- segDataTrain[,-highCorr]
 ```
+-->
 
 #### Dimensionality reduction
 In the case of data-sets comprised of many highly correlated variables, an alternative to removing correlated predictors is the transformation of the entire data set to a lower dimensional space, using a technique such as principal component analysis (PCA). Methods for dimensionality reduction will be explored in chapter \@ref(dimensionality-reduction).
@@ -479,6 +486,56 @@ In the case of data-sets comprised of many highly correlated variables, an alter
 
 #### Cross-validated performance without feature selection
 
+Generate a list of seeds.
+```{r echo=T}
+set.seed(42)
+seeds <- vector(mode = "list", length = 101)
+for(i in 1:100) seeds[[i]] <- sample.int(1000, 50)
+seeds[[101]] <- sample.int(1000,1)
+```
+
+Create a list of computational options for resampling. 
+```{r echo=T}
+tc <- trainControl(method="repeatedcv",
+                   number = 10,
+                   repeats = 10,
+                   #preProcOptions=list(cutoff=0.75),
+                   seeds = seeds)
+```
+
+Create a grid of values of _k_ for evaluation.
+```{r echo=T}
+tuneParam <- data.frame(k=seq(5,500,10))
+```
+
+To deal with the issues of scaling, skewness and highly correlated predictors identified earlier, we need to pre-process the data. We will use the Yeo-Johnson transformation to reduce skewness, because it can deal with the zero values present in some of the predictors. Ideally the pre-processing procedures would be performed within each cross-validation loop, using the following command:
+```
+knnFit <- train(segDataTrain, segClassTrain, 
+                method="knn",
+                preProcess = c("YeoJohnson", "center", "scale", "corr"),
+                tuneGrid=tuneParam,
+                trControl=tc)
+```
+
+However, this is time-consuming, so for the purposes of this demonstration we will pre-process the entire training data-set before proceeding with training and cross-validation.
+```{r echo=T}
+transformations <- preProcess(segDataTrain, 
+                              method=c("YeoJohnson", "center", "scale", "corr"),
+                              cutoff=0.75)
+segDataTrain <- predict(transformations, segDataTrain)
+
+
+knnFit <- train(segDataTrain, segClassTrain, 
+                method="knn",
+                tuneGrid=tuneParam,
+                trControl=tc)
+knnFit
+
+```
+
+```{r cvAccuracySegDataHighCorRem, fig.cap='Accuracy (repeated cross-validation) as a function of neighbourhood size for the segmentation training data with highly correlated predictors removed.', out.width='100%', fig.asp=0.6, fig.align='center', echo=T}
+plot(knnFit)
+```
 
 #### Methods
 
