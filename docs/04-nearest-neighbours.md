@@ -290,7 +290,7 @@ lseq <- function(from, to, length.out) {
 Get log spaced sequence of length 20, round and then remove any duplicates resulting from rounding.
 
 ```r
-s <- unique(round(lseq(1,200,20)))
+s <- unique(round(lseq(1,400,20)))
 ```
 
 
@@ -340,7 +340,7 @@ library(caret)
 ## Loading required package: lattice
 ```
 
-[caret](http://cran.r-project.org/web/packages/caret/index.html) has parallel processing built in. To take advantage of this feature we simply need to load the [doMC](http://cran.r-project.org/web/packages/doMC/index.html) package and register workers: 
+[caret](http://cran.r-project.org/web/packages/caret/index.html) has automatic parallel processing built in. To take advantage of this feature we simply need to load the [doMC](http://cran.r-project.org/web/packages/doMC/index.html) package and register workers: 
 
 ```r
 library(doMC)
@@ -372,6 +372,87 @@ getDoParWorkers()
 ## [1] 2
 ```
 
+The [caret](http://cran.r-project.org/web/packages/caret/index.html) function **train** is used to fit predictive models over different values of _k_. The function **trainControl** is used to specify a list of computational and resampling options, which will be passed to **train**. We will start by configuring our cross-validation procedure using **trainControl**.
+
+We would like to make this demonstration reproducible and because we will be running the models in parallel, using the **set.seed** function alone is not sufficient. In addition to using **set.seed** we have to make use of the optional **seeds** argument to **trainControl**. We need to supply **seeds** with a list of integers that will be used to set the seed at each sampling iteration. The list is required to have a length of B+1, where B is the number of resamples. We will be repeating 10-fold cross-validation a total of ten times and so our list must have a length of 101. The first B elements of the list are required to be vectors of integers of length M, where M is the number of models being evaluated (in this case 19). The last element of the list only needs to be a single integer, which will be used for the final model.
+
+First we generate our list of seeds.
+
+```r
+set.seed(42)
+seeds <- vector(mode = "list", length = 101)
+for(i in 1:100) seeds[[i]] <- sample.int(1000, 19)
+seeds[[101]] <- sample.int(1000,1)
+```
+
+We can now use **trainControl** to create a list of computational options for resampling.
+
+```r
+tc <- trainControl(method="repeatedcv",
+                   number = 10,
+                   repeats = 10,
+                   seeds = seeds)
+```
+
+There are two options for choosing the values of _k_ to be evaluated by the **train** function:
+1. Pass a data.frame of values of _k_ to the **tuneGrid** argument of **train**.
+2. Specify the number of different levels of _k_ using the **tuneLength** function and allow **train** to pick the actual values.
+
+We will use the first option, so that we can try the values of _k_ we examined earlier. We need to convert the vector of values of k we created earlier and convert it into a data.frame.
+
+
+```r
+s <- data.frame(s)
+names(s) <- "k"
+```
+
+We are now ready to run the cross-validation.
+
+```r
+knnFit <- train(xtrain, as.factor(ytrain), 
+                method="knn",
+                tuneGrid=s,
+                trControl=tc)
+
+knnFit
+```
+
+```
+## k-Nearest Neighbors 
+## 
+## 400 samples
+##   2 predictor
+##   2 classes: '0', '1' 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold, repeated 10 times) 
+## Summary of sample sizes: 360, 360, 360, 360, 360, 360, ... 
+## Resampling results across tuning parameters:
+## 
+##   k    Accuracy  Kappa 
+##     1  0.63375   0.2675
+##     2  0.64125   0.2825
+##     3  0.67925   0.3585
+##     4  0.67200   0.3440
+##     5  0.69675   0.3935
+##     7  0.71100   0.4220
+##     9  0.71650   0.4330
+##    12  0.71450   0.4290
+##    17  0.72650   0.4530
+##    23  0.73175   0.4635
+##    32  0.73775   0.4755
+##    44  0.74075   0.4815
+##    60  0.74675   0.4935
+##    83  0.75475   0.5095
+##   113  0.73600   0.4720
+##   155  0.72500   0.4500
+##   213  0.70950   0.4190
+##   292  0.69300   0.3860
+##   400  0.51300   0.0260
+## 
+## Accuracy was used to select the optimal model using  the largest value.
+## The final value used for the model was k = 83.
+```
 
 **Cohen's Kappa:**
 \begin{equation}
@@ -381,7 +462,16 @@ getDoParWorkers()
 
 where _O_ is the observed accuracy and _E_ is the expected accuracy based on the marginal totals of the confusion matrix. Cohen's Kappa takes values between -1 and 1; a value of zero indicates no agreement between the observed and predicted classes, while a value of one shows perfect concordance of the model prediction and the observed classes. If the prediction is in the opposite direction of the truth, a negative value will be obtained, but large negative values are rare in practice [@Kuhn2013].
 
+We can plot accuracy (determined from repeated cross-validation) as a function of neighbourhood size.
 
+```r
+plot(knnFit)
+```
+
+<div class="figure" style="text-align: center">
+<img src="04-nearest-neighbours_files/figure-html/cvAccuracyFunK-1.png" alt="Accuracy (repeated cross-validation) as a function of neighbourhood size." width="100%" />
+<p class="caption">(\#fig:cvAccuracyFunK)Accuracy (repeated cross-validation) as a function of neighbourhood size.</p>
+</div>
 
 ### Feature selection
 

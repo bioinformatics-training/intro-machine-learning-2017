@@ -670,7 +670,7 @@ plot_tot_withinss(res_k_15)
 set.seed(42)
 res_k_15 <- lapply(k, function(i){kmeans(t(e), i, nstart=10)})
 -->
-There is no obvious elbow, but the rate of decrease in the total-within sum of squares appears to slow after k=5. Since we know that there are seven tissues in the data set we will try k=7. 
+There is no obvious elbow, but since we know that there are seven tissues in the data set we will try k=7. 
 <!--
 ```{r echo=T}
 set.seed(42)
