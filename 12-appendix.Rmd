@@ -1,4 +1,4 @@
-# (APPENDIX) Appendix {-} 
+# (APPENDIX) Appendix {-}
 
 # Resources {#resources}
 

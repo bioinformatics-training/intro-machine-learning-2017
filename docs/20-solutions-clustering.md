@@ -17,68 +17,9 @@ plot(dbscanS, col="black")
 
 
 
+
+
 ## Exercise 1
-
-Load required packages
-
-```r
-library(ggplot2)
-library(cluster)
-library(RColorBrewer)
-```
-
-Define colours for plots
-
-```r
-clusterColours <- brewer.pal(9,"Set1")
-```
-
-Read data
-
-```r
-noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
-```
-
-Perform clustering
-
-```r
-res <- dbscan::dbscan(noisy_moons[,1:2], eps=0.075, minPts = 10)
-```
-
-Identify noise points as we do not want to include these in the silhouette analysis
-
-```r
-# identify and remove noise points
-noise <- res$cluster==0
-```
-
-Remove noise points from cluster results
-
-```r
-clusters <- res$cluster[!noise]
-```
-
-Generate distance matrix from ```noisy_moons``` data.frame, exluding noise points.
-
-```r
-d <- dist(noisy_moons[!noise,1:2])
-```
-
-Silhouette analysis
-
-```r
-sil <- silhouette(clusters, d)
-plot(sil, border=NA, col=clusterColours[sort(clusters)], main="")
-```
-
-<img src="20-solutions-clustering_files/figure-html/unnamed-chunk-9-1.png" width="672" />
-
-
-
-
-
-
-## Exercise 2
 
 First we need to read the image data and transform it into a suitable format for analysis:
 
@@ -184,5 +125,66 @@ K-means clustering with k=4 rapidly and effectively segments the image of the hi
 *N.B.* the cluster centres provide the mean pixel intensities for the red, green and blue channels and we have used this information to colour the pixels belonging to each cluster (figure \@ref(fig:pixelClustersK4)).
 
 
+<!--
 
+## Exercise 1
+
+Load required packages
+
+```r
+library(ggplot2)
+library(cluster)
+library(RColorBrewer)
+```
+
+Define colours for plots
+
+```r
+clusterColours <- brewer.pal(9,"Set1")
+```
+
+Read data
+
+```r
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+```
+
+Perform clustering
+
+```r
+res <- dbscan::dbscan(noisy_moons[,1:2], eps=0.075, minPts = 10)
+```
+
+Identify noise points as we do not want to include these in the silhouette analysis
+
+```r
+# identify and remove noise points
+noise <- res$cluster==0
+```
+
+Remove noise points from cluster results
+
+```r
+clusters <- res$cluster[!noise]
+```
+
+Generate distance matrix from ```noisy_moons``` data.frame, exluding noise points.
+
+```r
+d <- dist(noisy_moons[!noise,1:2])
+```
+
+Silhouette analysis
+
+```r
+sil <- silhouette(clusters, d)
+plot(sil, border=NA, col=clusterColours[sort(clusters)], main="")
+```
+
+<img src="20-solutions-clustering_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+
+
+
+
+-->
 
