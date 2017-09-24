@@ -81,9 +81,11 @@ lrfit3 <- train(y~., data=data.frame(x=D[1:24,1:10],y=D[1:24,geneindex]), method
 
 ## Gaussian process regression
 
+
+
 Overfitting.
 
-Define nonlinear. Show with some examples. May need to bypass standard definitions due to time constraints. These can be supplementary along with the maths. Here focus on use. 
+Define nonlinear. Show with some examples. May need to bypass standard definitions due to time constraints. These ca
 
 $y = f(x)$
 
@@ -316,10 +318,55 @@ In linear regression we tried to predict the value of y(i)
 . This is clearly not a great solution for predicting binary-valued labels (y(i)∈{0,1})
 . In logistic regression we use a different hypothesis class to try to predict the probability that a given example belongs to the “1” class versus the probability that it belongs to the “0” class. Specifically, we will try to learn a function of the form:
 
+
+library(caret)
+data(GermanCredit)
+Train <- createDataPartition(GermanCredit$Class, p=0.6, list=FALSE)
+training <- GermanCredit[ Train, ]
+testing <- GermanCredit[ -Train, ]
+mod_fit <- train(Class ~ Age + ForeignWorker + Property.RealEstate + Housing.Own + 
+                   CreditHistory.Critical,  data=training, method="glm", family="binomial")
+                   exp(coef(mod_fit$finalModel))
+                   
+                   mod_fit_one <- glm(Class ~ Age + ForeignWorker + Property.RealEstate + Housing.Own + 
+                     CreditHistory.Critical, data=training, family="binomial")
+
+mod_fit_two <- glm(Class ~ Age + ForeignWorker, data=training, family="binomial")
+
+library(pROC)
+# Compute AUC for predicting Class with the variable CreditHistory.Critical
+f1 = roc(Class ~ CreditHistory.Critical, data=training) 
+plot(f1, col="red")
+## 
+## Call:
+## roc.formula(formula = Class ~ CreditHistory.Critical, data = training)
+## 
+## Data: CreditHistory.Critical in 180 controls (Class Bad) < 420 cases (Class Good).
+## Area under the curve: 0.5944
+library(ROCR)
+# Compute AUC for predicting Class with the model
+prob <- predict(mod_fit_one, newdata=testing, type="response")
+pred <- prediction(prob, testing$Class)
+perf <- performance(pred, measure = "tpr", x.measure = "fpr")
+plot(perf)
+auc <- performance(pred, measure = "auc")
+auc <- auc@y.values[[1]]
+auc
+
 ## GP classification
 
 Example GP regression using kernlab
 
+t2 <- train(y~., data=data.frame(x=Xs,y=D[25:nrow(D),geneindex]), "gaussprPoly")
+
+
+Caret examples: https://github.com/tobigithub/caret-machine-learning
+GPML http://www.gaussianprocess.org/gpml/code/matlab/doc/
+GPy: https://github.com/SheffieldML/GPy
+GPflow: http://gpflow.readthedocs.io/en/latest/intro.html
+https://github.com/GPflow/GPflowOpt
+https://www.tensorflow.org
+http://deeplearning.net/software/theano/
 =======
 ## Exercises
 
