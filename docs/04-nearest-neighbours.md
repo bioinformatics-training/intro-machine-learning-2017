@@ -854,7 +854,7 @@ qplot(segDataTrain$IntenCoocASMCh3, binwidth=0.1) +
 <p class="caption">(\#fig:segDataSkewness)Example of a predictor from the segmentation data set showing skewness.</p>
 </div>
 
-[caret](http://cran.r-project.org/web/packages/caret/index.html) provides various methods for transforming skewed variables to normality, including the Box-Cox (@BoxCox) and Yeo-Johnson (@YeoJohnson) transformations.
+[caret](http://cran.r-project.org/web/packages/caret/index.html) provides various methods for transforming skewed variables to normality, including the Box-Cox [@BoxCox] and Yeo-Johnson [@YeoJohnson] transformations.
 
 #### Removal of correlated predictors
 
@@ -897,23 +897,31 @@ In the case of data-sets comprised of many highly correlated variables, an alter
 
 ### Feature selection
 
+wrapper and filter methods
+
 #### Cross-validated performance without feature selection
 
-Generate a list of seeds.
-
-```r
+<!-- original settings:
 set.seed(42)
 seeds <- vector(mode = "list", length = 101)
 for(i in 1:100) seeds[[i]] <- sample.int(1000, 50)
 seeds[[101]] <- sample.int(1000,1)
-```
-
-Create a list of computational options for resampling. 
+-->
+Generate a list of seeds.
 
 ```r
-tc <- trainControl(method="repeatedcv",
-                   number = 10,
-                   repeats = 10,
+set.seed(42)
+seeds <- vector(mode = "list", length = 26)
+for(i in 1:25) seeds[[i]] <- sample.int(1000, 50)
+seeds[[26]] <- sample.int(1000,1)
+```
+
+Create a list of computational options for resampling. In the interest of speed for this demonstration, we will perform 5-fold cross-validation a total of 5 times. In practice we would use a larger number of folds and repetitions.
+
+```r
+train_ctrl <- trainControl(method="repeatedcv",
+                   number = 5,
+                   repeats = 5,
                    #preProcOptions=list(cutoff=0.75),
                    seeds = seeds)
 ```
@@ -930,7 +938,7 @@ knnFit <- train(segDataTrain, segClassTrain,
                 method="knn",
                 preProcess = c("YeoJohnson", "center", "scale", "corr"),
                 tuneGrid=tuneParam,
-                trControl=tc)
+                trControl=train_ctrl)
 ```
 
 However, this is time-consuming, so for the purposes of this demonstration we will pre-process the entire training data-set before proceeding with training and cross-validation.
@@ -939,150 +947,11 @@ However, this is time-consuming, so for the purposes of this demonstration we wi
 transformations <- preProcess(segDataTrain, 
                               method=c("YeoJohnson", "center", "scale", "corr"),
                               cutoff=0.75)
+segDataTrain <- predict(transformations, segDataTrain)
 ```
 
-```
-## Warning in preProcess.default(segDataTrain, method = c("YeoJohnson", "center", : correlation matrix could not be computed:
-##  1correlation matrix could not be computed:
-##  0.0399656535611045correlation matrix could not be computed:
-##  -0.01401782480921correlation matrix could not be computed:
-##  -0.0187837923574354correlation matrix could not be computed:
-##  -0.0469667994444209correlation matrix could not be computed:
-##  0.0664826691953978correlation matrix could not be computed:
-##  0.0223565721289271correlation matrix could not be computed:
-##  -0.00247772318389345correlation matrix could not be computed:
-##  0.0158846522500652correlation matrix could not be computed:
-##  0.00830273006378069correlation matrix could not be computed:
-##  -0.0319505487556941correlation matrix could not be computed:
-##  -0.00277246165172196correlation matrix could not be computed:
-##  -0.0322190133174334correlation matrix could not be computed:
-##  0.0468199666151097correlation matrix could not be computed:
-##  0.0299932287943623correlation matrix could not be computed:
-##  0.0918419175907328correlation matrix could not be computed:
-##  0.0558685742029219correlation matrix could not be computed:
-##  0.0133466796175919correlation matrix could not be computed:
-##  -0.0213670544225047correlation matrix could not be computed:
-##  -0.0232262680891569correlation matrix could not be computed:
-##  0.0301963741169544correlation matrix could not be computed:
-##  -0.0280243705254885correlation matrix could not be computed:
-##  0.0244036442525391correlation matrix could not be computed:
-##  0.024780655197781correlation matrix could not be computed:
-##  -0.0407219843256941correlation matrix could not be computed:
-##  -0.0533602991100316correlation matrix could not be computed:
-##  -0.0124087897538399correlation matrix could not be computed:
-##  0.0399656535611045correlation matrix could not be computed:
-##  1correlation matrix could not be computed:
-##  0.318091534789045correlation matrix could not be computed:
-##  -0.470231685498673correlation matrix could not be computed:
-##  0.055382594927069correlation matrix could not be computed:
-##  0.035598844977434correlation matrix could not be computed:
-##  0.460443788379738correlation matrix could not be computed:
-##  -0.0558076756121481correlation matrix could not be computed:
-##  -0.277694139449617correlation matrix could not be computed:
-##  -0.0293761742332339correlation matrix could not be computed:
-##  0.249664372997467correlation matrix could not be computed:
-##  -0.16917572282694correlation matrix could not be computed:
-##  0.0322471147419416correlation matrix could not be computed:
-##  -0.101256549239793correlation matrix could not be computed:
-##  0.0638580820509881correlation matrix could not be computed:
-##  -0.177214629644544correlation matrix could not be computed:
-##  0.686157099237658correlation matrix could not be computed:
-##  -0.0546898613425807correlation matrix could not be computed:
-##  -0.407902478526775correlation matrix could not be computed:
-##  -0.352556540885133correlation matrix could not be computed:
-##  0.162203563532878correlation matrix could not be computed:
-##  0.258689286813188correlation matrix could not be computed:
-##  0.0627589823761482correlation matrix could not be computed:
-##  0.200696051349995correlation matrix could not be computed:
-##  -0.587953133695097correlation matrix could not be computed:
-##  -0.0414660401973205correlation matrix could not be computed:
-##  -0.0410869166878906correlation matrix could not be computed:
-##  -0.01401782480921correlation matrix could not be computed:
-##  0.318091534789045correlation matrix could not be computed:
-##  1correlation matrix could not be computed:
-##  0.0401164967247637correlation matrix could not be computed:
-##  -0.0745419614292381correlation matrix could not be computed:
-##  -0.0184566818541376correlation matrix could not be computed:
-##  0.447124911392658correlation matrix could not be computed:
-##  -0.105101207667655correlation matrix could not be computed:
-##  -0.362983563583841correlation matrix could not be computed:
-##  -0.172535893520489correlation matrix could not be computed:
-##  0.205784228528686correlation matrix could not be computed:
-##  -0.0903719189552464correlation matrix could not be computed:
-##  0.113109221450124correlation matrix could not be computed:
-##  -0.0819609323500842correlation matrix could not be computed:
-##  -0.00178251160156081correlation matrix could not be computed:
-##  -0.030074256266626correlation matrix could not be computed:
-##  0.244748161385148correlation matrix could not be computed:
-##  -0.107471608862106correlation matrix could not be computed:
-##  -0.26334864008133correlation matrix could not be computed:
-##  0.0466343302834301correlation matrix could not be computed:
-##  0.598015583208681correlation matrix could not be computed:
-##  0.7494069213488correlation matrix could not be computed:
-##  0.417970438924964correlation matrix could not be computed:
-##  0.422081633586389correlation matrix could not be computed:
-##  0.085200962920973correlation matrix could not be computed:
-##  -0.0738112201896686correlation matrix could not be computed:
-##  -0.111061084309888correlation matrix could not be computed:
-##  -0.0187837923574354correlation matrix could not be computed:
-##  -0.470231685498673correlation matrix could not be computed:
-##  0.0401164967247637correlation matrix could not be computed:
-##  1correlation matrix could not be computed:
-##  -0.157347704337933correlation matrix could not be computed:
-##  -0.106522474751295correlation matrix could not be computed:
-##  0.165008370707857correlation matrix could not be computed:
-##  -0.0195849997833145correlation matrix could not be computed:
-##  0.0951362164884144correlation matrix could not be computed:
-##  0.0535153101671921correlation matrix could not be computed:
-##  -0.0154835939577822correlation matrix could not be computed:
-##  0.0589554920926267correlation matrix could not be computed:
-##  0.0549635093457417correlation matrix could not be computed:
-##  0.0670739356526949correlation matrix could not be computed:
-##  -0.0180392602603926correlation matrix could not be computed:
-##  0.213254628529682correlation matrix could not be computed:
-##  -0.2623111448356correlation matrix could not be computed:
-##  0.138260790696054correlation matrix could not be computed:
-##  0.120150938779494correlation matrix could not be computed:
-##  0.634679620706067correlation matrix could not be computed:
-##  0.161942779298141correlation matrix could not be computed:
-##  -0.00487468617059258correlation matrix could not be computed:
-##  -0.0970325280281872correlation matrix could not be computed:
-##  -0.0970548286549872correlation matrix could not be computed:
-##  0.735251459967222correlation matrix could not be computed:
-##  -0.0233788546169213correlation matrix could not be computed:
-##  -0.0197966674798393correlation matrix could not be computed:
-##  -0.0469667994444209correlation matrix could not be computed:
-##  0.055382594927069correlation matrix could not be computed:
-##  -0.0745419614292381correlation matrix could not be computed:
-##  -0.157347704337933correlation matrix could not be computed:
-##  1correlation matrix could not be computed:
-##  0.199810214471052correlation matrix could not be computed:
-##  -0.135247528988592correlation matrix could not be computed:
-##  0.119795047970913correlation matrix could not be computed:
-##  -0.0189278632588467correlation matrix could not be computed:
-##  -0.0918743581123067correlation matrix could not be computed:
-##  -9.74037259693129e-05correlation matrix could not be computed:
-##  -0.0366381613541393correlation matrix could not be computed:
-##  -0.00771253996116994correlation matrix could not be computed:
-##  0.0639324730558175correlation matrix could not be computed:
-##  -0.0194537384769147correlation matrix could not be computed:
-##  -0.0662474651007067correlation matrix could not be computed:
-##  -0.0609953763465428correlation matrix could not be computed:
-##  0.0578353480403023correlation matrix could not be computed:
-##  -0.012630413972657correlation matrix could not be computed:
-##  -0.0426034016046167correlation matrix could not be computed:
-##  -0.0901980312669627correlation matrix could not be computed:
-##  -0.0332098741188583correlation matrix could not be computed:
-##  -0.00689801411436046correlation matrix could not be computed:
-##  0.00721523296110747correlation matrix could not be computed:
-##  -0.162519164311792correlation matrix could not be computed:
-##  0.0294872457484293correlation matrix could not be computed:
-##  -0.00655744260658358correlation matrix c
-```
 
 ```r
-segDataTrain <- predict(transformations, segDataTrain)
-
 str(segDataTrain)
 ```
 
@@ -1122,7 +991,7 @@ str(segDataTrain)
 knnFit <- train(segDataTrain, segClassTrain, 
                 method="knn",
                 tuneGrid=tuneParam,
-                trControl=tc)
+                trControl=train_ctrl)
 knnFit
 ```
 
@@ -1134,64 +1003,64 @@ knnFit
 ##    2 classes: 'PS', 'WS' 
 ## 
 ## No pre-processing
-## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 909, 909, 909, 909, 909, 909, ... 
+## Resampling: Cross-Validated (5 fold, repeated 5 times) 
+## Summary of sample sizes: 808, 808, 808, 808, 808, 808, ... 
 ## Resampling results across tuning parameters:
 ## 
 ##   k    Accuracy   Kappa    
-##     5  0.7844554  0.5355021
-##    15  0.8063366  0.5858762
-##    25  0.8071287  0.5860760
-##    35  0.8083168  0.5885382
-##    45  0.8043564  0.5777211
-##    55  0.8035644  0.5750911
-##    65  0.8024752  0.5728325
-##    75  0.7998020  0.5672303
-##    85  0.7979208  0.5622155
-##    95  0.7993069  0.5651879
-##   105  0.7975248  0.5609526
-##   115  0.8006931  0.5682550
-##   125  0.8002970  0.5666480
-##   135  0.8020792  0.5695054
-##   145  0.8040594  0.5738518
-##   155  0.8011881  0.5663541
-##   165  0.8005941  0.5640214
-##   175  0.7985149  0.5589314
-##   185  0.7967327  0.5546004
-##   195  0.7971287  0.5555960
-##   205  0.7982178  0.5573946
-##   215  0.7984158  0.5568846
-##   225  0.7962376  0.5516424
-##   235  0.7990099  0.5564413
-##   245  0.7976238  0.5525981
-##   255  0.7985149  0.5540280
-##   265  0.7976238  0.5513190
-##   275  0.7967327  0.5486973
-##   285  0.7979208  0.5508728
-##   295  0.8001980  0.5546946
-##   305  0.8003960  0.5539966
-##   315  0.8000990  0.5522283
-##   325  0.7980198  0.5464552
-##   335  0.7978218  0.5453697
-##   345  0.7966337  0.5415395
-##   355  0.7957426  0.5383734
-##   365  0.7937624  0.5328159
-##   375  0.7913861  0.5258660
-##   385  0.7892079  0.5194483
-##   395  0.7888119  0.5171381
-##   405  0.7872277  0.5120041
-##   415  0.7858416  0.5072424
-##   425  0.7817822  0.4949439
-##   435  0.7792079  0.4870700
-##   445  0.7742574  0.4725344
-##   455  0.7642574  0.4426034
-##   465  0.7605941  0.4275338
-##   475  0.7552475  0.4081788
-##   485  0.7481188  0.3841416
-##   495  0.7381188  0.3521300
+##     5  0.7906931  0.5483969
+##    15  0.8083168  0.5888506
+##    25  0.8100990  0.5924026
+##    35  0.8079208  0.5865236
+##    45  0.8063366  0.5814528
+##    55  0.8015842  0.5719387
+##    65  0.8007921  0.5701690
+##    75  0.7990099  0.5651716
+##    85  0.8011881  0.5697020
+##    95  0.8019802  0.5701985
+##   105  0.8019802  0.5704087
+##   115  0.8015842  0.5687150
+##   125  0.8015842  0.5684810
+##   135  0.7998020  0.5637078
+##   145  0.8001980  0.5636599
+##   155  0.7988119  0.5595799
+##   165  0.7972277  0.5560380
+##   175  0.7970297  0.5555436
+##   185  0.7978218  0.5567664
+##   195  0.7974257  0.5554857
+##   205  0.7974257  0.5548076
+##   215  0.7966337  0.5520418
+##   225  0.7958416  0.5492238
+##   235  0.7952475  0.5476906
+##   245  0.7942574  0.5444892
+##   255  0.7956436  0.5471174
+##   265  0.7990099  0.5530818
+##   275  0.7978218  0.5491339
+##   285  0.7966337  0.5449844
+##   295  0.7966337  0.5441319
+##   305  0.7950495  0.5399876
+##   315  0.7940594  0.5361108
+##   325  0.7926733  0.5313431
+##   335  0.7891089  0.5212114
+##   345  0.7855446  0.5104797
+##   355  0.7845545  0.5062078
+##   365  0.7835644  0.5018507
+##   375  0.7800000  0.4912488
+##   385  0.7766337  0.4812860
+##   395  0.7693069  0.4597910
+##   405  0.7615842  0.4346654
+##   415  0.7538614  0.4098402
+##   425  0.7497030  0.3933898
+##   435  0.7415842  0.3657612
+##   445  0.7330693  0.3385091
+##   455  0.7239604  0.3061210
+##   465  0.7182178  0.2829231
+##   475  0.7156436  0.2691460
+##   485  0.7057426  0.2347579
+##   495  0.6966337  0.2017917
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
-## The final value used for the model was k = 35.
+## The final value used for the model was k = 25.
 ```
 
 
@@ -1204,11 +1073,97 @@ plot(knnFit)
 <p class="caption">(\#fig:cvAccuracySegDataHighCorRem)Accuracy (repeated cross-validation) as a function of neighbourhood size for the segmentation training data with highly correlated predictors removed.</p>
 </div>
 
-#### Methods
-
 
 #### Univariate (_t_-test) filter
+We will use the same **trainingControl** settings and **tuning grid** as before. 
 
+```r
+train_ctrl <- trainControl(method="repeatedcv",
+                   number = 5,
+                   repeats = 5
+                   )
+
+mySBF <- caretSBF
+mySBF$summary <- twoClassSummary
+mySBF$score <- function(x, y) {
+  out <- t.test(x ~ y)$p.value 
+  out <- p.adjust(out, method="holm")
+  out
+}
+mySBF$filter <- function(score, x, y) { score <= 0.001 }
+
+sbf_ctrl <- sbfControl(functions = mySBF,
+                                method = "repeatedcv",
+                                number = 5,
+                                repeats = 5,
+                                verbose = FALSE)
+
+knn_model <- sbf(segDataTrain,
+                segClassTrain,
+                trControl = train_ctrl,
+                sbfControl = sbf_ctrl,
+                ## now arguments to `train`:
+                method = "knn",
+                tuneGrid = tuneParam)
+knn_model
+```
+
+```
+## 
+## Selection By Filter
+## 
+## Outer resampling method: Cross-Validated (5 fold, repeated 5 times) 
+## 
+## Resampling performance:
+## 
+##     ROC   Sens   Spec   ROCSD  SensSD  SpecSD
+##  0.8832 0.8262 0.7794 0.02297 0.03411 0.06032
+## 
+## Using the training set, 15 variables were selected:
+##    ConvexHullPerimRatioCh1, EntropyIntenCh1, FiberWidthCh1, IntenCoocASMCh4, IntenCoocContrastCh3...
+## 
+## During resampling, the top 5 selected variables (out of a possible 16):
+##    ConvexHullPerimRatioCh1 (100%), EntropyIntenCh1 (100%), FiberWidthCh1 (100%), IntenCoocContrastCh3 (100%), IntenCoocMaxCh3 (100%)
+## 
+## On average, 14.2 variables were selected (min = 13, max = 16)
+```
+
+Final model validation
+
+```r
+segDataTest <- predict(transformations, segDataTest)
+test_pred <- predict(knn_model, segDataTest)
+confusionMatrix(test_pred$pred, segClassTest)
+```
+
+```
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction  PS  WS
+##         PS 540  95
+##         WS 110 264
+##                                           
+##                Accuracy : 0.7968          
+##                  95% CI : (0.7707, 0.8213)
+##     No Information Rate : 0.6442          
+##     P-Value [Acc > NIR] : <2e-16          
+##                                           
+##                   Kappa : 0.5609          
+##  Mcnemar's Test P-Value : 0.3282          
+##                                           
+##             Sensitivity : 0.8308          
+##             Specificity : 0.7354          
+##          Pos Pred Value : 0.8504          
+##          Neg Pred Value : 0.7059          
+##              Prevalence : 0.6442          
+##          Detection Rate : 0.5352          
+##    Detection Prevalence : 0.6293          
+##       Balanced Accuracy : 0.7831          
+##                                           
+##        'Positive' Class : PS              
+## 
+```
 
 #### Recursive feature elimination
 

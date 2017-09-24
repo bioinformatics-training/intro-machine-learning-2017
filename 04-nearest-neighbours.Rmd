@@ -455,7 +455,7 @@ qplot(segDataTrain$IntenCoocASMCh3, binwidth=0.1) +
   theme_bw()
 ```
 
-[caret](http://cran.r-project.org/web/packages/caret/index.html) provides various methods for transforming skewed variables to normality, including the Box-Cox (@BoxCox) and Yeo-Johnson (@YeoJohnson) transformations.
+[caret](http://cran.r-project.org/web/packages/caret/index.html) provides various methods for transforming skewed variables to normality, including the Box-Cox [@BoxCox] and Yeo-Johnson [@YeoJohnson] transformations.
 
 #### Removal of correlated predictors
 
@@ -484,21 +484,29 @@ In the case of data-sets comprised of many highly correlated variables, an alter
 
 ### Feature selection
 
+wrapper and filter methods
+
 #### Cross-validated performance without feature selection
 
-Generate a list of seeds.
-```{r echo=T}
+<!-- original settings:
 set.seed(42)
 seeds <- vector(mode = "list", length = 101)
 for(i in 1:100) seeds[[i]] <- sample.int(1000, 50)
 seeds[[101]] <- sample.int(1000,1)
+-->
+Generate a list of seeds.
+```{r echo=T}
+set.seed(42)
+seeds <- vector(mode = "list", length = 26)
+for(i in 1:25) seeds[[i]] <- sample.int(1000, 50)
+seeds[[26]] <- sample.int(1000,1)
 ```
 
-Create a list of computational options for resampling. 
+Create a list of computational options for resampling. In the interest of speed for this demonstration, we will perform 5-fold cross-validation a total of 5 times. In practice we would use a larger number of folds and repetitions.
 ```{r echo=T}
-tc <- trainControl(method="repeatedcv",
-                   number = 10,
-                   repeats = 10,
+train_ctrl <- trainControl(method="repeatedcv",
+                   number = 5,
+                   repeats = 5,
                    #preProcOptions=list(cutoff=0.75),
                    seeds = seeds)
 ```
@@ -514,16 +522,18 @@ knnFit <- train(segDataTrain, segClassTrain,
                 method="knn",
                 preProcess = c("YeoJohnson", "center", "scale", "corr"),
                 tuneGrid=tuneParam,
-                trControl=tc)
+                trControl=train_ctrl)
 ```
 
 However, this is time-consuming, so for the purposes of this demonstration we will pre-process the entire training data-set before proceeding with training and cross-validation.
-```{r echo=T}
+```{r echo=T, message=F, warning=F}
 transformations <- preProcess(segDataTrain, 
                               method=c("YeoJohnson", "center", "scale", "corr"),
                               cutoff=0.75)
 segDataTrain <- predict(transformations, segDataTrain)
+```
 
+```{r echo=T}
 str(segDataTrain)
 ```
 
@@ -531,7 +541,7 @@ str(segDataTrain)
 knnFit <- train(segDataTrain, segClassTrain, 
                 method="knn",
                 tuneGrid=tuneParam,
-                trControl=tc)
+                trControl=train_ctrl)
 knnFit
 
 ```
@@ -540,11 +550,47 @@ knnFit
 plot(knnFit)
 ```
 
-#### Methods
-
 
 #### Univariate (_t_-test) filter
+We will use the same **trainingControl** settings and **tuning grid** as before. 
+```{r echo=T}
+train_ctrl <- trainControl(method="repeatedcv",
+                   number = 5,
+                   repeats = 5
+                   )
 
+mySBF <- caretSBF
+mySBF$summary <- twoClassSummary
+mySBF$score <- function(x, y) {
+  out <- t.test(x ~ y)$p.value 
+  out <- p.adjust(out, method="holm")
+  out
+}
+mySBF$filter <- function(score, x, y) { score <= 0.001 }
+
+sbf_ctrl <- sbfControl(functions = mySBF,
+                                method = "repeatedcv",
+                                number = 5,
+                                repeats = 5,
+                                verbose = FALSE)
+
+knn_model <- sbf(segDataTrain,
+                segClassTrain,
+                trControl = train_ctrl,
+                sbfControl = sbf_ctrl,
+                ## now arguments to `train`:
+                method = "knn",
+                tuneGrid = tuneParam)
+knn_model
+```
+
+Final model validation
+```{r echo=T}
+segDataTest <- predict(transformations, segDataTest)
+test_pred <- predict(knn_model, segDataTest)
+confusionMatrix(test_pred$pred, segClassTest)
+
+```
 
 #### Recursive feature elimination
 
