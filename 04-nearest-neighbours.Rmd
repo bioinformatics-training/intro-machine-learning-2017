@@ -76,7 +76,7 @@ knitr::include_graphics("images/knn_classification.svg")
 ```
 
 ### Simulated data
-We will use a simulated data set to demonstrate:
+A simulated data set will be used to demonstrate:
 
 * bias-variance trade-off
 * the knn function in R
@@ -566,7 +566,7 @@ mySBF$score <- function(x, y) {
   out <- p.adjust(out, method="holm")
   out
 }
-mySBF$filter <- function(score, x, y) { score <= 0.001 }
+mySBF$filter <- function(score, x, y) { score <= 0.01 }
 
 sbf_ctrl <- sbfControl(functions = mySBF,
                                 method = "repeatedcv",
@@ -574,29 +574,159 @@ sbf_ctrl <- sbfControl(functions = mySBF,
                                 repeats = 5,
                                 verbose = FALSE)
 
-knn_model <- sbf(segDataTrain,
+knn_sbf <- sbf(segDataTrain,
                 segClassTrain,
                 trControl = train_ctrl,
                 sbfControl = sbf_ctrl,
                 ## now arguments to `train`:
                 method = "knn",
                 tuneGrid = tuneParam)
-knn_model
+knn_sbf
 ```
 
-Final model validation
+Much information about the final model is stored in **knn_sbf**. To reveal the identities of the predictors selected for the final model run:
+```{r echo=T}
+knn_sbf$optVariables
+```
+
+Here are some performance metrics for the final model:
+```{r echo=T}
+knn_sbf$results
+```
+
+To retrieve the optimum value of k found during training run:
+```{r echo=T}
+knn_sbf$fit$finalModel$k
+```
+
+Let's test the final model.
 ```{r echo=T}
 segDataTest <- predict(transformations, segDataTest)
-test_pred <- predict(knn_model, segDataTest)
+test_pred <- predict(knn_sbf, segDataTest)
 confusionMatrix(test_pred$pred, segClassTest)
 
 ```
 
-#### Recursive feature elimination
+
 
 
 
 ## Regression
+
+_k_-nn can also be applied to the problem of regression as we will see in the following example. The **BloodBrain** dataset in the [caret](http://cran.r-project.org/web/packages/caret/index.html) package contains data on 208 chemical compounds, organized in two objects:
+
+* **logBBB** - a vector of the log ratio of the concentration of a chemical compound in the brain and the concentration in the blood.
+* **bbbDescr** - a data frame of 134 molecular descriptors of the compounds.
+
+We'll start by loading the data.
+```{r echo=T}
+data(BloodBrain)
+str(bbbDescr)
+str(logBBB)
+```
+Evidently the variables are on different scales which is problematic for _k_-nn.
+
+### Partition data
+Before proceeding the data set must be partitioned into a training and a test set.
+```{r echo=T}
+set.seed(42)
+trainIndex <- createDataPartition(y=logBBB, times=1, p=0.8, list=F)
+descrTrain <- bbbDescr[trainIndex,]
+concRatioTrain <- logBBB[trainIndex]
+descrTest <- bbbDescr[-trainIndex,]
+concRatioTest <- logBBB[-trainIndex]
+```
+
+### Data pre-processing
+Are there any issues with the data that might affect model fitting? Let's start by considering correlation.
+
+```{r compoundDescriptorsCorrelogram, fig.cap='Correlogram of the chemical compound descriptors.', out.width='80%', fig.asp=1, fig.align='center', echo=T}
+cm <- cor(descrTrain)
+corrplot(cm, order="hclust", tl.pos="n")
+```
+
+The number of variables exhibiting a pair-wise correlation coefficient above 0.75 can be determined:
+```{r echo=T}
+highCorr <- findCorrelation(cm, cutoff=0.75)
+length(highCorr)
+```
+
+A check for the presence of missing values:
+```{r echo=T}
+anyNA(descrTrain)
+```
+
+Detection of near zero variance predictors:
+```{r echo=T}
+nearZeroVar(descrTrain)
+```
+
+We know there are issues with scaling, and the presence of highly correlated predictors and near zero variance predictors. These problems are resolved by pre-processing. First we define the procesing steps.
+```{r echo=T}
+transformations <- preProcess(descrTrain,
+                              method=c("center", "scale", "corr", "nzv"),
+                              cutoff=0.75)
+```
+Then this transformation can be applied to the compound descriptor data set.
+```{r echo=T}
+descrTrain <- predict(transformations, descrTrain)
+```
+
+### Search for optimum _k_
+The optimum value of _k_ can be found by cross-validation, following similar methodology to that used to find the best _k_ for classification. We'll start by generating seeds to make this example reproducible.
+```{r echo=T}
+set.seed(42)
+seeds <- vector(mode = "list", length = 26)
+for(i in 1:25) seeds[[i]] <- sample.int(1000, 50)
+seeds[[26]] <- sample.int(1000,1)
+```
+
+Ten values of _k_ will be evaluated using 5 repeats of 5-fold cross-validation.
+```{r echo=T}
+knnTune <- train(descrTrain,
+                 concRatioTrain,
+                 method="knn",
+                 tuneGrid = data.frame(.k=1:10),
+                 trControl = trainControl(method="repeatedcv",
+                                          number = 5,
+                                          repeats = 5,
+                                          seeds=seeds,
+                                          preProcOptions=list(cutoff=0.75))
+                 )
+
+knnTune
+```
+
+
+```{r rmseFunK, fig.cap='Root Mean Squared Error as a function of neighbourhood size.', out.width='100%', fig.asp=0.6, fig.align='center', echo=T}
+plot(knnTune)
+```
+
+### Use model to make predictions
+Before attempting to predict the blood/brain concentration ratios of the test samples, the descriptors in the test set must be transformed using the same pre-processing procedure that was applied to the descriptors in the training set.
+```{r echo=T}
+descrTest <- predict(transformations, descrTest)
+```
+
+Use model to predict outcomes (concentration ratios) of the test set.
+```{r echo=T}
+test_pred <- predict(knnTune, descrTest)
+```
+
+Prediction performance can be visualized in a scatterplot.
+
+```{r obsPredConcRatios, fig.cap='Concordance between observed concentration ratios and those predicted by _k_-nn regression.', out.width='80%', fig.asp=0.8, fig.align='center', echo=T}
+qplot(concRatioTest, test_pred) + 
+  xlab("observed") +
+  ylab("predicted") +
+  theme_bw()
+```
+
+We can also measure correlation between observed and predicted values.
+```{r echo=T}
+cor(concRatioTest, test_pred)
+```
+
 <!--
 ## Caret
 

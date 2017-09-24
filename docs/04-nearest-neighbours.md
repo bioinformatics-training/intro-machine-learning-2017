@@ -71,7 +71,7 @@ increase in neighbours - increase in ties
 </div>
 
 ### Simulated data
-We will use a simulated data set to demonstrate:
+A simulated data set will be used to demonstrate:
 
 * bias-variance trade-off
 * the knn function in R
@@ -1090,7 +1090,7 @@ mySBF$score <- function(x, y) {
   out <- p.adjust(out, method="holm")
   out
 }
-mySBF$filter <- function(score, x, y) { score <= 0.001 }
+mySBF$filter <- function(score, x, y) { score <= 0.01 }
 
 sbf_ctrl <- sbfControl(functions = mySBF,
                                 method = "repeatedcv",
@@ -1098,14 +1098,14 @@ sbf_ctrl <- sbfControl(functions = mySBF,
                                 repeats = 5,
                                 verbose = FALSE)
 
-knn_model <- sbf(segDataTrain,
+knn_sbf <- sbf(segDataTrain,
                 segClassTrain,
                 trControl = train_ctrl,
                 sbfControl = sbf_ctrl,
                 ## now arguments to `train`:
                 method = "knn",
                 tuneGrid = tuneParam)
-knn_model
+knn_sbf
 ```
 
 ```
@@ -1116,23 +1116,61 @@ knn_model
 ## 
 ## Resampling performance:
 ## 
-##     ROC   Sens   Spec   ROCSD  SensSD  SpecSD
-##  0.8832 0.8262 0.7794 0.02297 0.03411 0.06032
+##     ROC   Sens   Spec   ROCSD SensSD  SpecSD
+##  0.8865 0.8326 0.7722 0.02285 0.0294 0.06211
 ## 
-## Using the training set, 15 variables were selected:
+## Using the training set, 16 variables were selected:
 ##    ConvexHullPerimRatioCh1, EntropyIntenCh1, FiberWidthCh1, IntenCoocASMCh4, IntenCoocContrastCh3...
 ## 
-## During resampling, the top 5 selected variables (out of a possible 16):
-##    ConvexHullPerimRatioCh1 (100%), EntropyIntenCh1 (100%), FiberWidthCh1 (100%), IntenCoocContrastCh3 (100%), IntenCoocMaxCh3 (100%)
+## During resampling, the top 5 selected variables (out of a possible 19):
+##    ConvexHullPerimRatioCh1 (100%), EntropyIntenCh1 (100%), FiberWidthCh1 (100%), IntenCoocASMCh4 (100%), IntenCoocContrastCh3 (100%)
 ## 
-## On average, 14.2 variables were selected (min = 13, max = 16)
+## On average, 15.6 variables were selected (min = 15, max = 17)
 ```
 
-Final model validation
+Much information about the final model is stored in **knn_sbf**. To reveal the identities of the predictors selected for the final model run:
+
+```r
+knn_sbf$optVariables
+```
+
+```
+##  [1] "ConvexHullPerimRatioCh1" "EntropyIntenCh1"        
+##  [3] "FiberWidthCh1"           "IntenCoocASMCh4"        
+##  [5] "IntenCoocContrastCh3"    "IntenCoocMaxCh3"        
+##  [7] "KurtIntenCh1"            "KurtIntenCh3"           
+##  [9] "KurtIntenCh4"            "ShapeBFRCh1"            
+## [11] "ShapeLWRCh1"             "SkewIntenCh1"           
+## [13] "TotalIntenCh2"           "VarIntenCh1"            
+## [15] "VarIntenCh4"             "WidthCh1"
+```
+
+Here are some performance metrics for the final model:
+
+```r
+knn_sbf$results
+```
+
+```
+##         ROC      Sens      Spec      ROCSD     SensSD   SpecSD
+## 1 0.8864679 0.8326154 0.7722222 0.02285086 0.02939898 0.062113
+```
+
+To retrieve the optimum value of k found during training run:
+
+```r
+knn_sbf$fit$finalModel$k
+```
+
+```
+## [1] 15
+```
+
+Let's test the final model.
 
 ```r
 segDataTest <- predict(transformations, segDataTest)
-test_pred <- predict(knn_model, segDataTest)
+test_pred <- predict(knn_sbf, segDataTest)
 confusionMatrix(test_pred$pred, segClassTest)
 ```
 
@@ -1141,35 +1179,334 @@ confusionMatrix(test_pred$pred, segClassTest)
 ## 
 ##           Reference
 ## Prediction  PS  WS
-##         PS 540  95
-##         WS 110 264
+##         PS 536  99
+##         WS 114 260
 ##                                           
-##                Accuracy : 0.7968          
-##                  95% CI : (0.7707, 0.8213)
+##                Accuracy : 0.7889          
+##                  95% CI : (0.7624, 0.8137)
 ##     No Information Rate : 0.6442          
 ##     P-Value [Acc > NIR] : <2e-16          
 ##                                           
-##                   Kappa : 0.5609          
-##  Mcnemar's Test P-Value : 0.3282          
+##                   Kappa : 0.5438          
+##  Mcnemar's Test P-Value : 0.3374          
 ##                                           
-##             Sensitivity : 0.8308          
-##             Specificity : 0.7354          
-##          Pos Pred Value : 0.8504          
-##          Neg Pred Value : 0.7059          
+##             Sensitivity : 0.8246          
+##             Specificity : 0.7242          
+##          Pos Pred Value : 0.8441          
+##          Neg Pred Value : 0.6952          
 ##              Prevalence : 0.6442          
-##          Detection Rate : 0.5352          
+##          Detection Rate : 0.5312          
 ##    Detection Prevalence : 0.6293          
-##       Balanced Accuracy : 0.7831          
+##       Balanced Accuracy : 0.7744          
 ##                                           
 ##        'Positive' Class : PS              
 ## 
 ```
 
-#### Recursive feature elimination
+
 
 
 
 ## Regression
+
+_k_-nn can also be applied to the problem of regression as we will see in the following example. The **BloodBrain** dataset in the [caret](http://cran.r-project.org/web/packages/caret/index.html) package contains data on 208 chemical compounds, organized in two objects:
+
+* **logBBB** - a vector of the log ratio of the concentration of a chemical compound in the brain and the concentration in the blood.
+* **bbbDescr** - a data frame of 134 molecular descriptors of the compounds.
+
+We'll start by loading the data.
+
+```r
+data(BloodBrain)
+str(bbbDescr)
+```
+
+```
+## 'data.frame':	208 obs. of  134 variables:
+##  $ tpsa                : num  12 49.3 50.5 37.4 37.4 ...
+##  $ nbasic              : int  1 0 1 0 1 1 1 1 1 1 ...
+##  $ negative            : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ vsa_hyd             : num  167.1 92.6 295.2 319.1 299.7 ...
+##  $ a_aro               : int  0 6 15 15 12 11 6 12 12 6 ...
+##  $ weight              : num  156 151 366 383 326 ...
+##  $ peoe_vsa.0          : num  76.9 38.2 58.1 62.2 74.8 ...
+##  $ peoe_vsa.1          : num  43.4 25.5 124.7 124.7 118 ...
+##  $ peoe_vsa.2          : num  0 0 21.7 13.2 33 ...
+##  $ peoe_vsa.3          : num  0 8.62 8.62 21.79 0 ...
+##  $ peoe_vsa.4          : num  0 23.3 17.4 0 0 ...
+##  $ peoe_vsa.5          : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ peoe_vsa.6          : num  17.24 0 8.62 8.62 8.62 ...
+##  $ peoe_vsa.0.1        : num  18.7 49 83.8 83.8 83.8 ...
+##  $ peoe_vsa.1.1        : num  43.5 0 49 68.8 36.8 ...
+##  $ peoe_vsa.2.1        : num  0 0 0 0 0 ...
+##  $ peoe_vsa.3.1        : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ peoe_vsa.4.1        : num  0 0 5.68 5.68 5.68 ...
+##  $ peoe_vsa.5.1        : num  0 13.567 2.504 0 0.137 ...
+##  $ peoe_vsa.6.1        : num  0 7.9 2.64 2.64 2.5 ...
+##  $ a_acc               : int  0 2 2 2 2 2 2 2 0 2 ...
+##  $ a_acid              : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ a_base              : int  1 0 1 1 1 1 1 1 1 1 ...
+##  $ vsa_acc             : num  0 13.57 8.19 8.19 8.19 ...
+##  $ vsa_acid            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ vsa_base            : num  5.68 0 0 0 0 ...
+##  $ vsa_don             : num  5.68 5.68 5.68 5.68 5.68 ...
+##  $ vsa_other           : num  0 28.1 43.6 28.3 19.6 ...
+##  $ vsa_pol             : num  0 13.6 0 0 0 ...
+##  $ slogp_vsa0          : num  18 25.4 14.1 14.1 14.1 ...
+##  $ slogp_vsa1          : num  0 23.3 34.8 34.8 34.8 ...
+##  $ slogp_vsa2          : num  3.98 23.86 0 0 0 ...
+##  $ slogp_vsa3          : num  0 0 76.2 76.2 76.2 ...
+##  $ slogp_vsa4          : num  4.41 0 3.19 3.19 3.19 ...
+##  $ slogp_vsa5          : num  32.9 0 9.51 0 0 ...
+##  $ slogp_vsa6          : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ slogp_vsa7          : num  0 70.6 148.1 144 140.7 ...
+##  $ slogp_vsa8          : num  113.2 0 75.5 75.5 75.5 ...
+##  $ slogp_vsa9          : num  33.3 41.3 28.3 55.5 26 ...
+##  $ smr_vsa0            : num  0 23.86 12.63 3.12 3.12 ...
+##  $ smr_vsa1            : num  18 25.4 27.8 27.8 27.8 ...
+##  $ smr_vsa2            : num  4.41 0 0 0 0 ...
+##  $ smr_vsa3            : num  3.98 5.24 8.43 8.43 8.43 ...
+##  $ smr_vsa4            : num  0 20.8 29.6 21.4 20.3 ...
+##  $ smr_vsa5            : num  113.2 70.6 235.1 235.1 234.6 ...
+##  $ smr_vsa6            : num  0 5.26 76.25 76.25 76.25 ...
+##  $ smr_vsa7            : num  66.2 33.3 0 31.3 0 ...
+##  $ tpsa.1              : num  16.6 49.3 51.7 38.6 38.6 ...
+##  $ logp.o.w.           : num  2.948 0.889 4.439 5.254 3.8 ...
+##  $ frac.anion7.        : num  0 0.001 0 0 0 0 0.001 0 0 0 ...
+##  $ frac.cation7.       : num  0.999 0 0.986 0.986 0.986 0.986 0.996 0.946 0.999 0.976 ...
+##  $ andrewbind          : num  3.4 -3.3 12.8 12.8 10.3 10 10.4 15.9 12.9 9.5 ...
+##  $ rotatablebonds      : int  3 2 8 8 8 8 8 7 4 5 ...
+##  $ mlogp               : num  2.5 1.06 4.66 3.82 3.27 ...
+##  $ clogp               : num  2.97 0.494 5.137 5.878 4.367 ...
+##  $ mw                  : num  155 151 365 382 325 ...
+##  $ nocount             : int  1 3 5 4 4 4 4 3 2 4 ...
+##  $ hbdnr               : int  1 2 1 1 1 1 2 1 1 0 ...
+##  $ rule.of.5violations : int  0 0 1 1 0 0 0 0 1 0 ...
+##  $ alert               : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ prx                 : int  0 1 6 2 2 2 1 0 0 4 ...
+##  $ ub                  : num  0 3 5.3 5.3 4.2 3.6 3 4.7 4.2 3 ...
+##  $ pol                 : int  0 2 3 3 2 2 2 3 4 1 ...
+##  $ inthb               : int  0 0 0 0 0 0 1 0 0 0 ...
+##  $ adistm              : num  0 395 1365 703 746 ...
+##  $ adistd              : num  0 10.9 25.7 10 10.6 ...
+##  $ polar_area          : num  21.1 117.4 82.1 65.1 66.2 ...
+##  $ nonpolar_area       : num  379 248 638 668 602 ...
+##  $ psa_npsa            : num  0.0557 0.4743 0.1287 0.0974 0.11 ...
+##  $ tcsa                : num  0.0097 0.0134 0.0111 0.0108 0.0118 0.0111 0.0123 0.0099 0.0106 0.0115 ...
+##  $ tcpa                : num  0.1842 0.0417 0.0972 0.1218 0.1186 ...
+##  $ tcnp                : num  0.0103 0.0198 0.0125 0.0119 0.013 0.0125 0.0162 0.011 0.0109 0.0122 ...
+##  $ ovality             : num  1.1 1.12 1.3 1.3 1.27 ...
+##  $ surface_area        : num  400 365 720 733 668 ...
+##  $ volume              : num  656 555 1224 1257 1133 ...
+##  $ most_negative_charge: num  -0.617 -0.84 -0.801 -0.761 -0.857 ...
+##  $ most_positive_charge: num  0.307 0.497 0.541 0.48 0.455 ...
+##  $ sum_absolute_charge : num  3.89 4.89 7.98 7.93 7.85 ...
+##  $ dipole_moment       : num  1.19 4.21 3.52 3.15 3.27 ...
+##  $ homo                : num  -9.67 -8.96 -8.63 -8.56 -8.67 ...
+##  $ lumo                : num  3.4038 0.1942 0.0589 -0.2651 0.3149 ...
+##  $ hardness            : num  6.54 4.58 4.34 4.15 4.49 ...
+##  $ ppsa1               : num  349 223 518 508 509 ...
+##  $ ppsa2               : num  679 546 2066 2013 1999 ...
+##  $ ppsa3               : num  31 42.3 64 61.7 61.6 ...
+##  $ pnsa1               : num  51.1 141.8 202 225.4 158.8 ...
+##  $ pnsa2               : num  -99.3 -346.9 -805.9 -894 -623.3 ...
+##  $ pnsa3               : num  -10.5 -44 -43.8 -42 -39.8 ...
+##  $ fpsa1               : num  0.872 0.611 0.719 0.693 0.762 ...
+##  $ fpsa2               : num  1.7 1.5 2.87 2.75 2.99 ...
+##  $ fpsa3               : num  0.0774 0.1159 0.0888 0.0842 0.0922 ...
+##  $ fnsa1               : num  0.128 0.389 0.281 0.307 0.238 ...
+##  $ fnsa2               : num  -0.248 -0.951 -1.12 -1.22 -0.933 ...
+##  $ fnsa3               : num  -0.0262 -0.1207 -0.0608 -0.0573 -0.0596 ...
+##  $ wpsa1               : num  139.7 81.4 372.7 372.1 340.1 ...
+##  $ wpsa2               : num  272 199 1487 1476 1335 ...
+##  $ wpsa3               : num  12.4 15.4 46 45.2 41.1 ...
+##  $ wnsa1               : num  20.4 51.8 145.4 165.3 106 ...
+##  $ wnsa2               : num  -39.8 -126.6 -580.1 -655.3 -416.3 ...
+##   [list output truncated]
+```
+
+```r
+str(logBBB)
+```
+
+```
+##  num [1:208] 1.08 -0.4 0.22 0.14 0.69 0.44 -0.43 1.38 0.75 0.88 ...
+```
+Evidently the variables are on different scales which is problematic for _k_-nn.
+
+### Partition data
+Before proceeding the data set must be partitioned into a training and a test set.
+
+```r
+set.seed(42)
+trainIndex <- createDataPartition(y=logBBB, times=1, p=0.8, list=F)
+descrTrain <- bbbDescr[trainIndex,]
+concRatioTrain <- logBBB[trainIndex]
+descrTest <- bbbDescr[-trainIndex,]
+concRatioTest <- logBBB[-trainIndex]
+```
+
+### Data pre-processing
+Are there any issues with the data that might affect model fitting? Let's start by considering correlation.
+
+
+```r
+cm <- cor(descrTrain)
+corrplot(cm, order="hclust", tl.pos="n")
+```
+
+<div class="figure" style="text-align: center">
+<img src="04-nearest-neighbours_files/figure-html/compoundDescriptorsCorrelogram-1.png" alt="Correlogram of the chemical compound descriptors." width="80%" />
+<p class="caption">(\#fig:compoundDescriptorsCorrelogram)Correlogram of the chemical compound descriptors.</p>
+</div>
+
+The number of variables exhibiting a pair-wise correlation coefficient above 0.75 can be determined:
+
+```r
+highCorr <- findCorrelation(cm, cutoff=0.75)
+length(highCorr)
+```
+
+```
+## [1] 68
+```
+
+A check for the presence of missing values:
+
+```r
+anyNA(descrTrain)
+```
+
+```
+## [1] FALSE
+```
+
+Detection of near zero variance predictors:
+
+```r
+nearZeroVar(descrTrain)
+```
+
+```
+## [1]  3 16 22 25 50 60
+```
+
+We know there are issues with scaling, and the presence of highly correlated predictors and near zero variance predictors. These problems are resolved by pre-processing. First we define the procesing steps.
+
+```r
+transformations <- preProcess(descrTrain,
+                              method=c("center", "scale", "corr", "nzv"),
+                              cutoff=0.75)
+```
+Then this transformation can be applied to the compound descriptor data set.
+
+```r
+descrTrain <- predict(transformations, descrTrain)
+```
+
+### Search for optimum _k_
+The optimum value of _k_ can be found by cross-validation, following similar methodology to that used to find the best _k_ for classification. We'll start by generating seeds to make this example reproducible.
+
+```r
+set.seed(42)
+seeds <- vector(mode = "list", length = 26)
+for(i in 1:25) seeds[[i]] <- sample.int(1000, 50)
+seeds[[26]] <- sample.int(1000,1)
+```
+
+Ten values of _k_ will be evaluated using 5 repeats of 5-fold cross-validation.
+
+```r
+knnTune <- train(descrTrain,
+                 concRatioTrain,
+                 method="knn",
+                 tuneGrid = data.frame(.k=1:10),
+                 trControl = trainControl(method="repeatedcv",
+                                          number = 5,
+                                          repeats = 5,
+                                          seeds=seeds,
+                                          preProcOptions=list(cutoff=0.75))
+                 )
+
+knnTune
+```
+
+```
+## k-Nearest Neighbors 
+## 
+## 168 samples
+##  61 predictor
+## 
+## No pre-processing
+## Resampling: Cross-Validated (5 fold, repeated 5 times) 
+## Summary of sample sizes: 134, 133, 134, 135, 136, 135, ... 
+## Resampling results across tuning parameters:
+## 
+##   k   RMSE       Rsquared 
+##    1  0.6558057  0.3842540
+##    2  0.6115146  0.4078611
+##    3  0.5973631  0.4175457
+##    4  0.5900643  0.4209210
+##    5  0.5965506  0.4048469
+##    6  0.6002566  0.3947480
+##    7  0.6069634  0.3847001
+##    8  0.6113786  0.3763523
+##    9  0.6143439  0.3720127
+##   10  0.6161641  0.3718038
+## 
+## RMSE was used to select the optimal model using  the smallest value.
+## The final value used for the model was k = 4.
+```
+
+
+
+```r
+plot(knnTune)
+```
+
+<div class="figure" style="text-align: center">
+<img src="04-nearest-neighbours_files/figure-html/rmseFunK-1.png" alt="Root Mean Squared Error as a function of neighbourhood size." width="100%" />
+<p class="caption">(\#fig:rmseFunK)Root Mean Squared Error as a function of neighbourhood size.</p>
+</div>
+
+### Use model to make predictions
+Before attempting to predict the blood/brain concentration ratios of the test samples, the descriptors in the test set must be transformed using the same pre-processing procedure that was applied to the descriptors in the training set.
+
+```r
+descrTest <- predict(transformations, descrTest)
+```
+
+Use model to predict outcomes (concentration ratios) of the test set.
+
+```r
+test_pred <- predict(knnTune, descrTest)
+```
+
+Prediction performance can be visualized in a scatterplot.
+
+
+```r
+qplot(concRatioTest, test_pred) + 
+  xlab("observed") +
+  ylab("predicted") +
+  theme_bw()
+```
+
+<div class="figure" style="text-align: center">
+<img src="04-nearest-neighbours_files/figure-html/obsPredConcRatios-1.png" alt="Concordance between observed concentration ratios and those predicted by _k_-nn regression." width="80%" />
+<p class="caption">(\#fig:obsPredConcRatios)Concordance between observed concentration ratios and those predicted by _k_-nn regression.</p>
+</div>
+
+We can also measure correlation between observed and predicted values.
+
+```r
+cor(concRatioTest, test_pred)
+```
+
+```
+## [1] 0.7278034
+```
+
 <!--
 ## Caret
 

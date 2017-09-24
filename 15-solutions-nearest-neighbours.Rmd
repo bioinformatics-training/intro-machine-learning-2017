@@ -3,6 +3,64 @@
 Solutions to exercises of chapter \@ref(nearest-neighbours).
 
 ## Exercise 1
+<!--
+```{r echo=T}
+library(caret)
+library(doMC)
+registerDoMC()
+
+
+data(segmentationData)
+
+segClass <- segmentationData$Class
+segData <- segmentationData[,4:61]
+
+set.seed(42)
+trainIndex <- createDataPartition(y=segClass, times=1, p=0.5, list=F)
+segDataTrain <- segData[trainIndex,]
+segDataTest <- segData[-trainIndex,]
+segClassTrain <- segClass[trainIndex]
+segClassTest <- segClass[-trainIndex]
+
+subsets<-c(5,10,15)
+
+tuneParam <- data.frame(k=seq(5,500,20))
+
+tuneParam <- data.frame(k=c(25,50))
+
+transformations <- preProcess(segDataTrain, 
+                              method=c("YeoJohnson", "center", "scale", "corr"),
+                              cutoff=0.75)
+segDataTrain <- predict(transformations, segDataTrain)
+
+train_ctrl <- trainControl(method="repeatedcv",
+                   number = 5,
+                   repeats=5)
+
+myRFE <- caretFuncs
+myRFE$summary <- twoClassSummary
+
+rfe_ctrl <- rfeControl(functions=myRFE,
+                       method="repeatedcv",
+                       number=5,
+                       repeats=5
+                       )
+
+knn_rfe <- rfe(segDataTrain,
+               segClassTrain,
+               sizes=subsets,
+               trControl = train_ctrl,
+               rfeControl = rfe_ctrl,
+               # now arguments to `train`:
+               method = "knn",
+               tuneGrid = tuneParam)
+
+knn_rfe
+
+
+
+```
+-->
 
 ## Exercise 2
 
