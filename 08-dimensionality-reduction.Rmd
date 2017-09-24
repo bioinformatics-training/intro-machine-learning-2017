@@ -12,15 +12,21 @@ The imbalance between the number of variables and the number of observatins is o
 
 The increasing prevalence of single cell RNA-sequencing (scRNA-seq) means the scales of datasets have shifted towards providing measurments of many variables but with a corresponding large are of observations (large n) albeit from potentially heterogeneous population. The first scRNA-sequencing was published in 2009 (Tang et al., 2009) in a single mouse blastomere, driven by the need to sequence the transcriptome of cells that are limited in quantity, such as embryonic cells. In 2017, scRNA-seq exerpiments routinely generete datasets with tens to hundreds of thousands of cells (Svensson, 2017). Indeed, in 2016, the [10x Genomics million cell experiment](https://community.10xgenomics.com/t5/10x-Blog/Our-1-3-million-single-cell-dataset-is-ready-to-download/ba-p/276) provided sequencing for over 1.3 million cells taken from the cortex, hippocampus and ventricular zone of embryonic mice, and large international consortiums, such as the [Human Cell Atlas](https://www.humancellatlas.org) aim to create a comprehensive maps of all cell types in the human body.
 
+```{r hierarchicClusteringDemo, echo = F, fig.cap = 'Building a dendrogram using hierarchic agglomerative clustering.', fig.align = 'center', fig.show='hold', out.width = '55%'}
+knitr::include_graphics(c("images/swiss_roll_manifold_sculpting.png"))
+```
+
 A key goal when dealing with datasets of these magnitude is the identification of subpopulations of cells that may have gone undetected in bulk measurements; another, perhaps more abitious task, aims to take advantage of any heterogeneity within the populatio in order to identify a temporal or mechanistic progression of developmental processes or disease. (citeations Saadatpour et al., 2017)
 
 However, these types of datasets are inherently difficult for humans to develop any intuition for. A useuful intermediate step towards making them of practucal use, is to reduce the dimensionality of the data, summarising the system which may contain tens of thousands of genes into a handful (typically two or three) informative variables, which are more intuitive space for a human to interogate and form a hypothesis. 
 
 Of course, whilst dimensionality reduction allows humans to inspect the dataset manually, particularly when the data can be represented in two or three dimensions, it should be noted that humans are exceptionally good at identifying patterns in two or three dimensional data, even when no real structure exists. For example, seeing an image of the UK in a cloud (Figure X). In these cases, it is often useful to employ other statistical machine learning approaches to search for patterns over the reduced dimensional space. In this sense, dimensionality reduction forms an important component of a moddern statistical analyses that will typically combined a variety of machine learning techniques, such as classification, regression, and/or clustering. 
 
-```{r UKClouds, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Human identified image of UK in a cloud. More whimsical images also possible.  GOLCAR MATT/WEATHERWATCHERS [Image from BBC news](http://www.bbc.co.uk/news/uk-england-leeds-40287817)}
-knitr::include_graphics("images/GB1.jpg")
+```{r hierarchicClusteringDemo1, echo = F, fig.cap = 'Building a dendrogram using hierarchic agglomerative clustering.', fig.align = 'center', fig.show='hold', out.width = '55%'}
+knitr::include_graphics(c("images/GB1.jpg"))
 ```
+
+
 
 In this chapter we will explore two forms of dimensionality reduction, principle component analysis (PCA) and t-distributed stochastic neighbor embedding (tSNE), highlighting the advantages and potential pitfalls of both methods. As an illustrative example, we will use these approaches to analyse some single cell RNA-sequencing data of early human development, ...
 
@@ -33,7 +39,7 @@ The most widely used form of dimensionality reduction is based on principle comp
 PCA is not a dimensionality reduction technique per se, but an alternative way of representing the data that more naturally captures the variance in the system. Specifically, it finds a new co-ordinate system, so that the new x-axis (the first principle component) is aligned along the direcion of greatest variance, with the y-axis aligned along the direction of second greatest variance (the second principle component), and so forth (Figure Figure \@ref(fig:PCAfig). At this stage there has been no inherent reduction in the dimensionality of the system, we have simply found a more natural way to represent the data.
 
 ```{r echo=F}
-D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/GSE5325/GSE5325.csv", header = TRUE, sep = ",", row.names=1)
+D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/GSE5325/GSE5325_markers.csv", header = TRUE, sep = ",", row.names=1)
 
 plot(t(D[1,which(D[3,]==0)]),t(D[2,which(D[3,]==0)]),'p',col='red', ylab="XBP1", xlab="GATA3",xlim=c(min(D[2,],na.rm = TRUE), max(D[2,],na.rm = TRUE)),ylim=c(min(D[1,],na.rm = TRUE), max(D[1,],na.rm = TRUE)))
 points(t(D[1,which(D[3,]==1)]),t(D[2,which(D[3,]==1)]),'p',col='blue')
@@ -160,6 +166,7 @@ scatterplot3d(D3,color=colors, main="3D Scatterplot")
 
 
 ```{r echo=F}
+tsne_model_1 = Rtsne(as.matrix(D3), check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
 y1 <- tsne_model_1$Y[which(D[1,]==-1),1:2]
 tsne_model_1 <- Rtsne(as.matrix(D3), check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
 

@@ -6,7 +6,6 @@
 
 <!-- Chris -->
 
-
 <<<<<<< HEAD
 
 A large component of machine learning involveds either regression analysis or classification analysis. Within regression analysis we wish to find how a particular continuous variable of interest, y, is influenced by another set of variables, x. Conceptually, this involves identifying a function that tells us the value of y given a observed x, for example, how the expression of a particular gene, y_i, changes over time, or as a function of the expression of itse regulators. In general, many applications in ML can be represented in terms of regression, including differential expression analysis and network inference.
@@ -43,7 +42,6 @@ lm(AT2G28890~Time, data = D[25:nrow(D),])
 
 
 ```{r echo=F}
-install.packages("caret", dependencies = c("Depends", "Suggests"))
 library(caret)
 library(mlbench)
 set.seed(1)
@@ -258,48 +256,39 @@ The application in the previous section. We have
 Stegle et al. Rattray et al.
 
 ```{r echo=T}
-install.packages("devtools")
+#install.packages("devtools")
 library(devtools)
 install_github("ManchesterBioinference/DEtime")
-import(DEtime)
+#import(DEtime)
 library(DEtime)
 ```
 
 
-```{r echo=T}
-res <- DEtime_infer(ControlTimes = Xs, ControlData = D[1:24,2], PerturbedTimes = Xs, PerturbedData = D[25:48,2])
+```{r echo=F}
+res <- DEtime_infer(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTimes = Xs, PerturbedData = D[25:48,3])
 print_DEtime
 plot_DEtime(res)
 ```
 
 
-
-res <- DEtime_infer(ControlTimes = Xs, ControlData = D[1:24,2], PerturbedTimes = Xs, PerturbedData = D[25:48,2])
+```{r echo=F}
+res <- DEtime_infer(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTimes = Xs, PerturbedData = D[25:48,3])
 print_DEtime
 plot_DEtime(res)
+```
 
-res_rank <- DEtime_rank(ControlTimes = ControlTimes, ControlData = ControlData, PerturbedTimes, PerturbedData=PerturbedData, savefile=TRUE)
+```{r echo=F}
+res_rank <- DEtime_rank(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTimes = Xs, PerturbedData = D[25:48,3], savefile=TRUE)
 idx <- which(res_rank[,2]>1)
+```
 
 
+```{r echo=F}
 res <- DEtime_infer(ControlTimes = Xs, ControlData = t(D[1:24,]), PerturbedTimes = Xs, PerturbedData = t(D[25:48,]))
-print_DEtime
-plot_DEtime(res)
-
 hist(as.numeric(res$result[,2]))
-
 hist(as.numeric(res$result[,2]),breaks=20)
+```
 
-### inport simulated dataset
-data(SimulatedData)
-
-### go on with the perturbation time point inference
-res <- DEtime_infer(ControlTimes = ControlTimes, ControlData = ControlData, PerturbedTimes = PerturbedTimes, PerturbedData = PerturbedData)
-
-### Print a summary of the results
-print_DEtime(res)
-### plot results for all the genes
-plot_DEtime(res)
 
 ## Classificaiton
 
@@ -309,16 +298,7 @@ Infer regulators that identify infection levels in plants.
 
 ## Logistic regression
 
-library(caret)
-
-In linear regression we tried to predict the value of y(i)
- for the i
-‘th example x(i)
- using a linear function y=hθ(x)=θ⊤x.
-. This is clearly not a great solution for predicting binary-valued labels (y(i)∈{0,1})
-. In logistic regression we use a different hypothesis class to try to predict the probability that a given example belongs to the “1” class versus the probability that it belongs to the “0” class. Specifically, we will try to learn a function of the form:
-
-
+```{r echo=F}
 library(caret)
 data(GermanCredit)
 Train <- createDataPartition(GermanCredit$Class, p=0.6, list=FALSE)
@@ -352,21 +332,28 @@ plot(perf)
 auc <- performance(pred, measure = "auc")
 auc <- auc@y.values[[1]]
 auc
+```
+
+
+
 
 ## GP classification
 
 Example GP regression using kernlab
 
+```{r echo=F}
 t2 <- train(y~., data=data.frame(x=Xs,y=D[25:nrow(D),geneindex]), "gaussprPoly")
+```
 
 
-Caret examples: https://github.com/tobigithub/caret-machine-learning
-GPML http://www.gaussianprocess.org/gpml/code/matlab/doc/
-GPy: https://github.com/SheffieldML/GPy
-GPflow: http://gpflow.readthedocs.io/en/latest/intro.html
-https://github.com/GPflow/GPflowOpt
-https://www.tensorflow.org
-http://deeplearning.net/software/theano/
+[Caret examples](https://github.com/tobigithub/caret-machine-learning)
+[GPML](http://www.gaussianprocess.org/gpml/code/matlab/doc/)
+[GPy](https://github.com/SheffieldML/GPy)
+[GPflow](http://gpflow.readthedocs.io/en/latest/intro.html)
+[GPflowopt](https://github.com/GPflow/GPflowOpt)
+[Tensorflow](https://www.tensorflow.org)
+[Theano](http://deeplearning.net/software/theano/)
+
 =======
 ## Exercises
 
