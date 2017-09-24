@@ -653,6 +653,12 @@ plot_clusters(noisy_moons, res, 2)
 diff_density <- as.data.frame(read.csv("data/example_clusters/different_density.csv", header=F))
 res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 ```
+
+```
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+```
 Failure to converge, so increase number of iterations.
 
 ```r
@@ -1409,7 +1415,10 @@ sil <- silhouette(clusters, d)
 plot(sil, border=NA, col=clusterColours[sort(clusters)], main="")
 ```
 
-<img src="09-clustering_files/figure-html/unnamed-chunk-55-1.png" width="672" />
+<div class="figure" style="text-align: center">
+<img src="09-clustering_files/figure-html/silhouetteNoisyMoonsDBSCAN-1.png" alt="Silhouette plot for DBSCAN clustering of the noisy moons data set." width="60%" />
+<p class="caption">(\#fig:silhouetteNoisyMoonsDBSCAN)Silhouette plot for DBSCAN clustering of the noisy moons data set.</p>
+</div>
 
 The silhouette analysis suggests that DBSCAN has found clusters of poor quality in the noisy moons data set. However, we saw by eye that it it did a good job of deliminiting the two clusters. The result demonstrates that the silhouette method is less useful when dealing with clusters that are defined by density, rather than inertia.
 

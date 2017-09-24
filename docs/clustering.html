@@ -1376,6 +1376,9 @@ Figure 10.18: K-means clustering of the noisy moons data set: scatterplot of clu
 <h4><span class="header-section-number">10.4.4.3</span> Different density</h4>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">diff_density &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/different_density.csv&quot;</span>, <span class="dt">header=</span>F))
 res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})</code></pre></div>
+<pre><code>## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations</code></pre>
 <p>Failure to converge, so increase number of iterations.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, function(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span>:<span class="dv">2</span>], i, <span class="dt">iter.max=</span><span class="dv">20</span>, <span class="dt">nstart=</span><span class="dv">50</span>)})
 <span class="kw">plot_tot_withinss</span>(res)</code></pre></div>
@@ -1875,7 +1878,12 @@ noise &lt;-<span class="st"> </span>res$cluster==<span class="dv">0</span></code
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterColours &lt;-<span class="st"> </span><span class="kw">brewer.pal</span>(<span class="dv">9</span>,<span class="st">&quot;Set1&quot;</span>)
 sil &lt;-<span class="st"> </span><span class="kw">silhouette</span>(clusters, d)
 <span class="kw">plot</span>(sil, <span class="dt">border=</span><span class="ot">NA</span>, <span class="dt">col=</span>clusterColours[<span class="kw">sort</span>(clusters)], <span class="dt">main=</span><span class="st">&quot;&quot;</span>)</code></pre></div>
-<p><img src="09-clustering_files/figure-html/unnamed-chunk-55-1.png" width="672" /></p>
+<div class="figure" style="text-align: center"><span id="fig:silhouetteNoisyMoonsDBSCAN"></span>
+<img src="09-clustering_files/figure-html/silhouetteNoisyMoonsDBSCAN-1.png" alt="Silhouette plot for DBSCAN clustering of the noisy moons data set." width="60%" />
+<p class="caption">
+Figure 10.46: Silhouette plot for DBSCAN clustering of the noisy moons data set.
+</p>
+</div>
 <p>The silhouette analysis suggests that DBSCAN has found clusters of poor quality in the noisy moons data set. However, we saw by eye that it it did a good job of deliminiting the two clusters. The result demonstrates that the silhouette method is less useful when dealing with clusters that are defined by density, rather than inertia.</p>
 </div>
 </div>
@@ -1905,11 +1913,11 @@ Not appropriate for phylogenetic analysis!!
 -->
 <div id="clusteringEx1" class="section level3">
 <h3><span class="header-section-number">10.8.1</span> Exercise 1</h3>
-<p>Image segmentation is used to partition digital images into distinct regions containing pixels with similar attributes. Applications include identifying objects or structures in biomedical images. The aim of this exercise is to use k-means clustering to segment the image of a histological section of lung tissue (figure <a href="clustering.html#fig:lungHistology">10.46</a>) into distinct biological structures, based on pixel colour.</p>
+<p>Image segmentation is used to partition digital images into distinct regions containing pixels with similar attributes. Applications include identifying objects or structures in biomedical images. The aim of this exercise is to use k-means clustering to segment the image of a histological section of lung tissue (figure <a href="clustering.html#fig:lungHistology">10.47</a>) into distinct biological structures, based on pixel colour.</p>
 <div class="figure" style="text-align: center"><span id="fig:lungHistology"></span>
 <img src="data/histology/Emphysema_H_and_E.jpg" alt="Image of haematoxylin and eosin (H&amp;E) stained section of lung tissue from a patient with end-stage emphysema. CC BY 2.0, https://commons.wikimedia.org/w/index.php?curid=437645." width="80%" />
 <p class="caption">
-Figure 10.46: Image of haematoxylin and eosin (H&amp;E) stained section of lung tissue from a patient with end-stage emphysema. CC BY 2.0, <a href="https://commons.wikimedia.org/w/index.php?curid=437645" class="uri">https://commons.wikimedia.org/w/index.php?curid=437645</a>.
+Figure 10.47: Image of haematoxylin and eosin (H&amp;E) stained section of lung tissue from a patient with end-stage emphysema. CC BY 2.0, <a href="https://commons.wikimedia.org/w/index.php?curid=437645" class="uri">https://commons.wikimedia.org/w/index.php?curid=437645</a>.
 </p>
 </div>
 <p>The haematoxylin and eosin (H &amp; E) staining reveals four types of biological objects, identified by the following colours:</p>
@@ -1957,7 +1965,7 @@ imgDF &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
 <div class="figure" style="text-align: center"><span id="fig:recreatedLungHistology"></span>
 <img src="09-clustering_files/figure-html/recreatedLungHistology-1.png" alt="Image of lung tissue recreated from reshaped data." width="80%" />
 <p class="caption">
-Figure 10.47: Image of lung tissue recreated from reshaped data.
+Figure 10.48: Image of lung tissue recreated from reshaped data.
 </p>
 </div>
 <p>This should be all the information you need to perform this exercise.</p>

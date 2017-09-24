@@ -1025,7 +1025,7 @@ d <- dist(noisy_moons[!noise,1:2])
 ```
 
 Silhouette analysis
-```{r echo=T}
+```{r silhouetteNoisyMoonsDBSCAN, fig.cap='Silhouette plot for DBSCAN clustering of the noisy moons data set.', out.width='60%', fig.asp=1, fig.align='center', echo=T}
 clusterColours <- brewer.pal(9,"Set1")
 sil <- silhouette(clusters, d)
 plot(sil, border=NA, col=clusterColours[sort(clusters)], main="")
