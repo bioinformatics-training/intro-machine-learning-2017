@@ -1,8 +1,103 @@
-# Solutions ch. 4 - Linear and non-linear logistic regression {#solutions-logistic-regression}
+# Solutions ch. 4 - Linear and non-linear (logistic) regression {#solutions-logistic-regression}
 
 Solutions to exercises of chapter \@ref(logistic-regression).
 
-## Exercise 1
+Excercise 3.1.
+
+
+
+```{r echo=T}
+genenames <- colnames(D)
+geneindex <- 36
+D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/Arabidopsis/Arabidopsis_Botrytis_transpose.csv", header = TRUE, sep = ",", row.names=1)
+Xs <- seq(from = 2, to = 48, by = 2)
+plot(Xs,(D[1:24,geneindex]),type="p",col="black",ylim=c(min(D[,geneindex])-0.2, max(D[,geneindex]+0.2)),main=genenames[geneindex])
+points(Xs,(D[25:nrow(D),geneindex]),type="p",col="red")
+```
+
+Excercise 3.2. 
+
+```{r echo=T}
+geneindex <- 10
+lrfit3 <- train(y~., data=data.frame(x=D[1:24,3:10],y=D[1:24,geneindex]), method = "lm")
+```
+
+Excercise 3.3. Linear regression can generally be applied for any number of variables. A notable example, would be to regress the expression pattern of a gene against putative regulators.
+
+Excercise 3.4 (optional): 
+
+Example covariance functions implemented from the [Kernel Cookbook](http://www.cs.toronto.edu/~duvenaud/cookbook/). Here we implement a rational quadratic covariance function:
+
+```{r echo=T}
+covRQ <- function(X1,X2,l=1,sig=1,a=2) {
+  K <- matrix(rep(0, length(X1)*length(X2)), nrow=length(X1))
+  for (i in 1:nrow(K)) {
+    for (j in 1:ncol(K)) {
+      K[i,j] <- sig^2*(1 + (abs(X1[i]-X2[j])^2/(2*a*l^2))    )^a 
+    }
+  }
+  return(K)
+}
+```
+
+Here we implement a periodic covariance function:
+
+```{r echo=T}
+covPer <- function(X1,X2,l=1,sig=1,p=1) {
+  K <- matrix(rep(0, length(X1)*length(X2)), nrow=length(X1))
+  for (i in 1:nrow(K)) {
+    for (j in 1:ncol(K)) {
+      K[i,j] <- sig^2*exp(sin(pi*abs(X1[i]-X2[j])/p)^2 / l^2) 
+    }
+  }
+  return(K)
+}
+```
+
+Excercise 3.5:
+
+We can example functions using the following code:
+
+```{r echo=F}
+require(MASS)
+require(plyr)
+require(reshape2)
+require(ggplot2)
+
+covSE <- function(X1,X2,l=1,sig=1) {
+  K <- matrix(rep(0, length(X1)*length(X2)), nrow=length(X1))
+  for (i in 1:nrow(K)) {
+    for (j in 1:ncol(K)) {
+      K[i,j] <- sig^2*exp(-0.5*(abs(X1[i]-X2[j]))^2 /l^2)
+    }
+  }
+  return(K)
+}
+```
+
+```{r echo=T}
+x.star <- seq(-5,5,len=500)
+f <- data.frame(x=c(-4,-3,-2,-1,0,1,2),
+                y=sin(c(-4,-3,-2,-1,0,1,2)))
+x <- f$x
+k.xx <- covSE(x,x)
+k.xxs <- covSE(x,x.star)
+k.xsx <- covSE(x.star,x)
+k.xsxs <- covSE(x.star,x.star)
+
+f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y  #Mean
+cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs #Var
+
+y1 <- mvrnorm(1, f.star.bar, cov.f.star)
+y2 <- mvrnorm(1, f.star.bar, cov.f.star)
+y3 <- mvrnorm(1, f.star.bar, cov.f.star)
+plot(x.star,sin(x.star),type = 'l',col="red",ylim=c(-2.2, 2.2))
+points(f,type = 'p',col="blue")
+lines(x.star,y1,type = 'l',col="blue")
+lines(x.star,y2,type = 'l',col="blue")
+lines(x.star,y3,type = 'l',col="blue")
+```
+
 
 ## Exercise 2
 
