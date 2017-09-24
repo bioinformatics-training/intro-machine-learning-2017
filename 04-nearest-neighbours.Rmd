@@ -697,7 +697,7 @@ knnTune <- train(descrTrain,
 knnTune
 ```
 
-
+The Root Mean Squared Error (RMSE) measures the differences between the values predicted by the model and the values actually observed. More specifically, it represents the sample standard deviation of the difference between the predicted values and observed values. 
 ```{r rmseFunK, fig.cap='Root Mean Squared Error as a function of neighbourhood size.', out.width='100%', fig.asp=0.6, fig.align='center', echo=T}
 plot(knnTune)
 ```

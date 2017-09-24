@@ -80,9 +80,6 @@ cor as.dist(1-cor(x))
 Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
 
-### Image segmentation
-
-
 
 ## Hierarchic agglomerative
 
@@ -354,7 +351,7 @@ plot(hc, labels=tissue, cex=0.5, hang=-1, xlab="", sub="")
 
 #### Colour labels
 
-use dendextend library to plot dendrogram with colour labels
+The dendextend library can be used to plot dendrogram with colour labels
 ```{r tissueDendrogramColour, fig.cap='Clustering of tissue samples based on gene expression profiles with labels coloured by tissue type. ', out.width='100%', fig.asp=3, fig.align='center', echo=T}
 tissue_type <- unique(tissue)
 dend <- as.dendrogram(hc)
@@ -923,7 +920,12 @@ http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_anal
   (\#eq:silhouette)
 \end{equation}
 
-Method can be applied to clusters generated using any algorithm. 
+Where
+
+* _a(i)_ - average dissimmilarity of _i_ with all other data within the cluster. _a(i)_ can be interpreted as how well _i_ is assigned to its cluster (the smaller the value, the better the assignment).
+* _b(i)_ - the lowest average dissimilarity of _i_ to any other cluster, of which _i_ is not a member.
+
+Observations with a large _s(i)_ (close to 1) are very well clustered. Observations lying between clusters will have a small _s(i)_ (close to 0). If an observation has a negative _s(i)_, it has probably been placed in the wrong cluster. 
 
 ### Example - k-means clustering of blobs data set
 Load library required for calculating silhouette coefficients and plotting silhouettes.
@@ -992,7 +994,44 @@ ggplot(data=dat, aes(x=k, y=avgS)) +
 
 The bar plot (figure \@ref(fig:silhouetteAllK)) confirms that the optimum number of clusters is three.
 
+### Example - DBSCAN clustering of noisy moons
+<!--
+Read data
+```{r echo=T}
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+```
+-->
+The clusters that DBSCAN found in the noisy moons data set are shown in figure \@ref(fig:noisyMoonsDBSCANscatter).
 
+Let's repeat clustering, because the original result is no longer in memory.
+```{r echo=T}
+res <- dbscan::dbscan(noisy_moons[,1:2], eps=0.075, minPts = 10)
+```
+
+Identify noise points as we do not want to include these in the silhouette analysis
+```{r echo=T}
+# identify and remove noise points
+noise <- res$cluster==0
+```
+
+Remove noise points from cluster results
+```{r echo=T}
+clusters <- res$cluster[!noise]
+```
+
+Generate distance matrix from ```noisy_moons``` data.frame, exluding noise points.
+```{r echo=T}
+d <- dist(noisy_moons[!noise,1:2])
+```
+
+Silhouette analysis
+```{r echo=T}
+clusterColours <- brewer.pal(9,"Set1")
+sil <- silhouette(clusters, d)
+plot(sil, border=NA, col=clusterColours[sort(clusters)], main="")
+```
+
+The silhouette analysis suggests that DBSCAN has found clusters of poor quality in the noisy moons data set. However, we saw by eye that it it did a good job of deliminiting the two clusters. The result demonstrates that the silhouette method is less useful when dealing with clusters that are defined by density, rather than inertia.
 
 
 
@@ -1022,15 +1061,8 @@ Not appropriate for phylogenetic analysis!!
 
 -->
 
+
 ### Exercise 1 {#clusteringEx1}
-
-<!-- link to solution for this specific exercise -->
-
-silohouette and dbscan (c.f. k-means)
-
-DBSCAN
-
-### Exercise 2 {#clusteringEx2}
 
 Image segmentation is used to partition digital images into distinct regions containing pixels with similar attributes. Applications include identifying objects or structures in biomedical images. The aim of this exercise is to use k-means clustering to segment the image of a histological section of lung tissue (figure \@ref(fig:lungHistology)) into distinct biological structures, based on pixel colour.
 
@@ -1095,6 +1127,9 @@ ggplot(data = imgDF, aes(x = x, y = y)) +
   theme_minimal()
 ```
 
+This should be all the information you need to perform this exercise.
+
+### Exercise 2 {#clusteringEx2}
 
 
 **Solutions to exercises can be found in appendix \@ref(solutions-clustering).**

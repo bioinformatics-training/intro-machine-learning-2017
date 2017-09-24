@@ -40,9 +40,6 @@ cor as.dist(1-cor(x))
 Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 
 
-### Image segmentation
-
-
 
 ## Hierarchic agglomerative
 
@@ -83,13 +80,13 @@ Explain anatomy of the dendrogram - branches, nodes and leaves.
 
 Table: (\#tab:distance-merge)Merge distances for objects in the example distance matrix using three different linkage methods.
 
-Groups          Single   Complete   Average 
+Groups           Single   Complete   Average
 --------------  -------  ---------  --------
-A,B,C,D,E       0        0          0       
-(A,B),C,D,E     2        2          2       
-(A,B),(C,E),D   3        3          3       
-(A,B)(C,D,E)    4        5          4.5     
-(A,B,C,D,E)     5        10         8       
+A,B,C,D,E             0          0       0.0
+(A,B),C,D,E           2          2       2.0
+(A,B),(C,E),D         3          3       3.0
+(A,B)(C,D,E)          4          5       4.5
+(A,B,C,D,E)           5         10       8.0
 
 <div class="figure" style="text-align: center">
 <img src="09-clustering_files/figure-html/linkageComparison-1.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-2.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" /><img src="09-clustering_files/figure-html/linkageComparison-3.png" alt="Dendrograms for the example distance matrix using three different linkage methods. " width="100%" />
@@ -332,7 +329,7 @@ plot(hc, labels=tissue, cex=0.5, hang=-1, xlab="", sub="")
 
 #### Colour labels
 
-use dendextend library to plot dendrogram with colour labels
+The dendextend library can be used to plot dendrogram with colour labels
 
 ```r
 tissue_type <- unique(tissue)
@@ -656,16 +653,6 @@ plot_clusters(noisy_moons, res, 2)
 diff_density <- as.data.frame(read.csv("data/example_clusters/different_density.csv", header=F))
 res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 ```
-
-```
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-```
 Failure to converge, so increase number of iterations.
 
 ```r
@@ -822,7 +809,7 @@ plot_tot_withinss(res_k_15)
 set.seed(42)
 res_k_15 <- lapply(k, function(i){kmeans(t(e), i, nstart=10)})
 -->
-There is no obvious elbow, but the rate of decrease in the total-within sum of squares appears to slow after k=5. Since we know that there are seven tissues in the data set we will try k=7. 
+There is no obvious elbow, but since we know that there are seven tissues in the data set we will try k=7. 
 <!--
 
 ```r
@@ -1274,7 +1261,12 @@ http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_anal
   (\#eq:silhouette)
 \end{equation}
 
-Method can be applied to clusters generated using any algorithm. 
+Where
+
+* _a(i)_ - average dissimmilarity of _i_ with all other data within the cluster. _a(i)_ can be interpreted as how well _i_ is assigned to its cluster (the smaller the value, the better the assignment).
+* _b(i)_ - the lowest average dissimilarity of _i_ to any other cluster, of which _i_ is not a member.
+
+Observations with a large _s(i)_ (close to 1) are very well clustered. Observations lying between clusters will have a small _s(i)_ (close to 0). If an observation has a negative _s(i)_, it has probably been placed in the wrong cluster. 
 
 ### Example - k-means clustering of blobs data set
 Load library required for calculating silhouette coefficients and plotting silhouettes.
@@ -1358,7 +1350,7 @@ avgS <- sapply(s, function(x){mean(x[,3])})
 Now we have the data we need to produce a barplot.
 
 ```r
-dat <- as.data.frame(cbind(k, avgS))
+dat <- data.frame(k, avgS)
 ggplot(data=dat, aes(x=k, y=avgS)) + 
          geom_bar(stat="identity", fill="steelblue") +
   geom_text(aes(label=round(avgS,2)), vjust=1.6, color="white", size=3.5)+
@@ -1374,7 +1366,52 @@ ggplot(data=dat, aes(x=k, y=avgS)) +
 
 The bar plot (figure \@ref(fig:silhouetteAllK)) confirms that the optimum number of clusters is three.
 
+### Example - DBSCAN clustering of noisy moons
+<!--
+Read data
 
+```r
+noisy_moons <- read.csv("data/example_clusters/noisy_moons.csv", header=F)
+```
+-->
+The clusters that DBSCAN found in the noisy moons data set are shown in figure \@ref(fig:noisyMoonsDBSCANscatter).
+
+Let's repeat clustering, because the original result is no longer in memory.
+
+```r
+res <- dbscan::dbscan(noisy_moons[,1:2], eps=0.075, minPts = 10)
+```
+
+Identify noise points as we do not want to include these in the silhouette analysis
+
+```r
+# identify and remove noise points
+noise <- res$cluster==0
+```
+
+Remove noise points from cluster results
+
+```r
+clusters <- res$cluster[!noise]
+```
+
+Generate distance matrix from ```noisy_moons``` data.frame, exluding noise points.
+
+```r
+d <- dist(noisy_moons[!noise,1:2])
+```
+
+Silhouette analysis
+
+```r
+clusterColours <- brewer.pal(9,"Set1")
+sil <- silhouette(clusters, d)
+plot(sil, border=NA, col=clusterColours[sort(clusters)], main="")
+```
+
+<img src="09-clustering_files/figure-html/unnamed-chunk-55-1.png" width="672" />
+
+The silhouette analysis suggests that DBSCAN has found clusters of poor quality in the noisy moons data set. However, we saw by eye that it it did a good job of deliminiting the two clusters. The result demonstrates that the silhouette method is less useful when dealing with clusters that are defined by density, rather than inertia.
 
 
 
@@ -1404,15 +1441,8 @@ Not appropriate for phylogenetic analysis!!
 
 -->
 
+
 ### Exercise 1 {#clusteringEx1}
-
-<!-- link to solution for this specific exercise -->
-
-silohouette and dbscan (c.f. k-means)
-
-DBSCAN
-
-### Exercise 2 {#clusteringEx2}
 
 Image segmentation is used to partition digital images into distinct regions containing pixels with similar attributes. Applications include identifying objects or structures in biomedical images. The aim of this exercise is to use k-means clustering to segment the image of a histological section of lung tissue (figure \@ref(fig:lungHistology)) into distinct biological structures, based on pixel colour.
 
@@ -1503,6 +1533,9 @@ ggplot(data = imgDF, aes(x = x, y = y)) +
 <p class="caption">(\#fig:recreatedLungHistology)Image of lung tissue recreated from reshaped data.</p>
 </div>
 
+This should be all the information you need to perform this exercise.
+
+### Exercise 2 {#clusteringEx2}
 
 
 **Solutions to exercises can be found in appendix \@ref(solutions-clustering).**
