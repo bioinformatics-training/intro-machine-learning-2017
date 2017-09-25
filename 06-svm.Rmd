@@ -1,9 +1,141 @@
 # Support vector machines {#svm}
 
+## Introduction
+
+
+
 <!-- Matt -->
 
+<!--REPEAT CLASSIFICATION EXAMPLE FOR SERUM PROTEOMICS -->
 
 <!-- regression and classification -->
+
+## Classification
+Load required libraries
+```{r echo=T}
+library(caret)
+
+```
+
+
+Setup parallel processing
+```{r echo=T}
+library(doMC)
+registerDoMC()
+getDoParWorkers()
+```
+
+MUST GENERATE A LIST OF SEEDS IF WE USE PARALLEL PROCESSING, FOR REPRODUCIBILITY
+
+We will return to the cell segmentation data set [@Hill2007] we looked at earlier.
+```{r echo=T}
+data(segmentationData)
+segClass <- segmentationData$Class
+segData <- segmentationData[,4:61]
+set.seed(42)
+trainIndex <- createDataPartition(y=segClass, times=1, p=0.5, list=F)
+segDataTrain <- segData[trainIndex,]
+segDataTest <- segData[-trainIndex,]
+segClassTrain <- segClass[trainIndex]
+segClassTest <- segClass[-trainIndex]
+
+transformations <- preProcess(segDataTrain, 
+                              method=c("YeoJohnson", "center", "scale", "corr"),
+                              cutoff=0.75)
+segDataTrain <- predict(transformations, segDataTrain)
+```
+
+
+We will pass the twoClassSummary function into model training through **trainControl**. Additionally we would like the model to predict class probabilities so that we can calculate the ROC curve, so we use the **classProbs** option.
+```{r echo=T}
+cvCtrl <- trainControl(method = "repeatedcv", repeats = 3,
+                        summaryFunction = twoClassSummary,
+                        classProbs = TRUE)
+```
+
+Tune SVM over the cost parameter
+```{r echo=T}
+svmTune <- train(x = segDataTrain,
+                 y = segClassTrain,
+                 method = "svmRadial",
+                 # The default grid of cost parameters go from 2^-2,
+                 # 0.5 to 1,
+                 # Well fit 9 values in that sequence via the tuneLength
+                 # argument.
+                 tuneLength = 9,
+                 ## Also add options from preProcess here too
+                 preProc = c("center", "scale"),
+                 metric = "ROC",
+                 trControl = cvCtrl)
+
+svmTune
+
+```
+
+
+```{r echo=T}
+svmTune$finalModel
+```
+
+
+SVM accuracy profile
+
+```{r svmAccuracyProfile, fig.cap='SVM accuracy profile.', out.width='80%', fig.asp=0.7, fig.align='center', echo=T}
+plot(svmTune, metric = "ROC", scales = list(x = list(log =
+2)))
+```
+
+Test set results
+
+```{r echo=T}
+segDataTest <- predict(transformations, segDataTest)
+svmPred <- predict(svmTune, segDataTest)
+confusionMatrix(svmPred, segClassTest)
+```
+
+## Serum proteomics
+```{r echo=T}
+centre1 <- read.csv("data/serum_proteomics/male_centre1.csv")
+centre2 <- read.csv("data/serum_proteomics/male_centre2.csv")
+
+diag_cent1 <- centre1$Diagnostic_group
+prot_cent1 <- centre1[,2:18]
+
+diag_cent2 <- centre2$Diagnostic_group
+prot_cent2 <- centre2[,2:18]
+
+# featurePlot(x=prot_cent1, y=diag_cent1, plot="pairs")
+
+transformations <- preProcess(prot_cent1, 
+                              method=c("center", "scale"),
+                              cutoff=0.75)
+prot_cent1 <- predict(transformations, prot_cent1)
+
+svmTune <- train(x = prot_cent1,
+                 y = diag_cent1,
+                 method = "svmRadial",
+                 # The default grid of cost parameters go from 2^-2,
+                 # 0.5 to 1,
+                 # Well fit 9 values in that sequence via the tuneLength
+                 # argument.
+                 tuneLength = 9,
+                 ## Also add options from preProcess here too
+                 preProc = c("center", "scale"),
+                 metric = "ROC",
+                 trControl = cvCtrl)
+
+svmTune
+
+svmTune$finalModel
+
+```
+
+<!--GENERATE TWO  DIFFERENT MODELS AND COMPARE -->
+LINEAR
+RBM
+
+
+<!--REPEAT CLASSIFICATION EXAMPLE FOR SERUM PROTEOMICS -->
 
 ## Exercises
 
