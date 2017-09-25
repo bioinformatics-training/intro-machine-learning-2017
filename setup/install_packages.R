@@ -11,7 +11,15 @@ cran_packages <- c("ggplot2",
 "dbscan",
 "cluster",
 "methods",
-"devtools")
+"devtools",
+"caret",
+"mlbench",
+"plot3D",
+"pROC",
+"ROCR",
+"Rtsne",
+"scatterplot3d"
+)
 
 # vector of bioconductor packages to be installed
 bioc_packages <- c("EBImage")
@@ -25,7 +33,7 @@ biocLite(bioc_packages)
 
 # install packages from other repositories
 devtools::install_github("SheffieldML/vargplvm/vargplvmR")
-
+devtools::install_github("ManchesterBioinference/DEtime")
 
 
 
