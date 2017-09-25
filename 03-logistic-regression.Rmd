@@ -8,31 +8,31 @@
 
 <<<<<<< HEAD
 
-A large component of machine learning involveds either regression analysis or classification. Within the regression framework we wish to find how a particular continuous variable of interest, y, is influenced by another set of variables, x. Conceptually, this involves identifying a function that tells us the value of y given a observed x, for example, how the expression of a particular gene, y_i, changes over time, or as a function of the expression of itse regulators. In general, many applications in ML can be represented in terms of regression, including differential expression analysis and network inference.
+Supervised learning typically involves regression or classification. Regression aims to identify how a particular (continuous) variable of interest, $\mathbf{y}$, is influenced by a set of explanatory variables, $\mathbf{X}$. Conceptually, this typically involves identifying a function that tells us the value of $y*$ for arbitrary values of $X*$. Classificaiton algorithms, on the other hand, deal with discrete (categorical) valued outpus. The aim, here is to the ability to learn how different input values, $X$, map to a particular group (category), and ultimately to assign categories to a new set of observations currently lacking a group assingment, $X*$.
 
-Classificaiton algorithms, on the other hand, deal with discrete (categorical) valued outpus. The aim, here is to the ability to learn how different input values, x, map to a particular group (category), and ultimately to assign categories to a new set of observations for which catagories have no yet been assigned.
+Within this chapter we will cover aspects of linear and nonlinear regression and classification, using examples taken from plant datasets. OUTLINE EXACTLY WHAT WE DO.
 
-Within this chapter we will cover linear and nonlinear regression and classification using examples taken from plant datasets infected with pathogens. In particular we will be investigating the expression levels of the model plant Arabidopsis thaliana following infection with the necrotophic pathogen Botrytis cineara. Botrytis cinerea ...
+## Dataset: *Arabidopsis thaliana* dataset {#dataset}
 
-The processed data is available on GEO under accession number GSE39597. Due to time constraints a pre-processed version of data is available from /data/Arabidopsis/Arabidopsis_Botrytis.csv. The dataset is tab delimited text file with the fist columns containig gene names for 163 marker genes. Columns 2 through 49 contain processed gene expression values (see Windram et al. 2012, for full details). The first 24 columns of the data matrix represent contain the control gene expression in Arabidopsis leaves at time points 2h through 48h at 2 hourly intervals; the second 24 columns contain the gene expression levels in Arabidopsis leaves following infection with the necrotophic fungus, Botyris cinerea. 
+Our dataset of choice, captures the gene expression levels in the model plant *Arabidopsis thaliana* following infection with the necrotophic pathogen *Botrytis cineara*. *Botrytis cinerea* is considered the second most important fungal plant pathogen dues to its abilty to cause disease in a range of plants (pre- and postharvest). A time series dataset measuring the gene expression in *Arabidopsis* leaves following innoculation with *Botrytis cinearea* is available from GEO under accession number GSE39597 (Windram *et al.*, 2012). A pre-processed version of the data is available in the file data folder. The processed data is a tab delimited text file with the fist row containig gene IDs for 163 marker genes. Columns 2 contains the time points of observations, with column 3 indicating which time series the data point belongs to (control versus infected time series). All subsequent columns indicate ($log_2$) normalised gene expression values using microarrays (V4 TAIR V9 spotted cDNA array; full details in Windram *et al.*, 2012). The expression dataset itself is split into two: the first $24$ observations represent measurments of *Arabidopsis* gene expression in a control experiment (uninfected), from $2h$ through $48h$ at $2$ hourly intervals. The second set of $24$ observations represents an infection datasets, from $2h$ after innoculation with *Botyris cinerea* through $48h$ at $2$ hourly intervals.   
 
-Excercise 3.1. Load in the data and plot the gene expresison of the genes, to visualise.
+Excercise 3.1. Use read.csv() to load in the pre-processed data file /data/Arabidopsis/Arabidopsis_Botrytis.csv and plot the gene expresison of genes to familiraise yourself with the data.
 
 ## Regression {#regression}
 
-One of the simplest models to fit to data is linear regression. Linear regression assumes an output, $y$, depends on the input variable, $x$, via:
+One of the simplest regression models is linear regression, which assumes that the variable of interest, $y$, depends on an explanatory variable, $x$, via:
 
 $y = mx + c.$
 
-For a typically set of data, we typically have a set of input variables $\mathbf{x} = \{x_1,x_2,\ldots,x_n\}$ with a corresponding set of observations, $\mathbf{y} = \{y_1,y_2,\ldots,y_n\}$. The aim is to infer the parameters $m$ and $c$. Exmaples?
+For a typical set of data, we have a vector of observations, $\mathbf{y} = \{y_1,y_2,\ldots,y_n\}$ with a corresponding set of explanatory variables. For now we can assume that we have only a single explanatory variable, $\mathbf{x} = \{x_1,x_2,\ldots,x_n\}$. Using linear regression we aim to infer the parameters $m$ and $c$. By fitting such a model we can capture underlying trends in the datasets, and make predictions at a new location which may be missing observations. 
 
-Within R, linear regression can be implemented via the lm function. For example, we can perform linear regression for the gene AT2G28890 as a function of time:
+Within R, linear regression can be implemented via the lm function. In the example below we have loaded the data in using read.csv, and perform linear regression for the gene AT2G28890 as a function of the variable Time for the infection dataset:
 
 ```{r echo=F}
 lm(AT2G28890~Time, data = D[25:nrow(D),])
 ```
 
-Within the caret package, linear regression can be performed by calling the function lm. In the snippet of code, below, we load caret and perform linear regression:
+Linear regression is also implemented within the caret package, allowing us to make use of the various other advantages. In fact, within caret, linear regression is performed by calling the function lm, and can be perform via:
 
 ```{r echo=F}
 library(caret)
@@ -44,7 +44,7 @@ predictedValues<-predict(lrfit)
 summary(lrfit)
 ```
 
-Finally, we can plot the fit to the control dataset as well and plot the outputs:
+Finally, we can also fit to the control dataset and plot the inferred results alongside the observation data:
 
 ```{r echo=T}
 lrfit2 <- train(y~., data=data.frame(x=Xs,y=D[1:24,geneindex]), method = "lm")
@@ -56,34 +56,70 @@ points(Xs,predictedValues,type="l",col="black")
 points(Xs,predictedValues2,type="l",col="red")
 ```
 
-For this particular gene linear regression appears to have done a reasonable job identifying the trend for how gene expression of AT2G28890 changes over time. In general, however, linear regression will not typically provide a good fit for all genes.
+### ...
 
-Excercise 3.2. Try fitting to some other genes to identify some whose expression profile doesn't change linearly over time.
+Try making use of the caret functionality to 
 
-Excercise 3.3. Linear regression can generally be applied for any number of variables. A notable example, would be to regress the expression pattern of a gene against putative regulators.
+Excercise 3.2. The caret package has a variety of features that are of use in ML. In our example, above, we fitted a linear model to a gene to identify parameters and make predictions using all the data. We can make use of the caret functionality to split our data into training and test sets, which should allow us to guage uncertainty in our parameters and the strength of the model.
+
+Excercise 3.5. Linear regression can generally be applied for any number of variables. A notable example, would be to regress the expression pattern of a gene against putative regulators.
 
 ```{r echo=T}
-lrfit3 <- train(y~., data=data.frame(x=D[1:24,3:10],y=D[1:24,geneindex]), method = "lm")
+lrfit3 <- train(y~poly(.,2), data=data.frame(x=D[1:24,3:10],y=D[1:24,geneindex]), method = "lm")
 ```
 
-In general, ... linear regression can be used to network inference (Oates and Mukherjee, 2012).
+### More complex models
+
+In general linear models will not be appropriate for a large variety of datasets. We can instead try to fit more complex models to the dataset. A more complex model might look something like:
+
+$y = m_1 x + m_2 x^2 + c,$
+
+representing a quadratic function, where $m = [m_1,m_2,c]$ represent the parameters we're interested in inferring, that together capture the relationship between the variables $x$ and $y$.  Higher order polynomials can be fitted:
+
+$y = \sum_{i=1}^{n} m_i x^i + c.$
+
+Within R we can infer more complex polynomials to the data using the lm package. In the example below we fit a 3rd order polynomial:
+ 
+```{r echo=T}
+degree <- 3
+
+lrfit3 <- train(y~poly(x,degree), data=data.frame(x=D[1:24,1],y=D[1:24,geneindex]), method = "lm")
+lrfit4 <- train(y~poly(x,degree), data=data.frame(x=D[25:nrow(D),1],y=D[25:nrow(D),geneindex]), method = "lm")
+
+plot(Xs,D[25:nrow(D),geneindex],type="p",col="black",ylim=c(min(D[,geneindex])-0.2, max(D[,geneindex]+0.2)),main=genenames[geneindex])
+points(Xs,D[1:24,geneindex],type="p",col="red")
+lines(Xs,fitted(lrfit3),type="l",col="red")
+lines(Xs,fitted(lrfit4),type="l",col="black")
+``` 
+ 
+Note that the fit appears to be better than for the linear fit. We can quantify this by looking at the RMSE. What happens if we fit a much higher order polynomial. Try fitting a polynomial with degree = 20. The fit appears to much more closely fit the data. Whilst it may be possible that the data was generated by a polynomial, it's far more likely that we are overfitting the data. We can evaluate how good the model really is by looking at the RMSE from bootstrapped sampling. 
+
+Excercise 3.3. Compare the RMSE for various polynomial models versus that of the linear models. 
 
 ## Gaussian process regression
 
-Overfitting. Nonlinear Bayesian approaches are often used for nonlinear regression. In particular, Gaussian processes (Rasmussen and Williams) attempt to model the output variable, y, as a nonlinear function of the input variable, x:
+Overfitting. Nonlinear Bayesian approaches are often used for nonlinear regression. In particular, 
 
-$y = f(x)$
+Gaussian processes (Rasmussen and Williams) represent a Bayesian approach to inferring the relationship between a variable of interest, $y$, and the explanatory variably, $x$, via a potentially nonlinear function:
 
-$f(x) \sim \mathcal{GP}(m(x), k(x,x^\prime))$
+$y = f(x) + \varepsilon$
 
-where $f(x)$ represents some potentially nonlinear function. Gaussian process regression represents a way to estimate a distribution over functions ... A gaussian process can be used to 
+where $\varepsilon$ represents some observational noise. 
 
-Given a set of observations, $(\mathbf{x},\mathbf{y})$ GP regression can be used to infer the expression, $\mathbf{y}^*$, at a new input location $\mathbf{x}^*$.
+Brief intro maths. $f(x) \sim \mathcal{GP}(m(x), k(x,x^\prime))$ ... 
+
+Given a set of observations, $(\mathbf{x},\mathbf{y})$ GP regression can be used to infer the values of the variable of interest $\mathbf{y}^*$, at a new input location $\mathbf{x}^*$, which turns out to be Gaussian distributed:
+
+$y* | \mathbf{x}, \mathbf{y}, \mathbf{x}* \sim \mathcal{N}(f*,K*)$
+
+where
 
 $f_* = k_*^\top(K)^{-1} y$
 $c_* = k(x_*,x_*)^{-1} - k_*^\top (K)^{-1} k_*$
 
-Although the most complete GP toolboxes can be found in Matlab and Python, some GP toolboxes exist in R. In particular, notable resources such as [link](https://www.r-bloggers.com/gaussian-process-regression-with-r/) have implemented a variety of functions from the gpml package. To better understand GPs we first load in some required packages.
+Although the most comprehensive GP toolboxes can be found in Matlab and Python, some GP toolboxes exist in R. In particular, notable resources such as this [blog](https://www.r-bloggers.com/gaussian-process-regression-with-r/) have begun to implemented a variety of functions from the Matlab gpml package. 
+
+In the example below we implement some basic GPs to better understand what it is they're doing. We first require a number of packages.
 
 ```{r echo=T}
 require(MASS)
@@ -92,9 +128,11 @@ require(reshape2)
 require(ggplot2)
 ```
 
-In the snippet of code, below, we implement a squared exponential covariance function, defined as:
+Recall that the GP is completely defined by its mean funciton and covariance function. We can assume a zero-mean function without loss of generality, but we must define a covariance function ahead of inference. In the example belwo we implement a squared exponential covariance function, defined as:
 
 $C(x,x^\prime) = \sigma^2 \exp\biggl{(}\frac{(x-x^\prime)^2}{2l^2}\biggr{)}$. We can implement this:
+
+description of this. 
 
 ```{r echo=T}
 covSE <- function(X1,X2,l=1,sig=1) {
@@ -108,7 +146,7 @@ covSE <- function(X1,X2,l=1,sig=1) {
 }
 ```
 
-... To better understand GPs, we can generate samples from the GP prior:
+To get an idea of what this means, we can generate samples from the GP prior:
 
 ```{r echo=T}
 x.star <- seq(-5,5,len=500) #Define a set of points at which to evaluate the functions
@@ -121,13 +159,17 @@ lines(y2)
 lines(y3)
 ```
 
-When we specify a GP, we are essentially encoding a whole range of functions. What that function looks like depends on the type of covariance function and the hyperparameters. To get a feel for this you can try changing the hyperparameters in the above code. The squared exponential covariannce function we have encoded specifies very smooth functions (infinitely differentiable). A variety of other covariance functions exist, and can be found, with examples found in the [Kernel Cookbook](http://www.cs.toronto.edu/~duvenaud/cookbook/).
+When we specify a GP, we are essentially encoding a whole range of functions. What that function looks like depends on the type of covariance function and the hyperparameters. PRIOR BELIEF. 
+
+To get a feel for this you can try changing the hyperparameters in the above code. The squared exponential covariannce function we have encoded specifies very smooth functions (infinitely differentiable). A variety of other covariance functions exist, and can be found, with examples found in the [Kernel Cookbook](http://www.cs.toronto.edu/~duvenaud/cookbook/).
 
 Excercise 3.4 (optional): Try implementing another covariance function from the [Kernel Cookbook](http://www.cs.toronto.edu/~duvenaud/cookbook/) and generating samples from the GP prior.
 
 ### Inference using Gaussian process regression
 
-We can generate samples from the GP prior, but what about inference? In liner regression we aimed to infer the parameters, $m$ and $a$. What is the GP doing? Essentially, iot's representing the function in terms of the observed data (and the hyperperameters). To demonstrate this, let's assume we have an uknown function (we will generate this via $y = sin(x)$). Although we don't know what the function is, we might have some observations e.g., we have one observation at $x=-2$:
+We can generate samples from the GP prior, but what about inference? In liner regression we aimed to infer the parameters, $m$ and $a$. What is the GP doing? Essentially, it's representing the (unknown) function in terms of the observed data (and the hyperperameters). Another way to look at it, is that we've specified our prior distribuiont (encoding for all functions of a particualr kind), and in the inference procedure we're giving a greater weight to a subset of those functions that pass close to our observed datapoints. 
+
+To demonstrate this, let's assume we have an uknown function. In our example we will generate this via $y = sin(x)$, but the algorithms will not see the function itself only samples from it. For example we might have some observations from this function at a set of input positions $x$ e.g., we have one observation at $x=-2$:
 
 ```{r echo=T}
 f <- data.frame(x=c(-2),
@@ -153,11 +195,11 @@ lines(x.star,f.star.bar+2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="
 lines(x.star,f.star.bar-2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="black")
 ```
 
-Of course the fit is not particularly good, but we only had one observation. Crucially, the GP encodes uncertainty, so although the model fit is not particularly good, we can see that it is not particularly good.  
+Of course the fit is not particularly good, but we only had one observation, so this is not surprising. Crucially, we can see that the GP encodes the idea of uncertainty, so although the model fit is not particularly good, we can see where it is not particularly good.  
 
-Excercise 3.5 (optional): Try plotting some sample function from the posterior GP.
+Excercise 3.5 (optional): Try plotting some sample function from the posterior GP. Hint: these will be Gaussian distributed with mean f.star.bar and covariance cov.f.star.
 
-We can start to add more observations. Here's what the posterior fit looks like if we include 4 observations (at x in [-4,-2,0,1]):
+Let's start adding in more observations. Here's what the posterior fit looks like if we include 4 observations (at x in [-4,-2,0,1]):
 
 ```{r echo=F}
 f <- data.frame(x=c(-4,-2,0,1),
@@ -178,7 +220,7 @@ lines(x.star,f.star.bar+2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="
 lines(x.star,f.star.bar-2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="black")
 ```
 
-And with 7 observations:
+Definitely getting better, and we still have a good grasp of where the model is uncertain. With 7 observations:
 
 ```{r echo=F}
 f <- data.frame(x=c(-4,-3,-2,-1,0,1,2),
@@ -199,11 +241,11 @@ lines(x.star,f.star.bar+2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="
 lines(x.star,f.star.bar-2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="black")
 ```
 
-We can see that even with only 7 observations the posterior GP has begun to resemble the true (nonlinear) underlying function very well. Over most of the $x$-axis the mean of the GP lies very close to the true function and, perhaps more importantly, we have an treatment for the uncertainty. With the GP we can see where the model is relatively sure of the behaviour of the function, and we can see where the model is uncertain. We might, for example want to get observations at $x = 4$, where the posterior errorbars are greatest.
+We can see that even with only 7 observations the posterior GP has begun to resemble the true (nonlinear) underlying function very well. Over most of the $x$-axis the mean of the GP lies very close to the true function and, perhaps more importantly, we continue to have an treatment for the uncertainty. We might, for example, want to get observations at $x = 4$, where the posterior errorbars are greatest.
 
 #### Marginali Likelihood
 
-Another key aspect of GP regression is the ability to evaluate marginal likelihood, otherwise referred to as the "model evidence". We can calculate the marginal likelihood using the snippet of code below:
+Another key aspect of GP regression is the ability to evaluate the marginal likelihood, otherwise referred to as the "model evidence". We can calculate the marginal likelihood using the snippet of code below:
 
 $\ln p(\mathbf{y}|\mathbf{x}) = -\frac{1}{2}\mathbf{y}^\top (K)^{-1} \mathbf{y} -\frac{1}{2} \ln |K| - \frac{n}{2}\ln 2\pi$
 
@@ -220,7 +262,7 @@ calcML <- function(f,l=1,sig=1) {
 
 #### Optimising hyperparameters
 
-Crucially, by optimising the marginal we automatically select the hyperparameters. In the example below we increment the length-scale hyperparameter. 
+Crucially, the ability to calculate the marginal likelihood gives us a way to automatically select the hyperparameters. We can increment hyperparameters, and choose the ones that return the greatest evidence. In the example below we increment both the length-scale and process varaince hyperparameter. 
 
 ```{r echo=T}
 #install.packages("plot3D")
@@ -239,27 +281,28 @@ print(c("length-scale", par[ind[1]]))
 print(c("process variance", par[ind[2]]))
 ```
 
-Excercise 3.1: Try fitting plotting the GP for the optimised values of the hyperparmeters. 
+Excercise 3.5: Try fitting plotting the GP for the optimised values of the hyperparmeters. 
 
-Within GPs we can acta
-
-Excercise 3.1: Try fitting a Gaussian process to one of the gene expression profiles in the Botrytis dataset. Hint: identify a gene with good dynamics.
+Excercise 3.6: Now try fitting a Gaussian process to one of the gene expression profiles in the Botrytis dataset.
 
 ### Model Selection
 
-The marginal likelihood can additionally be used as a basis for selecting models. For example studies by Stegle et al. (2010) used Gaussian processes to identify differential expression between two time series e.g., between a control time series and an infection time series. 
+As well as a criterior for selection hyperparameters, the marginal likelihood can additionally be used as a basis for selecting models. For example, we might be interested in comparing how well two different covariance functions fit the data.
+
+Previous studies by Stegle et al. (2010) have used Gaussian processes to identify differential expression between two time series e.g., between a control time series and an infection time series. 
 
 Differential expression analysis is a way of determininig whether two sets of data are different. For example, if one measured the expression of a set of genes in two conditions, you could use an appropriate statistical test to determin whether the expression of those genes varied significantly in the two conditions. The most often used test are either Student's t-test or rank based test. Both tests however, are not appropriate for time series data, in which we have temporal information. 
 
-Gaussian processes represent a useufl way of test for the differences in genes expression for time series observations. Here we are using the machine learning approaches to fit a model, first to the one time series, the to the second time series, and finally to a combination of the time series. A related example of this kind of approach was introduced by Stegle et al. (2010), with extensions introduced by Rattray et al. (2016) and Penfold, Sybirna et al. (2017).
+Gaussian processes represent a useufl way of test for the differences in genes expression for time series observations. To do so we can write down two competeing modes: (i) the two time series are differentially expressed, and are therefore best described by two independent GPs; (ii) the two time series are noisy observations from an identical underlying process, and are therefore best described by a single GP. 
 
-Excercise 3.1: Use GPs for model selection.
+Excercise 3.1: Use the marginal likelihood to guage if a time series is differentially expressed.
+
 
 ### Differential expression analysis as model selection
 
-The application in the previous section. We have 
+As well as identifying if a gene is differentially expressed, GPs can also be used to identify when a gene might be differentially expressed. Notable examples include the work by Stegle et al. (2010), with related approaches introduced by Rattray *et al.* (2016) and Penfold, Sybirna *et al.* (2017).
 
-Stegle et al. Rattray et al.
+Rattray *et al.* (2016) have corresponding code [DEtime](https://github.com/ManchesterBioinference/DEtime) allowing both model selection and identificaiton of the timing of DE. 
 
 ```{r echo=T}
 #install.packages("devtools")
@@ -269,25 +312,22 @@ library(devtools)
 library(DEtime)
 ```
 
-
-```{r echo=F}
-res <- DEtime_infer(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTimes = Xs, PerturbedData = D[25:48,3])
-print_DEtime
-plot_DEtime(res)
-```
-
-
-```{r echo=F}
-res <- DEtime_infer(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTimes = Xs, PerturbedData = D[25:48,3])
-print_DEtime
-plot_DEtime(res)
-```
+We can call the function DEtime_rank to calculate marginal likelihoods for a two sample time course test. 
 
 ```{r echo=F}
 res_rank <- DEtime_rank(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTimes = Xs, PerturbedData = D[25:48,3], savefile=TRUE)
 idx <- which(res_rank[,2]>1)
 ```
 
+For genes that are DE, we can run the code to identify the timing of DE by calling the function DEtime_infer.
+
+```{r echo=F}
+res <- DEtime_infer(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTimes = Xs, PerturbedData = D[25:48,3])
+print_DEtime
+plot_DEtime(res)
+```
+
+We can do it for all genes using the example below, and histogram the times of DE to identify the timing.
 
 ```{r echo=F}
 res <- DEtime_infer(ControlTimes = Xs, ControlData = t(D[1:24,]), PerturbedTimes = Xs, PerturbedData = t(D[25:48,]))
@@ -295,16 +335,41 @@ hist(as.numeric(res$result[,2]))
 hist(as.numeric(res$result[,2]),breaks=20)
 ```
 
-
 ## Classificaiton
 
-Importance of classifiers.
-
-Infer regulators that identify infection levels in plants.
+Classification algorithms are a supervised learning techniques that assign data to categorical outputs. For example we may have a continuous input variable, $x$ e.g., gene expression, and want to learn how that variable maps to a discrete output e.g., a phenotype. 
 
 ## Logistic regression
 
+The simplest form of classification is the logistic regression. 
+
+
+Class
+
+mod_fit <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="LogitBoost", family="binomial")
+mod_fit <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="bayesglm", family="binomial")
+
+
+D2 <-D
+D2[which[D2[,2]==1],2]<-1
+D2[which[D2[,2]==2],2]<1
+mod_fit2 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="logreg", family="binomial")
+
+
+mod_fit <- train(Class ~ AT1G03960,  data=D, method="glm", family="binomial") %ERROR
+
+mod_fit2 <- train(y ~ ., data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="gaussprPoly")
+
+
+t2 <- train(y~., data=data.frame(x=Xs,y=D[25:nrow(D),geneindex]), "gaussprPoly")
+
+library(pROC)
+
 ```{r echo=F}
+source("https://bioconductor.org/biocLite.R")
+biocLite("VGAM")
+
+
 library(caret)
 data(GermanCredit)
 Train <- createDataPartition(GermanCredit$Class, p=0.6, list=FALSE)
@@ -359,6 +424,8 @@ t2 <- train(y~., data=data.frame(x=Xs,y=D[25:nrow(D),geneindex]), "gaussprPoly")
 [GPflowopt](https://github.com/GPflow/GPflowOpt)
 [Tensorflow](https://www.tensorflow.org)
 [Theano](http://deeplearning.net/software/theano/)
+
+### Ensemble classifiers
 
 =======
 ## Exercises
