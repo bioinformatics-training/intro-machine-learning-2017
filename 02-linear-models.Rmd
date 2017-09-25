@@ -7,3 +7,7 @@
 ## Exercises
 
 Solutions to exercises can be found in appendix \@ref(solutions-linear-models)
+$$X = \begin{bmatrix}1 & x_{1}\\
+1 & x_{2}\\
+1 & x_{3}
+\end{bmatrix}$$
