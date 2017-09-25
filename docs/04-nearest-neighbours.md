@@ -1116,8 +1116,8 @@ knn_sbf
 ## 
 ## Resampling performance:
 ## 
-##     ROC   Sens   Spec   ROCSD SensSD  SpecSD
-##  0.8865 0.8326 0.7722 0.02285 0.0294 0.06211
+##     ROC   Sens   Spec   ROCSD  SensSD  SpecSD
+##  0.8826 0.8298 0.7672 0.02181 0.03119 0.05828
 ## 
 ## Using the training set, 16 variables were selected:
 ##    ConvexHullPerimRatioCh1, EntropyIntenCh1, FiberWidthCh1, IntenCoocASMCh4, IntenCoocContrastCh3...
@@ -1152,8 +1152,8 @@ knn_sbf$results
 ```
 
 ```
-##         ROC      Sens      Spec      ROCSD     SensSD   SpecSD
-## 1 0.8864679 0.8326154 0.7722222 0.02285086 0.02939898 0.062113
+##         ROC      Sens      Spec      ROCSD    SensSD     SpecSD
+## 1 0.8825705 0.8298462 0.7672222 0.02181001 0.0311926 0.05827819
 ```
 
 To retrieve the optimum value of k found during training run:
@@ -1458,7 +1458,7 @@ knnTune
 ## The final value used for the model was k = 4.
 ```
 
-
+The Root Mean Squared Error (RMSE) measures the differences between the values predicted by the model and the values actually observed. More specifically, it represents the sample standard deviation of the difference between the predicted values and observed values. 
 
 ```r
 plot(knnTune)
