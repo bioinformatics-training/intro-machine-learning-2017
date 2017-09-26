@@ -70,14 +70,14 @@ text(4.5,4, expression(paste('q(x'[2],'y'[2],')')), cex=1.7)
 text(2.5,0.5, expression(paste('dist(p,q)'==sqrt((x[2]-x[1])^2 + (y[2]-y[1])^2))), cex=1.7)
 ```
 
-## Classification
-
 ### Algorithm
 ```{r knnClassification, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Illustration of _k_-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object. If k=3 (solid line circle) the test object is assigned to the red triangle class. If k=5 the test object is assigned to the blue square class.  By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282"}
 knitr::include_graphics("images/knn_classification.svg")
 ```
 
-### Simulated data
+
+## Classification: simulated data
+
 A simulated data set will be used to demonstrate:
 
 * bias-variance trade-off
@@ -85,7 +85,7 @@ A simulated data set will be used to demonstrate:
 * plotting decision boundaries
 * choosing the optimum value of _k_
 
-The dataset is partitioned into training and test sets.
+The dataset has been partitioned into training and test sets.
 
 Load data
 ```{r echo=T}
@@ -385,12 +385,12 @@ ggplot(xgrid, aes(V1,V2)) +
         axis.title=element_text(size=20,face="bold"))
 ```
 
-### Data pre-processing
+## Classification: cell segmentation
 
-The simulated data in our previous example was randomly sampled from a normal (Gaussian) distribution and so did not require pre-processing. In practice, data collected in real studies often require transformation and/or filtering. 
+The simulated data in our previous example were randomly sampled from a normal (Gaussian) distribution and so did not require pre-processing. In practice, data collected in real studies often require transformation and/or filtering. Furthermore, the simulated data contained only two predictors; in practice, you are likely to have many variables. For example, in a gene expression study you might have thousands of variables. When using _k_-nn for classification or regression, removing variables that are not associated with the outcome of interest will improve the predictive power of the model. The process of choosing the best predictors from the available variables is known as *feature selection*. For honest estimates of model performance, pre-processing and feature selection should be performed within the loops of the cross validation process.
 
 #### Cell segmentation data set
-Pre-processing will be demonstrated using the cell segmentation data of [@Hill2007]
+Pre-processing and feature selection will be demonstrated using the cell segmentation data of [@Hill2007]
 
 ```{r imageSegmentationHCS, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340"}
 knitr::include_graphics("images/Hill_2007_cell_segmentation.jpg")
@@ -409,8 +409,8 @@ segClass <- segmentationData$Class
 segData <- segmentationData[,4:61]
 ```
 
-#### Data splitting
-The first step in the analysis is to partition the data into training and test sets, using the **createDataPartition** function in [caret](http://cran.r-project.org/web/packages/caret/index.html).
+### Data splitting
+Before starting analysis we must partition the data into training and test sets, using the **createDataPartition** function in [caret](http://cran.r-project.org/web/packages/caret/index.html).
 ```{r echo=T}
 set.seed(42)
 trainIndex <- createDataPartition(y=segClass, times=1, p=0.5, list=F)
@@ -428,7 +428,11 @@ summary(segClassTest)
 
 _**N.B. The test set is set aside for now. It will be used only ONCE, to test the final model.**_
 
-#### Removal of zero and near zero-variance predictors
+### Identification of data quality issues
+
+Let's check our training data set for some undesirable characteristics which may impact model performance and should be addressed through pre-processing. 
+
+#### Zero and near zero-variance predictors
 The function **nearZeroVar** identifies predictors that have one unique value. It also diagnoses predictors having both of the following characteristics:
 
 * very few unique values relative to the number of samples
@@ -441,17 +445,17 @@ nzv <- nearZeroVar(segDataTrain, saveMetrics=T)
 nzv
 ```
 
-#### Centring and scaling
+#### Scaling
 The variables in this data set are on different scales, for example:
 ```{r echo=T}
 summary(segDataTrain$IntenCoocASMCh4)
 summary(segDataTrain$TotalIntenCh2)
 ```
 
-In this situation it is important to centre and scale each predictor. A predictor variable is centered by subtracting the mean of the predictor from each value. To scale a predictor variable, each value is divided by its standard deviation. After centring and scaling the predictor variable has a mean of 0 and a standard deviation of 1. Centring and scaling will be peformed within the cross-validation process.
+In this situation it is important to centre and scale each predictor. A predictor variable is centered by subtracting the mean of the predictor from each value. To scale a predictor variable, each value is divided by its standard deviation. After centring and scaling the predictor variable has a mean of 0 and a standard deviation of 1. 
 
 
-#### Resolving skewness
+#### Skewness
 Many of the predictors in the segmentation data set exhibit skewness, _i.e._ the distribution of their values is asymmetric, for example:
 ```{r segDataSkewness, fig.cap='Example of a predictor from the segmentation data set showing skewness.', out.width='75%', fig.asp=0.9, fig.align='center', echo=T}
 qplot(segDataTrain$IntenCoocASMCh3, binwidth=0.1) + 
@@ -461,9 +465,11 @@ qplot(segDataTrain$IntenCoocASMCh3, binwidth=0.1) +
 
 [caret](http://cran.r-project.org/web/packages/caret/index.html) provides various methods for transforming skewed variables to normality, including the Box-Cox [@BoxCox] and Yeo-Johnson [@YeoJohnson] transformations.
 
-#### Removal of correlated predictors
+#### Correlated predictors
 
 Many of the variables in the segmentation data set are highly correlated.
+
+A correlogram provides a helpful visualization of the patterns of pairwise correlation within the data set.
 
 ```{r segDataCorrelogram, fig.cap='Correlogram of the segmentation data set.', out.width='75%', fig.asp=1, fig.align='center', echo=T}
 library(corrplot)
@@ -471,7 +477,9 @@ corMat <- cor(segDataTrain)
 corrplot(corMat, order="hclust", tl.cex=0.4)
 ```
 
-The **preProcess** function in [caret](http://cran.r-project.org/web/packages/caret/index.html) has an option, **corr** to remove highly correlated variables. It considers the absolute values of pair-wise correlations. If two variables are highly correlated, **preProcess** looks at the mean absolute correlation of each variable and removes the variable with the largest mean absolute correlation.
+The **preProcess** function in [caret](http://cran.r-project.org/web/packages/caret/index.html) has an option, **corr** to remove highly correlated variables. It considers the absolute values of pair-wise correlations. If two variables are highly correlated, **preProcess** looks at the mean absolute correlation of each variable and removes the variable with the largest mean absolute correlation. 
+
+In the case of data-sets comprised of many highly correlated variables, an alternative to removing correlated predictors is the transformation of the entire data set to a lower dimensional space, using a technique such as principal component analysis (PCA). Methods for dimensionality reduction will be explored in chapter \@ref(dimensionality-reduction).
 
 <!--
 ```{r echo=T}
@@ -481,16 +489,15 @@ segDataTrain <- segDataTrain[,-highCorr]
 ```
 -->
 
-#### Dimensionality reduction
-In the case of data-sets comprised of many highly correlated variables, an alternative to removing correlated predictors is the transformation of the entire data set to a lower dimensional space, using a technique such as principal component analysis (PCA). Methods for dimensionality reduction will be explored in chapter \@ref(dimensionality-reduction).
-
-
 
 ### Feature selection
 
 wrapper and filter methods
 
-#### Cross-validated performance without feature selection
+Determination of which 
+
+
+### Fit model without feature selection
 
 <!-- original settings:
 set.seed(42)
@@ -537,10 +544,13 @@ transformations <- preProcess(segDataTrain,
 segDataTrain <- predict(transformations, segDataTrain)
 ```
 
+The ```cutoff``` refers to the correlation coefficient threshold.
+
 ```{r echo=T}
 str(segDataTrain)
 ```
 
+Perform cross validation to find best value of _k_.
 ```{r echo=T}
 knnFit <- train(segDataTrain, segClassTrain, 
                 method="knn",
@@ -555,7 +565,7 @@ plot(knnFit)
 ```
 
 
-#### Univariate (_t_-test) filter
+### Univariate (_t_-test) filter
 We will use the same **trainingControl** settings and **tuning grid** as before. 
 ```{r echo=T}
 train_ctrl <- trainControl(method="repeatedcv",
@@ -590,7 +600,7 @@ knn_sbf
 
 Much information about the final model is stored in **knn_sbf**. To reveal the identities of the predictors selected for the final model run:
 ```{r echo=T}
-knn_sbf$optVariables
+predictors(knn_sbf)
 ```
 
 Here are some performance metrics for the final model:
@@ -603,7 +613,7 @@ To retrieve the optimum value of k found during training run:
 knn_sbf$fit$finalModel$k
 ```
 
-Let's test the final model.
+Let's predict our test set using our final model.
 ```{r echo=T}
 segDataTest <- predict(transformations, segDataTest)
 test_pred <- predict(knn_sbf, segDataTest)
