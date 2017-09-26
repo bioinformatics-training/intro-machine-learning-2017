@@ -50,6 +50,8 @@ increase in neighbours - increase in ties
 
 ### Measuring distance between objects
 
+Euclidean distance is the most widely used distance metric in _k_-nn.
+
 **Euclidean distance:**
 \begin{equation}
   distance\left(p,q\right)=\sqrt{\sum_{i=1}^{n} (p_i-q_i)^2}
@@ -384,6 +386,8 @@ ggplot(xgrid, aes(V1,V2)) +
 ```
 
 ### Data pre-processing
+
+The simulated data in our previous example was randomly sampled from a normal (Gaussian) distribution and so did not require pre-processing. In practice, data collected in real studies often require transformation and/or filtering. 
 
 #### Cell segmentation data set
 Pre-processing will be demonstrated using the cell segmentation data of [@Hill2007]

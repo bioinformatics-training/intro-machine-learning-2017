@@ -88,9 +88,7 @@ text(10, 80, paste("y =", b[1], "+", b[2], "x"), adj=c(0,0.5))
 Falling of an object
 
 ```{r}
-install.packages("UsingR")
 library(UsingR)
-install.packages("rafalib")
 library(rafalib)
 set.seed(1)
 g <- 9.8 ##meters per second
@@ -129,7 +127,6 @@ Mouse diet data
 Here we read-in mouse body weight data from mice that were fed two different diets: high fat and control (chow). We have a random sample of 12 mice for each. We are interested in determining if the diet has an effect on weight. 
 
 ```{r}
-install.packages("downloader")
 library(downloader)
 url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/femaleMiceWeights.csv"
 filename <- "femaleMiceWeights.csv"

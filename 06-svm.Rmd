@@ -10,7 +10,25 @@
 
 <!-- regression and classification -->
 
+
+```{r echo=T}
+
+
+```
+
+
 ## Classification
+
+
+### Example - simulated data
+
+```{r echo=T}
+linearly_separable <- read.csv("data/sim_data_svm/linearly_separable.csv", header=F)
+circles <- read.csv("data/sim_data_svm/circles.csv", header=F)
+moons <- read.csv("data/sim_data_svm/moons.csv", header=F)
+```
+
+### Example -  cell segmentation data
 Load required libraries
 ```{r echo=T}
 library(caret)

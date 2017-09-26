@@ -18,7 +18,10 @@ cran_packages <- c("ggplot2",
 "pROC",
 "ROCR",
 "Rtsne",
-"scatterplot3d"
+"scatterplot3d",
+"UsingR",
+"Rafalib",
+"downloader"
 )
 
 # vector of bioconductor packages to be installed
