@@ -6,14 +6,14 @@ Excercise 3.1.
 
 ```{r echo=T}
 geneindex <- 36
-D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/Arabidopsis/Arabidopsis_Botrytis_transpose.csv", header = TRUE, sep = ",", row.names=1)
+D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/Arabidopsis/Arabidopsis_Botrytis_transpose_2.csv", header = TRUE, sep = ",", row.names=1)
 genenames <- colnames(D)
-
-plot(Xs,(D[1:24,geneindex]),type="p",col="black",ylim=c(min(D[,geneindex])-0.2, max(D[,geneindex]+0.2)),main=genenames[geneindex])
+Xs <- D$Time[1:24]
+plot(Xs,(D[1:24,geneindex]),type="p",col="black",ylim=c(min(D[,geneindex])-0.2, max(D[,geneindex]+0.2)),main=genenames[geneindex],xlab = "Time", ylab = "log_2 expression")
 points(Xs,(D[25:nrow(D),geneindex]),type="p",col="red")
 ```
 
-xcercise 3.2. The caret package has a variety of features that are of use in ML. In our example, above, we fitted a linear model to a gene to identify parameters and make predictions using all the data. We can make use of the caret functionality to split our data into training and test sets, which should allow us to guage uncertainty in our parameters and the strength of the model.
+Excercise 3.2. The caret package has a variety of features that are of use in ML. In the previous example, above, we fitted a linear model to a gene to identify parameters and make predictions using all the data. A better approach would be to partition the data into a test We can make use of the caret functionality to split our data into training and test sets, which should allow us to guage uncertainty in our parameters and the strength of the model.
 
 Excercise 3.3. Linear regression can generally be applied for any number of variables. A notable example, would be to regress the expression pattern of a gene against putative regulators.
 
