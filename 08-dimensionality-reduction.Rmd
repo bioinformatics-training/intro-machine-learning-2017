@@ -1,53 +1,47 @@
-<<<<<<< HEAD
-<!-- Chris -->
-
-# Dimensionality reduction
-=======
 # Dimensionality reduction {#dimensionality-reduction}
->>>>>>> 634734233afdb3dfc9a40a09faa8cc06d917ce62
 
-Systems level measurments are increasingly used to understand complex biological systems. These include systems level measurments of gene expression from collections of microarrays (Breeze et al. 2011; Windram et al., 2012; Lewis et al., 2015; Bechtold et al., 2016) and RNA-sequencing experiments (Irie et al., 2015; Tang et al., 2015), as well as measurements of epigenetic marks such as DNA methylation (Tang et al, 2015). Studies based on bulk measurments tend to provide observations for many variables (genes) with relatively few samples e.g., time points or conditions. Within these.
+Systems level measurments are increasingly used to understand complex biological systems. Notable examples include measurments of gene expression from collections of microarrays [@Breeze873,@windram2012arabidopsis,@Lewis:15,@BechtoldTPC2015-00910-LSB] or RNA-sequencing experiments [@irie2015sox17,@tang2015unique], as well as measurements of epigenetic marks such as DNA methylation ([@hackett2013germline,@tang2015unique]). Studies based on bulk measurments tend to provide observations for many variables (such as genes) with relatively few samples e.g., time points or conditions. The imbalance between the number of variables and the number of observatins is referred to as large p, small n, making statistical analysis difficult. AIM?
 
-The imbalance between the number of variables and the number of observatins is often referred to as large p, small n, Further to this, the presence of noise in the system means that statistical analyses can be difficult. AIM IS TO LOOK AT WHAT'S DIFFERENT ETC.
+The increasing prevalence of single cell RNA-sequencing (scRNA-seq) means the scale of datasets has shifted, providing measurments of many variables but with a corresponding large number of observations (large n) albeit from potentially heterogeneous population. For example, the first scRNA-sequencing was published by [@tang2009mrna] for a single mouse blastomere, driven by the need to sequence the transcriptome of cells that are limited in quantity, such as embryonic cells. In 2017, scRNA-seq exerpiments routinely generete datasets with tens to hundreds of thousands of cells (see e.g., [svensson2017moore]). Indeed, in 2016, the [10x Genomics million cell experiment](https://community.10xgenomics.com/t5/10x-Blog/Our-1-3-million-single-cell-dataset-is-ready-to-download/ba-p/276) provided sequencing for over 1.3 million cells taken from the cortex, hippocampus and ventricular zone of embryonic mice, and large international consortiums, such as the [Human Cell Atlas](https://www.humancellatlas.org) aim to create a comprehensive maps of all cell types in the human body.
 
-The increasing prevalence of single cell RNA-sequencing (scRNA-seq) means the scales of datasets have shifted towards providing measurments of many variables but with a corresponding large are of observations (large n) albeit from potentially heterogeneous population. The first scRNA-sequencing was published in 2009 (Tang et al., 2009) in a single mouse blastomere, driven by the need to sequence the transcriptome of cells that are limited in quantity, such as embryonic cells. In 2017, scRNA-seq exerpiments routinely generete datasets with tens to hundreds of thousands of cells (Svensson, 2017). Indeed, in 2016, the [10x Genomics million cell experiment](https://community.10xgenomics.com/t5/10x-Blog/Our-1-3-million-single-cell-dataset-is-ready-to-download/ba-p/276) provided sequencing for over 1.3 million cells taken from the cortex, hippocampus and ventricular zone of embryonic mice, and large international consortiums, such as the [Human Cell Atlas](https://www.humancellatlas.org) aim to create a comprehensive maps of all cell types in the human body.
+A key goal when dealing with datasets of this magnitude is the identification of subpopulations of cells that may have gone undetected in bulk experiments; another, perhaps more abitious task, aims to take advantage of any heterogeneity within the populatio in order to identify a temporal or mechanistic progression of developmental processes or disease. ... (citeations Saadatpour et al., 2017)
 
-```{r hierarchicClusteringDemo, echo = F, fig.cap = 'Building a dendrogram using hierarchic agglomerative clustering.', fig.align = 'center', fig.show='hold', out.width = '55%'}
+In general, datasets of these size are inherently difficult for humans to develop any intuition for. A useuful intermediate step towards making them of practical use, is to reduce the dimensionality of the data, summarising the system which may contain tens of thousands of genes into a handful (typically two or three) informative variables, which are more intuitive space for a human to interogate and form a hypothesis (see @ref(fig:dimreduc).
+
+```{r dimreduc, echo = F, fig.cap = 'Example of a dimensionality reduction.', fig.align = 'center', fig.show='hold', out.width = '55%'}
 knitr::include_graphics(c("images/swiss_roll_manifold_sculpting.png"))
 ```
 
-A key goal when dealing with datasets of these magnitude is the identification of subpopulations of cells that may have gone undetected in bulk measurements; another, perhaps more abitious task, aims to take advantage of any heterogeneity within the populatio in order to identify a temporal or mechanistic progression of developmental processes or disease. (citeations Saadatpour et al., 2017)
+Of course, whilst dimensionality reduction allows humans to inspect the dataset manually, particularly when the data can be represented in two or three dimensions, we should remember humans are exceptionally good at identifying patterns in two or three dimensional data, even when no real structure exists (Figure \@ref(fig:humanpattern). It is therefore useful to employ other statistical approaches to search for patterns in the reduced dimensional space. In this sense, dimensionality reduction forms an integral component in the analysis of complex biological data that will typically be combined with variety of machine learning techniques, such as classification (link), regression (link), and clustering (link). 
 
-However, these types of datasets are inherently difficult for humans to develop any intuition for. A useuful intermediate step towards making them of practucal use, is to reduce the dimensionality of the data, summarising the system which may contain tens of thousands of genes into a handful (typically two or three) informative variables, which are more intuitive space for a human to interogate and form a hypothesis. 
-
-Of course, whilst dimensionality reduction allows humans to inspect the dataset manually, particularly when the data can be represented in two or three dimensions, it should be noted that humans are exceptionally good at identifying patterns in two or three dimensional data, even when no real structure exists. For example, seeing an image of the UK in a cloud (Figure X). In these cases, it is often useful to employ other statistical machine learning approaches to search for patterns over the reduced dimensional space. In this sense, dimensionality reduction forms an important component of a moddern statistical analyses that will typically combined a variety of machine learning techniques, such as classification, regression, and/or clustering. 
-
-```{r hierarchicClusteringDemo1, echo = F, fig.cap = 'Building a dendrogram using hierarchic agglomerative clustering.', fig.align = 'center', fig.show='hold', out.width = '55%'}
+```{r humanpattern, echo = F, fig.cap = 'Humans are exceptionally good at identifying patterns in two and three-dimensional spaces - sometimes too good. To illustrate this, note the Great Britain shapped cloud in the image (presumably driffting away from an EU shaped cloud, not shown). More whimsical shaped clouds can also be seen if you have a spare afternoon.  Golcar Matt/Weatherwatchers [BBC News](http://www.bbc.co.uk/news/uk-england-leeds-40287817)', fig.align = 'center', fig.show='hold', out.width = '35%'}
 knitr::include_graphics(c("images/GB1.jpg"))
 ```
 
+In this chapter we will explore two forms of dimensionality reduction, principle component analysis ([PCA](#linear-dimensionality-reduction) and t-distributed stochastic neighbor embedding ([tSNE](#nonlinear-dimensionality-reduction)), highlighting the advantages and potential pitfalls of each method. Finally, in section XXX we discuss how dimensionality reduction tecniques can be combiend with other ML algorithms to perform pseudotime analyses in collections of single cell data: so-called pseudotime approaches. 
 
+## Linear Dimensionality Reduction {#linear-dimensionality-reduction}
 
-In this chapter we will explore two forms of dimensionality reduction, principle component analysis (PCA) and t-distributed stochastic neighbor embedding (tSNE), highlighting the advantages and potential pitfalls of both methods. As an illustrative example, we will use these approaches to analyse some single cell RNA-sequencing data of early human development, ...
+The most widely used form of dimensionality reduction is principle component analysis (PCA), which was introduced by Pearson in the early 1900's [@pearson1901liii], and indepedently rediscovered by Hotelling [@hotelling1933analysis]. PCA has a long history of use, first in population studies [@sforza1964analysis], and later for the analysis of gene expression data [@vohradsky1997identification,@hilsenbeck1999statistical,@craig1997developmental].
 
-In section X we discuss how dimensionality reduction tecniques can be combiend with other ML algorithms to perform pseudotime analyses in collections of scRNA-seq data, so-called pseudotime approaches. Finally, we will explore more recent developments in pseudotime analysis by running ... 
+PCA is not a dimensionality reduction technique *per se*, but an alternative way of representing the data that more naturally captures the variance in the system. Specifically, it finds a new co-ordinate system, so that the new x-axis (the first principle component; PC1) is aligned along the direction of greatest variance, with the y-axis aligned along the direction with second greatest variance (the second principle component; PC2), and so forth (Figure \@ref(fig:PCAfig)). At this stage there has been no inherent reduction in the dimensionality of the system, we have simply rotated the data around.
 
-## Linear Dimensionality Reduction
+To illustrate PCA we can repeat the analysis of  [@ringner2008principal] using the dataset of [@saal2007poor] (GEO GSE5325) which contains gene expression profiles for $105$ breast tumour measured using Swegene Human 27K RAP UniGene188 arrays. In their illustrative example, [@ringner2008principal] looked at the expression of *GATA3* and *XBP1*, whose expression was known to correlate with estrogen receptor status. In this simple example, we have a two dimensional system. A pre-processed dataset contining the expression levels for *GATA3* and *XBP1* can be loaded in using the code, below:
 
-The most widely used form of dimensionality reduction is based on principle component analysis (PCA), which was introduced by Pearson in the early 1900's (cite), and indepedently discovered by Hotelling (1930). PCA has a long history of use in the biological sciences with early uses in the analysis of gene expression data (Vohradsky et al. 1997, Craig et al. 1997, Hilsenbeck et al. 1999).
-
-PCA is not a dimensionality reduction technique per se, but an alternative way of representing the data that more naturally captures the variance in the system. Specifically, it finds a new co-ordinate system, so that the new x-axis (the first principle component) is aligned along the direcion of greatest variance, with the y-axis aligned along the direction of second greatest variance (the second principle component), and so forth (Figure Figure \@ref(fig:PCAfig). At this stage there has been no inherent reduction in the dimensionality of the system, we have simply found a more natural way to represent the data.
-
-```{r echo=F}
+```{r echo=T}
 D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/GSE5325/GSE5325_markers.csv", header = TRUE, sep = ",", row.names=1)
+```
 
+We can now plot the expression levels of *GATA3* and *XBP1* against one another to visulise the data looks in the two-dimensional space. 
+
+```{r echo=T}
 plot(t(D[1,which(D[3,]==0)]),t(D[2,which(D[3,]==0)]),'p',col='red', ylab="XBP1", xlab="GATA3",xlim=c(min(D[2,],na.rm = TRUE), max(D[2,],na.rm = TRUE)),ylim=c(min(D[1,],na.rm = TRUE), max(D[1,],na.rm = TRUE)))
 points(t(D[1,which(D[3,]==1)]),t(D[2,which(D[3,]==1)]),'p',col='blue')
 ```
 
-We can perform PCA in R using the command
+We can perform PCA in R using the \texttt{prcomp} function. In the snippet of code, below, we perform PCA for the samples. To do so, we must first filter out datapoints that have missing observations, as PCA does not, inherently deal with missing observations.
 
-```{r echo=F}
+```{r echo=T}
 Dommitsamps <- t(na.omit(t(D[,]))); #Get the subset of samples
 
 pca1  <- prcomp(t(Dommitsamps[1:2,]),center = TRUE)
@@ -56,42 +50,63 @@ ERexp <- Dommitsamps[3,];
 ER_neg <- pca1$x[which(ERexp==0),]
 ER_pos <- pca1$x[which(ERexp==1),]
 
-plot(-ER_neg[,1],ER_neg[,2],'p',col='red', xlab="PC1", ylab="PC2",xlim=c(-4, 5),ylim=c(-3, 3))
+plot(ER_neg[,1],ER_neg[,2],'p',col='red', xlab="PC1", ylab="PC2",xlim=c(-4.5, 4.2),ylim=c(-3, 2.5))
+points(ER_pos[,1],ER_pos[,2],'p',col='blue')
+```
+
+We can better visualise what's happened by plotting the original data side-by-side with the new data (note that here we have plotted the negative of PC1).
+
+```{r echo=T}
+par(mfrow=c(1,2))
+plot(t(D[1,which(D[3,]==0)]),t(D[2,which(D[3,]==0)]),'p',col='red', ylab="XBP1", xlab="GATA3",xlim=c(min(D[2,],na.rm = TRUE), max(D[2,],na.rm = TRUE)),ylim=c(min(D[1,],na.rm = TRUE), max(D[1,],na.rm = TRUE)))
+points(t(D[1,which(D[3,]==1)]),t(D[2,which(D[3,]==1)]),'p',col='blue')
+plot(-ER_neg[,1],ER_neg[,2],'p',col='red', xlab="-PC1", ylab="PC2",xlim=c(-4.5, 4.2),ylim=c(-3, 2.5))
 points(-ER_pos[,1],ER_pos[,2],'p',col='blue')
 ```
 
-We can visualise how the origianl genes align to the new PC co-ordiante system:
+So, we have simply rotated the original data, so that the greatest variance aligns along the x-axis etc. We can find out how much of the variance each principle component explains:
 
-```{r echo=F}
-genenames <- c("GATA3","XBP1")
-plot(-pca1$rotation[,1],pca1$rotation[,2], type="n", xlim=c(-2, 2), ylim=c(-2, 2), xlab="PC1", ylab="PC2")
-text(-pca1$rotation[,1], pca1$rotation[,2], genenames, , cex = .4)
-arrows(0, 0, x1 = -pca1$rotation[,1], y1 = -pca1$rotation[,2],length=0.1)
-```
-
-In this particualr case, we can see that both genes appear to be reasonably strongly assocaited with PC1. When dealing with much larger systems e.g., with more genes, these types of plots can be useufl for identifying which genes are assocuate with particualr directions and therefore possible intepretations of the PCs.
-
-We can find out how much of the variance is explained by each of the principle components:
-
-```{r echo=F}
+```{r echo=T}
+par(mfrow=c(1,1))
 barplot(((pca1$sdev)^2 / sum(pca1$sdev^2))*100, names.arg=c("PC1","PC2"), ylab="% variance")
 ```
 
-Here we can see that principle component 1 explains the vast majority of the variance in the observations. The dimensionality reduction technique enters the fray when we choose to discard later PCs. Of course, by doing so we loose a lot of information about the system, but this may be an acceptible loss compared to the intepretability we might get by being able to visualise the system in lower dimensions. 
+Here we can see that PC1 explains the vast majority of the variance in the observations. The dimensionality reduction step of PCA occurs when we choose to discard the later PCs. Of course, by doing so we loose information about the system, but this may be an acceptible loss compared to the increased intepretability achieved by visualising the system in lower dimensions. In the example below, we follow from [@ringner2008principal], and visulaise the data using only PC1.
 
-```{r echo=F}
-plot(-ER_neg[,1],matrix(0, 1, length(ER_neg[,1])),'p',col='red', xlab="PC1",xlim=c(-4, 3))
+```{r echo=T}
+par(mfrow=c(1,1))
+plot(-ER_neg[,1],matrix(-1, 1, length(ER_neg[,1])),'p',col='red', xlab="PC1",xlim=c(-4, 3),ylim=c(-1.5,1.5))
+
+points(-ER_pos[,1],matrix(-1, 1, length(ER_pos[,1])),'p',col='blue')
+
+points(-ER_neg[,1],matrix(1, 1, length(ER_neg[,1])),'p',col='red', xlab="PC1",xlim=c(-4, 3))
+
 points(-ER_pos[,1],matrix(0, 1, length(ER_pos[,1])),'p',col='blue')
+
+axis(side = 2, at = c(-1,0,1), labels = c("ER+","ER-","All"))
 ```
 
-This has done a good job at srperating out ER positive anf ER negative cells. 
+This appears to have done a good job at seperating out the ER positive cells from the ER negative cells. 
+
+### Intepreting the Principle Component Axes
+
+In the original data, the individual axes had very obvious intepretations: the x-axis represented expression levels of *GATA3* and the y-axis represented the expression level of *XBP1*. Other than indicating maximum variance, what does PC1 mean? The individual axes represent linear combinations of the expression of various genes. This may not be immediatly obvious, but we can get a feel by projecting the original axes (gene expression) onto the (reduced dimensional) co-ordinate system.
+
+```{r echo=T}
+genenames <- c("GATA3","XBP1")
+plot(-pca1$rotation[,1],pca1$rotation[,2], type="n", xlim=c(-2, 2), ylim=c(-2, 2), xlab="PC1", ylab="PC2")
+text(-pca1$rotation[,1], pca1$rotation[,2], genenames, cex = .4)
+arrows(0, 0, x1 = -pca1$rotation[,1], y1 = -pca1$rotation[,2],length=0.1)
+```
+
+In this particular case, we can see that both genes appear to be reasonably strongly assocaited with PC1. When dealing with much larger systems e.g., with more genes, these types of plots can be useful for identifying which genes are associated with particular directions, allowing us to intepret the meaning of the PCs.
 
 ### Horeshoe effect
 
-Principle component analysis is a linear (dimensionality reduction) technique, and is not always appropriate when dealing with nonlinearities in datasets. To illustrate this, let's consider an simulated expression set containig 8 genes, with N timepoints. We can again represnt this in terms of a matrix (below): 
+Principle component analysis is a linear (dimensionality reduction) technique, and is not always appropriate when dealing with nonlinearities in datasets. To illustrate this, let's consider an simulated expression set containing $8$ genes, with $N=10$ timepoints or conditions. We can again represent this in terms of a matrix: 
 
 
-```{r echo=F}
+```{r echo=T}
 X <- matrix( c(2,4,2,0,0,0,0,0,0,0,
                  0,2,4,2,0,0,0,0,0,0,
                  0,0,2,4,2,0,0,0,0,0,  
@@ -102,6 +117,8 @@ X <- matrix( c(2,4,2,0,0,0,0,0,0,0,
                  0,0,0,0,0,0,0,2,4,2), nrow=8,  ncol=10, byrow = TRUE)
 ```
 
+Or we can plot the data:
+
 ```{r echo=F}
 plot(1:10,X[1,],type="l",col="red",xlim=c(0, 14))
 points(1:10,X[2,],type="l",col="blue")
@@ -109,50 +126,60 @@ points(1:10,X[5,],type="l",col="black")
 legend(8, 4, legend=c("gene 1", "gene 2", "gene 5"), col=c("red", "blue", "black"),lty=1, cex=0.8)
 ```
 
-Not that, from the matrix, we can see a simple pattern in the data, with the expression pattern of later genes representing a simple time shifted version of the previous gene. Intuitively, then, this data can be represented by a single dimension e.g., an ordering that runs from time point 1 to time point 10. Let's run PCA and visualise what we get out:
+By eye, we can see that the data can be seperated by a single direction: that is, we can order the data from time/condition 1 through to time/condition 10, to seperate out the data. Intuitively, the data can be represented by a single dimension. Let's run PCA and visualise what we get out when we plot the first two PCs:
 
-```{r echo=F}
-B<-prcomp(t(X))
+```{r echo=T}
+pca2<-prcomp(t(X))
 condnames = c('TP1','TP2','TP3','TP4','TP5','TP6','TP7','TP8','TP9','TP10')
-plot(B$x[,1:2],type="p",col="red",xlim=c(-5, 5),ylim=c(-5, 5))
-text(B$x[,1:2]+0.5, condnames, , cex = 0.7)
+plot(pca2$x[,1:2],type="p",col="red",xlim=c(-5, 5),ylim=c(-5, 5))
+text(pca2$x[,1:2]+0.5, condnames, cex = 0.7)
 ```
 
-If we visualise the data in two dimensions, we see that the PCA plot has, in fact, placed time point 1 very close to time point 10. But why? From the earlier plot of gene expression profiles we can see that the relationships between the various genes are not enirely straightforward. For example, gene 1 is initially correlated with gene 2, then negatively correlated, and finally uncorrelated, whilst no correlation exists between gene 1 and genes 5 - 8. In general, PCA attemtps to preserve large pairwise distances, to do so for all genes, we observe the well know horsehoe effect (Novembre & Stephens 2008, Reich et al. 2008). These types of artifacts may be problematic when trying to draw intepretations on the data, and we must take care when we see these types of effects.  
+We see that the PCA plot has placed condition/time point 1 very close to condition/time point 10, but we can see from the data itself that this is not the case. From the earlier plots of gene expression profiles we can see that the relationships between the various genes are not enirely straightforward. For example, gene 1 is initially correlated with gene 2, then negatively correlated, and finally uncorrelated, whilst no correlation exists between gene 1 and genes 5 - 8. In general, PCA attemtps to preserve large pairwise distances, to do so for all genes, we observe the well know horsehoe effect [@novembre2008interpreting,@reich2008principal]. These types of artifacts may be problematic when trying to draw intepretations on the data, and we must take care when we see these types of effects.  
 
 ### PCA analysis of mammalian development
 
-Now that we have a feel for PCA and understand how the basic commands work we can take a look at some real data. To illustrate this we will make use of preprocessed data taken from Yan et al. (2015; GEO  GSE36552) and Guo et al. (2015; GEO GSE63818). The data from Yan et al. represents single cell RNA-seq data of from human embryos from the zygote stage (a single cell produced following fertilisation of an egg) through to the blastocyst stage (consisting of around 64 cells), as well as human embryonic stem cells (hESC), cells extracted from an early blsatocyst stage embryo and maintained in vitro. The dataset of Guo et al. (2015) contains scRNA-seq data from human primordial germ cells (hPGCs), precursors of sperm or eggs that are specified early in the developing human embryo soon after implantation (around week 2-3 in humans), and somatic cells. Together, these datasets therefore provide useful insights into the ...
+Now that we have a feel for PCA and understand some of the basic commands we can apply it in a real setting. Here we will make use of preprocessed data taken from [@yan2013single] (GEO  GSE36552) and [@guo2015transcriptome] (GEO GSE63818). The data from [@yan2013single] represents single cell RNA-seq measurments from human embryos from the zygote stage (a single cell produced following fertilisation of an egg) through to the blastocyst stage (consisting of around 64 cells), as well as human embryonic stem cells (hESC), cells extracted from an early blsatocyst stage embryo and maintained *in vitro*. The dataset of [@guo2015transcriptome] contains scRNA-seq data from human primordial germ cells (hPGCs), precursors of sperm or eggs that are specified early in the developing human embryo soon after implantation (around week 2-3 in humans), and somatic cells. Together, these datasets therefore provide useful insights into the early development of human embryos, and possible mechanisms for the specification of early cell types, such as PGCs. 
 
-The preprocessed data contains log_2 normalised counts in around 400 cells for 300X marker genes, and can be found in the file XXX.csv. Note that the first line of data in the file is an indicator denoting cell type (-1 = ESC, 0 = pre-implantation, 1 = PGC, 2 = somatic cell). The second row indicates the sex of the cell (0 = unknown/unlabelled, 1 = female, 2 = male), with the third row indicating capture time (-1 = ESC, 0 - 7 denotes various developmental stages from zygote to blastocyst, 8 - X indicates various times of embryo development from week 4 through to week 19).
+The preprocessed data contains log_2 normalised counts in around 400 cells for 2957 marker genes, and can be found in the file /data/PGC_transcriptomics/PGC_transcriptomics.csv. Note that the first line of data in the file is an indicator denoting cell type (-1 = ESC, 0 = pre-implantation, 1 = PGC, and 2 = somatic cell). The second row indicates the sex of the cell (0 = unknown/unlabelled, 1 = female, 2 = male), with the third row indicating capture time (-1 = ESC, 0 - 7 denotes various developmental stages from zygote to blastocyst, 8 - 13 indicates increasing times of embryo development from week 4 through to week 19).
 
 Excercise 8.1. First load in the expression data into R and plot some example expression patterns.
 
-Excercise 8.2. Use perform prcomp to perfom PCA on the data.
+Excercise 8.2. Use perform \texttt{prcomp} to perfom PCA on the data.
 
-Excercise 8.3. Try plotting the loadings for the genes. Can we identify any genes of interest that may be particularlry important for PGCs?
+Excercise 8.3. Try plotting the loadings for the individual genes. Can we identify any genes of interest that may be particularlry important for PGCs?
 
 Excercise 8.4. Does the data sepearate well? Perform k-means cluster analysis on the data.
 
 Excercise 8.5. Perform a differential expression analysis between blastocyst cells and the PGCs.
 
-## Nonlinear Dimensionality Reduction
+## Nonlinear Dimensionality Reduction (#nonlinear-dimensionality-reduction)
 
-Whilst PCA is extremely useuful for exploratory analysis, it is not always appropriate, particularly for datasets with nonlinearites in the data. A large number of nonlinear dimensinoality reduction techniques exist, inlcuding t-distributed stochastic neighbour emedding (tSNE). The tSNE has become one of the most widely used algorithms for exploration of high dimensional (nonlinear) datasets, and particularly single cell transcriptomics.
+Whilst [PCA]{#linear-dimensionality-reduction} is extremely useuful for exploratory analysis, it is not always appropriate, particularly for datasets with nonlinearites. A large number of nonlinear dimensionality reduction techniques exist. Perhaps the most widely used technique is t-distributed stochastic neighbour emedding (tSNE) [@maaten2008visualizing,@van2009learning,@van2012visualizing,@van2014accelerating].
 
-[blog](https://distill.pub/2016/misread-tsne/)
+In general, tSNE attempts to take points in a high-dimensional space and find a faithful representation of those points in a lower-dimensional space. The SNE algorithm inditially converts the high-dimensional Euclidean distances between datapoints into conditional probabilities that represent similarities. The similarity of datapoint $x_j$ to datapoint $x_i$ is the conditional probability, $p_ _{j|i}$, that $x_i$ would pick $x_j$ as its neighbor if neighbors were picked in proportion to their probability density under a Gaussian centered at $x_i$. 
 
-The tSNE algorithm aims to take points in a high-dimensional space and find a faithful representation of those points in a lower-dimensional space.
+$p_{j|i} = \frac{\exp(-|x_i - x_j|^2/2\sigma_i^2)}{\sum_{k\neqi}\exp(-|x_i - x_k|^2/2\sigma_i^2)}$
 
-```{r echo=F}
+The similarity between datapoints in the reduced dimensionaly space is:
+
+$q_{j|i} = \frac{\exp(-|y_i - y_j|^2/2\sigma_i^2)}{\sum_{k\neqi}\exp(-|y_i - y_k|^2/2\sigma_i^2)}$
+
+map points $y_i$ and $y_j$ correctly model the similarity between the high-dimensional datapoints $x_i$ and $x_j$, the conditional probabilities $p_{j|i} = q_{j|i}$. We can therfore attempt to minimise the KL-divergence between distributions:
+
+$C = \sum KL(P_i||Q_i)= \sum_i \sum_j p_{i|j} \log \biggl{(} \frac{p_{i|j}}{q_{i|j}} \biggr{)}$
+
+Note that, for the SNE algorithm we have defined in terms of Gaussian distribution. We can, of course, choose a heavier tailed distirbtion such as a t-distribution. The tSNE algorithm is implemented in R via the \texttt{Rtsne} package.
+
+```{r echo=T}
 library(Rtsne)
 library(scatterplot3d)
-attach(mtcars)
 set.seed(12345)
 ```
 
-First generate some data so taht we can get a feel for what's going on. In this case we generate two different groups that exist in a 3D space. The groups are Gaussian distributed, with different 
-```{r echo=F}
+To get a feel for tSNE we will first generate some artificial data. In this case we generate two different groups that exist in a 3-dimensional space. The groups are Gaussian distributed, with different means and variances:
+
+```{r echo=T}
 D1 <- matrix( rnorm(5*3,mean=0,sd=1), 100, 3) 
 D2 <- matrix( rnorm(5*3,mean=5,sd=3), 100, 3) 
 G1 <- matrix( 1, 100, 1) 
@@ -164,6 +191,7 @@ colors <- colors[G3]
 scatterplot3d(D3,color=colors, main="3D Scatterplot")
 ```
 
+We can run tSNE on this dataset and try to condense the data down from a three-dimensional to a two-dimensional dataset. Unlike PCA, which has no real free parameters, tSNE has a variety of parameters that will need to be set. First, we have the perplexity parameter which, in essence, balances local and global aspects of the data. For low values of perplexity, the algorithm will tend to entirely focus on keeping datapoints locally together.
 
 ```{r echo=F}
 tsne_model_1 = Rtsne(as.matrix(D3), check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
@@ -174,9 +202,7 @@ plot(tsne_model_1$Y[1:100,1:2],type="p",col="red",xlim=c(-45, 45),ylim=c(-45, 45
 points(tsne_model_1$Y[101:200,1:2],type="p",col="blue")
 ```
 
-Unlike pca, which has no real free parameters (different wasy of doing it)  tSNE has a variety of parameters that will need to be set. First, we have the perplexity parameter which, in essence, balances local and global aspects of the data. For low values of perplexity, the algorithm will tend to entirely focus on keeping datapoints locally together, whilst high perplexity will tend to focus on conserving
-
-“perplexity,” which says (loosely) how to balance attention between local and global aspects of your data. Not here that tSNE appears to have identified a lot of structure in the dataset that shouldn't exist in reality. Let's try a larger value for the perplexity parameter. 
+Note that here we have set the perplexity parameter reasonably low, and tSNE appears to have identified a lot of local structure that we know doesn't exist in reality. Let's try a larger value for the perplexity parameter. 
 
 ```{r echo=F}
 y1 <- tsne_model_1$Y[which(D[1,]==-1),1:2]
@@ -186,30 +212,42 @@ plot(tsne_model_1$Y[1:100,1:2],type="p",col="red",xlim=c(-45, 45),ylim=c(-45, 45
 points(tsne_model_1$Y[101:200,1:2],type="p",col="blue")
 ```
 
-This appears to have worked well, tSNE has sepearted out the data well. Look at teh size of the cluser.
+This appears to have worked well, tSNE has sepearted out the two groups.
 
 ### Nonlinear warping 
 
-Illustrates another point: in the original data, the second class was drawn form a distribtuion that was larger variacen than the first one. Following tSNE the two groups appear to have a similar size: the alogirhm has performed nonlienar local warping.
+In our previous example we showed that if we chose the perplexity parameter correctly we tSNE seperated out the two populations well. If we plot the original data next to the tSNE reduced dimensionality data, however we will see something interesting:
+
+```{r echo=F}
+par(mfrow=c(1,2))
+scatterplot3d(D3,color=colors, main="3D Scatterplot")
+plot(tsne_model_1$Y[1:100,1:2],type="p",col="red",xlim=c(-45, 45),ylim=c(-45, 45))
+points(tsne_model_1$Y[101:200,1:2],type="p",col="blue")
+```
+
+Whilst the two groups in the original data had very different variances, in the reduced dimensionality representation the two groups showed a similar spread. This is down to tSNEs being able to represent nonlinearities.
+This is, of course, important to keep in mind: the spread and local structures in a tSNE output are not always indicative of, for example, heterogeneity in the data. This is something to keep in mind when dealing with single cell that may be intrinsicly heterogeneous.
 
 ### Stochasticity
 
-Another important point is taht tSNE is stochastic. Run twice differennt results!
+Another important aspect of the tSNE algorithm is that is stochastic in nature. Unlike PCA, which for the same dataset will always yield the same result, if you run tSNE twice you will find different results. We can illustrate this below, by running tSNE again for perplexity 50, and plotting the results alongside the previous ones.
 
 ```{r echo=F}
 set.seed(123456)
 
-y1 <- tsne_model_1$Y[which(D[1,]==-1),1:2]
-tsne_model_1 <- Rtsne(as.matrix(D3), check_duplicates=FALSE, pca=TRUE, perplexity=50, theta=0.5, dims=2)
+tsne_model_2 <- Rtsne(as.matrix(D3), check_duplicates=FALSE, pca=TRUE, perplexity=50, theta=0.5, dims=2)
 
+par(mfrow=c(1,2))
 plot(tsne_model_1$Y[1:100,1:2],type="p",col="red",xlim=c(-45, 45),ylim=c(-45, 45))
 points(tsne_model_1$Y[101:200,1:2],type="p",col="blue")
+
+plot(tsne_model_2$Y[1:100,1:2],type="p",col="red",xlim=c(-45, 45),ylim=c(-45, 45))
+points(tsne_model_2$Y[101:200,1:2],type="p",col="blue")
 ```
 
+### Analysis of mammalian development
 
-### PCA analysis of mammalian development
-
-In our previous sections we used PCA to analyse single cell datasets, and noted that it seemed adept at picking out difference cell types and idetifying putative regulators. We will now use tSNE to analyse the same data.
+In earlier previous sections (cite) we used PCA to analyse single cell datasets of early human embryo development. In general PCA seemed adept at picking out difference cell types and idetifying putative regulators associated with those cell types. We will now use tSNE to analyse the same data.
 
 Excercise 8.6. Load in the single cell dataset from section ??? and run tSNE. Note: try a variety of perplexity values.
 
@@ -219,31 +257,20 @@ Excercise 8.7. There appears to be more structure in the dataset than PCA. Take 
 
 Excercise 8.8. More formally we could try to cluster these data. 
 
-
-
 ## Other dimensionality reduction techniques
 
-A large number of alternative dimensionality reduction techniques exist with corresponding codebases in R. These include other nonliner dimensionality reduction techniques such as Gaussian Process Latent Variable Models (GPLVMs; Lawrence 2004) available in [GPLVM](https://github.com/SheffieldML/vargplvm.git) and Isomap. RESOURCES. [Isomap](https://www.rdocumentation.org/packages/RDRToolbox/versions/1.22.0)
+A large number of alternative dimensionality reduction techniques exist with corresponding codebases in R. These include probabilistic extentions to PCA [pcaMethods](https://www.rdocumentation.org/packages/pcaMethods/versions/1.64.0) and other nonliner dimensionality reduction techniques such as Gaussian Process Latent Variable Models ([GPLVM](https://github.com/SheffieldML/vargplvm.git); Lawrence 2004) and [Isomap](https://www.rdocumentation.org/packages/RDRToolbox/versions/1.22.0) and other general ML packages such as [kernlab](https://cran.r-project.org/web/packages/kernlab/index.html).
 
-[kernlab](https://cran.r-project.org/web/packages/kernlab/index.html)
+## Dimensionality reduction and pseudotime
 
-[pcaMethods](https://www.rdocumentation.org/packages/pcaMethods/versions/1.64.0)
+Single cell RNA-sequencing datasets tend to be of low temporal resolution, albeit with observations of many cells (Yan et al. 2013; Guo et al. 2015; Petropoulos et al. 2016; Borensztein et al. 2017; Huang et al. 2017). Due to intrinisic heterogenetity of cells, the developmental progression (or response to perturbation or disease) of cells may be different, and the population reflects a continuum of developmental states or responses to perturbations. These dataset can therefore provided insights to the developmental trjacetories provoding the cells can be appropriately ordered. This is referred to as pseudotime ordering. 
 
-## Dimensionality reduction and pseudotime algorithsm
+Dimensionality reduction forms an integral component of pseudotime ordering. In particular collections of cells are often projected in reduced dimensional spaces, with cells ordered over the reduced dimensional space. This ordering itself may involved a number of statistical approaches, clustering and graph theory. A course on pseudotime... [course](https://hemberg-lab.github.io/scRNA.seq.course/index.html)
 
-Primer on pseudotime.
+These types of approaches have proven very sucessfuly. Howver, a number of clear limitations exist. Notably, most methods order cells in teh reduced dimensional space and provide only a single estimate of the ordering i.e., they do not account for uncertainty in oredring. We have sene from earlier chapters that MAP/ML can be prone to overfitting. 
 
-[course](https://hemberg-lab.github.io/scRNA.seq.course/index.html)
+Furthermore, methods based on nonlinear dimensionality reduction techniques do not provide an easily interpretable relationship between the inferred pseudo-time and chronological time. For example, we have seen in tSNE how datasets may undergo different warping at different regions in teh reduced dimensional space. This effect is compounded when inferring pseudotime for datasets with multiple branches: if one branch has fewer observations, or else a period of quiescence, the branch will tend to be artificially truncated compared to others; different branches can also be artificially truncated or extended due to differnet warpings in the dimensionality reduction techniques. 
 
-tSNE is a particularly useful approach when dealing with large (potentially nonliner) datasets with unknown strucutre. It is frequently used as a starting point for pseudotime algorithms. Reference Martin Hembergs course for intro to pseudotime.
-
-However, as we have seen, there remains some intepretability issues in using these approaches for pseudotime ordering. In partciular the flexibility of the nonlinear warping means that the intepretation of the odering can be difficult. Furthermore, since most algorithms will artifically truncate the ...
-
-An alternative apporach that is particularly useful when dealing with time series annotated datasets attempts to tie the latent dimension to a meanigful parameter. Specifically, these approaches attempt to reduce teh dimension down to a single dimension, with that dimension anchored into to time points (Figure CX). Consequently, this approach ... An example of this type of pseudotime ordering can be found in the DeLorean package of (Reid and Wernisch, 2016). Of course, ...
-
-Front end in R [DeLorean package](https://cran.r-project.org/web/packages/DeLorean/index.htmllibrary)
-
-<<<<<<< HEAD
+An alternative apporach that is particularly useful when dealing with time series annotated datasets attempts to tie the latent dimension to a meanigful parameter. Specifically, these approaches attempt to reduce teh dimension down to a single dimension, with that dimension anchored into to time points. An example of this type of pseudotime ordering can be found in the[DeLorean package](https://cran.r-project.org/web/packages/DeLorean/index.htmllibrary) package of [@reid2016pseudotime].
 
 Solutions to exercises can be found in appendix \@ref(solutions-dimensionality-reduction).
->>>>>>> 634734233afdb3dfc9a40a09faa8cc06d917ce62

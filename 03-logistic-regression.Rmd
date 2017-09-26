@@ -1,22 +1,29 @@
 <<<<<<< HEAD
-# Linear and non linear (logistic) regression
+# Logistic regression
 =======
-# Linear and non linear regression and classification {#logistic-regression}
+# Logistic regression {#logistic-regression}
 >>>>>>> 634734233afdb3dfc9a40a09faa8cc06d917ce62
 
 <!-- Chris -->
 
 <<<<<<< HEAD
 
-Supervised learning typically involves regression or classification. Regression aims to identify how a particular (continuous) variable of interest, $\mathbf{y}$, is influenced by a set of explanatory variables, $\mathbf{X}$. Conceptually, this typically involves identifying a function that tells us the value of $y*$ for arbitrary values of $X*$. Classificaiton algorithms, on the other hand, deal with discrete (categorical) valued outpus. The aim, here is to the ability to learn how different input values, $X$, map to a particular group (category), and ultimately to assign categories to a new set of observations currently lacking a group assingment, $X*$.
+Supervised learning typically involves regression or classification. Regression aims to identify how a particular (continuous) variable of interest, $\mathbf{y}$, is influenced by a set of explanatory variables, $\mathbf{X}$. This involves identifying a function that predicts $y$ from $X$ (trends), which, of course, allows prediction of $y*$ at a new input where there has been no observation $X*$ (forecasting). LINK BACK TO LINEAR MODELS. Classificaiton algorithms, on the other hand, deal with discrete (categorical) valued outpus. A notable example would be where the output is either $0$ or $1$ (logistic). Other categorical values could be when the data falls in to one of three categories "group 1", "group 2" or "group 3". The aim here, is to learn how different input values of $X$ map to a particular output (category), and ultimately to assign categories to a new set of observations, $X*$, whose response variable is unknown.
 
 Within this chapter we will cover aspects of linear and nonlinear regression and classification, using examples taken from plant datasets. OUTLINE EXACTLY WHAT WE DO.
 
-## Dataset: *Arabidopsis thaliana* dataset {#dataset}
+## Dataset: *Arabidopsis thaliana* time series {#dataset}
 
-Our dataset of choice, captures the gene expression levels in the model plant *Arabidopsis thaliana* following infection with the necrotophic pathogen *Botrytis cineara*. *Botrytis cinerea* is considered the second most important fungal plant pathogen dues to its abilty to cause disease in a range of plants (pre- and postharvest). A time series dataset measuring the gene expression in *Arabidopsis* leaves following innoculation with *Botrytis cinearea* is available from GEO under accession number GSE39597 (Windram *et al.*, 2012). A pre-processed version of the data is available in the file data folder. The processed data is a tab delimited text file with the fist row containig gene IDs for 163 marker genes. Columns 2 contains the time points of observations, with column 3 indicating which time series the data point belongs to (control versus infected time series). All subsequent columns indicate ($log_2$) normalised gene expression values using microarrays (V4 TAIR V9 spotted cDNA array; full details in Windram *et al.*, 2012). The expression dataset itself is split into two: the first $24$ observations represent measurments of *Arabidopsis* gene expression in a control experiment (uninfected), from $2h$ through $48h$ at $2$ hourly intervals. The second set of $24$ observations represents an infection datasets, from $2h$ after innoculation with *Botyris cinerea* through $48h$ at $2$ hourly intervals.   
+To illustrate nonlinear regressino and classificaiton we will use a dataset that captures the gene expression levels in the model plant *Arabidopsis thaliana* following infection with the necrotophic pathogen *Botrytis cineara*. *Botrytis cinerea* is considered the second most important fungal plant pathogen dues to its abilty to cause disease in a range of plants (pre- and postharvest). A time series dataset measuring the gene expression in *Arabidopsis* leaves following innoculation with *Botrytis cinearea* is available from GEO under accession number GSE39597 (Windram *et al.*, 2012). A pre-processed version of the data is available in the file data folder. The processed data is a tab delimited text file with the fist row containig gene IDs for 163 marker genes. Columns 2 contains the time points of observations, with column 3 indicating which time series the data point belongs to (control versus infected time series). All subsequent columns indicate ($log_2$) normalised gene expression values using microarrays (V4 TAIR V9 spotted cDNA array; full details in Windram *et al.*, 2012). The expression dataset itself is split into two: the first $24$ observations represent measurments of *Arabidopsis* gene expression in a control experiment (uninfected), from $2h$ through $48h$ at $2$ hourly intervals. The second set of $24$ observations represents an infection datasets, from $2h$ after innoculation with *Botyris cinerea* through $48h$ at $2$ hourly intervals. We can read the dataset in as follows:
 
-Excercise 3.1. Use read.csv() to load in the pre-processed data file /data/Arabidopsis/Arabidopsis_Botrytis.csv and plot the gene expresison of genes to familiraise yourself with the data.
+```{r echo=T}
+geneindex <- 36
+D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/Arabidopsis/Arabidopsis_Botrytis_transpose_3.csv", header = TRUE, sep = ",", row.names=1)
+genenames <- colnames(D)
+Xs <- D$Time[1:24]
+```
+
+Excercise 3.1. Plot the gene expresison profiles to familiraise yourself with the data. Hint, you may need to add some noise in to the GP.
 
 ## Regression {#regression}
 
@@ -56,16 +63,15 @@ points(Xs,predictedValues,type="l",col="black")
 points(Xs,predictedValues2,type="l",col="red")
 ```
 
-### ...
-
-Try making use of the caret functionality to 
-
 Excercise 3.2. The caret package has a variety of features that are of use in ML. In our example, above, we fitted a linear model to a gene to identify parameters and make predictions using all the data. We can make use of the caret functionality to split our data into training and test sets, which should allow us to guage uncertainty in our parameters and the strength of the model.
 
-Excercise 3.5. Linear regression can generally be applied for any number of variables. A notable example, would be to regress the expression pattern of a gene against putative regulators.
+$y = m_1 x_1 + m_2 x_2 + c.$
+$y = \sum m_i x_i + c.$
+
+Excercise 3.3. Linear regression can generally be applied for any number of variables. A notable example, would be to regress the expression pattern of a gene against putative regulators.
 
 ```{r echo=T}
-lrfit3 <- train(y~poly(.,2), data=data.frame(x=D[1:24,3:10],y=D[1:24,geneindex]), method = "lm")
+lrfit3 <- train(y~poly(x,degree=2), data=data.frame(x=D[1:24,3],y=D[1:24,geneindex]), method = "lm")
 ```
 
 ### More complex models
@@ -74,17 +80,21 @@ In general linear models will not be appropriate for a large variety of datasets
 
 $y = m_1 x + m_2 x^2 + c,$
 
-representing a quadratic function, where $m = [m_1,m_2,c]$ represent the parameters we're interested in inferring, that together capture the relationship between the variables $x$ and $y$.  Higher order polynomials can be fitted:
+representing a quadratic function, where $m = [m_1,m_2,c]$ represent the parameters we're interested in inferring, that together capture the relationship between the variables $x$ and $y$. Higher order polynomials can be fitted:
 
 $y = \sum_{i=1}^{n} m_i x^i + c.$
 
-Within R we can infer more complex polynomials to the data using the lm package. In the example below we fit a 3rd order polynomial:
+where $m = [m_1,\ldots,m_n,c]$ are the free parameters. Within R we can infer more complex polynomials to the data using the lm package. In the example below we fit a 3rd order polynomial:
  
 ```{r echo=T}
-degree <- 3
-
-lrfit3 <- train(y~poly(x,degree), data=data.frame(x=D[1:24,1],y=D[1:24,geneindex]), method = "lm")
-lrfit4 <- train(y~poly(x,degree), data=data.frame(x=D[25:nrow(D),1],y=D[25:nrow(D),geneindex]), method = "lm")
+lrfit3 <- lm(y~poly(x,degree=3), data=data.frame(x=D[1:24,1],y=D[1:24,geneindex]))
+```
+ 
+We can do this within caret:
+ 
+```{r echo=T}
+lrfit3 <- train(y~poly(x,degree=3), data=data.frame(x=D[1:24,1],y=D[1:24,geneindex]), method = "lm")
+lrfit4 <- train(y~poly(x,degree=3), data=data.frame(x=D[25:nrow(D),1],y=D[25:nrow(D),geneindex]), method = "lm")
 
 plot(Xs,D[25:nrow(D),geneindex],type="p",col="black",ylim=c(min(D[,geneindex])-0.2, max(D[,geneindex]+0.2)),main=genenames[geneindex])
 points(Xs,D[1:24,geneindex],type="p",col="red")
@@ -94,10 +104,11 @@ lines(Xs,fitted(lrfit4),type="l",col="black")
  
 Note that the fit appears to be better than for the linear fit. We can quantify this by looking at the RMSE. What happens if we fit a much higher order polynomial. Try fitting a polynomial with degree = 20. The fit appears to much more closely fit the data. Whilst it may be possible that the data was generated by a polynomial, it's far more likely that we are overfitting the data. We can evaluate how good the model really is by looking at the RMSE from bootstrapped sampling. 
 
-Excercise 3.3. Compare the RMSE for various polynomial models versus that of the linear models. 
+Excercise 3.4. Compare the fits for various polynomial models. What about the RMSE? Which model seems to be best?
 
 ## Gaussian process regression
 
+When dealing with 
 Overfitting. Nonlinear Bayesian approaches are often used for nonlinear regression. In particular, 
 
 Gaussian processes (Rasmussen and Williams) represent a Bayesian approach to inferring the relationship between a variable of interest, $y$, and the explanatory variably, $x$, via a potentially nonlinear function:
@@ -149,8 +160,8 @@ covSE <- function(X1,X2,l=1,sig=1) {
 To get an idea of what this means, we can generate samples from the GP prior:
 
 ```{r echo=T}
-x.star <- seq(-5,5,len=500) #Define a set of points at which to evaluate the functions
-sigma  <- covSE(x.star,x.star) #Evaluate the covariance function at those locations, to give the covariance matrix.
+x.star <- seq(-5,5,len=500) ####Define a set of points at which to evaluate the functions
+sigma  <- covSE(x.star,x.star) ###Evaluate the covariance function at those locations, to give the covariance matrix.
 y1 <- mvrnorm(1, rep(0, length(x.star)), sigma)
 y2 <- mvrnorm(1, rep(0, length(x.star)), sigma)
 y3 <- mvrnorm(1, rep(0, length(x.star)), sigma)
@@ -185,8 +196,8 @@ k.xxs <- covSE(x,x.star)
 k.xsx <- covSE(x.star,x)
 k.xsxs <- covSE(x.star,x.star)
 
-f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y  #Mean
-cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs #Var
+f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y  ###Mean
+cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs ###Var
 
 plot(x.star,sin(x.star),type = 'l',col="red",ylim=c(-2.2, 2.2))
 points(f,type='o')
@@ -210,8 +221,8 @@ k.xxs <- covSE(x,x.star)
 k.xsx <- covSE(x.star,x)
 k.xsxs <- covSE(x.star,x.star)
 
-f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y  #Mean
-cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs #Var
+f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y  ###Mean
+cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs ###Var
 
 plot(x.star,sin(x.star),type = 'l',col="red",ylim=c(-2.2, 2.2))
 points(f,type='o')
@@ -231,8 +242,8 @@ k.xxs <- covSE(x,x.star)
 k.xsx <- covSE(x.star,x)
 k.xsxs <- covSE(x.star,x.star)
 
-f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y  #Mean
-cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs #Var
+f.star.bar <- k.xsx%*%solve(k.xx)%*%f$y  ###Mean
+cov.f.star <- k.xsxs - k.xsx%*%solve(k.xx)%*%k.xxs ###Var
 
 plot(x.star,sin(x.star),type = 'l',col="red",ylim=c(-2.2, 2.2))
 points(f,type='o')
@@ -265,7 +276,7 @@ calcML <- function(f,l=1,sig=1) {
 Crucially, the ability to calculate the marginal likelihood gives us a way to automatically select the hyperparameters. We can increment hyperparameters, and choose the ones that return the greatest evidence. In the example below we increment both the length-scale and process varaince hyperparameter. 
 
 ```{r echo=T}
-#install.packages("plot3D")
+###install.packages("plot3D")
 library(plot3D)
 
 par <- seq(.1,10,by=0.1)
@@ -281,13 +292,17 @@ print(c("length-scale", par[ind[1]]))
 print(c("process variance", par[ind[2]]))
 ```
 
-Excercise 3.5: Try fitting plotting the GP for the optimised values of the hyperparmeters. 
+CAN OPTIMISE DIRECTLY. Derivative
 
-Excercise 3.6: Now try fitting a Gaussian process to one of the gene expression profiles in the Botrytis dataset.
+$dL/dK dK/d\theta$
+
+Excercise 3.6: Try fitting plotting the GP for the optimised values of the hyperparmeters. 
+
+Excercise 3.7: Now try fitting a Gaussian process to one of the gene expression profiles in the Botrytis dataset. Hint: Normalise the time axis. You will also re-implement the covSE covariance function and the ML calculation function to account for independent noise.
 
 ### Model Selection
 
-As well as a criterior for selection hyperparameters, the marginal likelihood can additionally be used as a basis for selecting models. For example, we might be interested in comparing how well two different covariance functions fit the data.
+As well as a criterior for selection of hyperparameters, the marginal likelihood can additionally be used as a basis for selecting models. For example, we might be interested in comparing how well two different covariance functions fit the data.
 
 Previous studies by Stegle et al. (2010) have used Gaussian processes to identify differential expression between two time series e.g., between a control time series and an infection time series. 
 
@@ -295,31 +310,35 @@ Differential expression analysis is a way of determininig whether two sets of da
 
 Gaussian processes represent a useufl way of test for the differences in genes expression for time series observations. To do so we can write down two competeing modes: (i) the two time series are differentially expressed, and are therefore best described by two independent GPs; (ii) the two time series are noisy observations from an identical underlying process, and are therefore best described by a single GP. 
 
-Excercise 3.1: Use the marginal likelihood to guage if a time series is differentially expressed.
+Bayes FACTOR!
+
+Excercise 3.8 (optional): Write a function for determining differential expression for two genes. Hint: we are interested in comparing two models, and using Bayes Factor to determine if the genes are DE. In the first mode ... one we assume no differential expression i.e., ...
+
+Excercise 3.9 (optional): Apply the model ...
 
 
-### Differential expression analysis as model selection
+### Advanced Application: Differential expression analysis as model selection 
 
-As well as identifying if a gene is differentially expressed, GPs can also be used to identify when a gene might be differentially expressed. Notable examples include the work by Stegle et al. (2010), with related approaches introduced by Rattray *et al.* (2016) and Penfold, Sybirna *et al.* (2017).
+Nonlinear regression represent useful tools for modelling. In the previous section we have seen how GPs can also be used to model if two time series are differentially expresssed. Further to this, they can be used to model when the time series diverge. Notable examples include the work by Stegle et al. (2010), Rattray *et al.* (2016), and Penfold, Sybirna *et al.* (2017).
 
-Rattray *et al.* (2016) have corresponding code [DEtime](https://github.com/ManchesterBioinference/DEtime) allowing both model selection and identificaiton of the timing of DE. 
+Code for using GPs to infer timing are available from [DEtime](https://github.com/ManchesterBioinference/DEtime) (Rattray *et al.* 2016).
 
 ```{r echo=T}
-#install.packages("devtools")
+###install.packages("devtools")
 library(devtools)
-#install_github("ManchesterBioinference/DEtime")
-#import(DEtime)
+###install_github("ManchesterBioinference/DEtime")
+###import(DEtime)
 library(DEtime)
 ```
 
-We can call the function DEtime_rank to calculate marginal likelihoods for a two sample time course test. 
+Within DEtime, we can call the function \texttt{DEtime_rank} to calculate marginal likelihoods for two time series, similar to our applicaiton in the previous section. Within toptimising the hyperparameters. 
 
 ```{r echo=F}
 res_rank <- DEtime_rank(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTimes = Xs, PerturbedData = D[25:48,3], savefile=TRUE)
-idx <- which(res_rank[,2]>1)
+#idx <- which(res_rank[,2]>1)
 ```
 
-For genes that are DE, we can run the code to identify the timing of DE by calling the function DEtime_infer.
+For genes that are DE, we can run the code to identify the timing of divergence by calling the function \texttt{DEtime_infer}.
 
 ```{r echo=F}
 res <- DEtime_infer(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTimes = Xs, PerturbedData = D[25:48,3])
@@ -337,67 +356,49 @@ hist(as.numeric(res$result[,2]),breaks=20)
 
 ## Classificaiton
 
-Classification algorithms are a supervised learning techniques that assign data to categorical outputs. For example we may have a continuous input variable, $x$ e.g., gene expression, and want to learn how that variable maps to a discrete output e.g., a phenotype. 
+Classification algorithms are a supervised learning techniques that assign data to categorical outputs. For example we may have a continuous input variable, $x$, and want to learn how that variable maps to a discrete valued output such as a discrete phenotype. 
 
 ## Logistic regression
 
 The simplest form of classification is the logistic regression. 
+$y=2$
 
 
-Class
 
-mod_fit <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="LogitBoost", family="binomial")
-mod_fit <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="bayesglm", family="binomial")
+$p(y=1|X) = \Phi (X^\top \beta)$
 
+$\Phi$ is the CDF of normal. Latent variable:
 
-D2 <-D
-D2[which[D2[,2]==1],2]<-1
-D2[which[D2[,2]==2],2]<1
-mod_fit2 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="logreg", family="binomial")
+$y* = X^\top \beta + \varepsilon$
+
+where $\varepsilon$ is a GRV.
 
 
-mod_fit <- train(Class ~ AT1G03960,  data=D, method="glm", family="binomial") %ERROR
+$y* = 1 if y* >0$
+$y* = 0 if y* >0$
 
-mod_fit2 <- train(y ~ ., data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="gaussprPoly")
+ML estimations.
 
+$\ln \mathcal{L} (\beta) = \sum_{i=1}^{n} y_i \ln \Phi (x_i^\prime \beta) +  (1-y_i) \ln \Phi (x_i^\prime \beta)$
 
-t2 <- train(y~., data=data.frame(x=Xs,y=D[25:nrow(D),geneindex]), "gaussprPoly")
+can use gradient methods. 
 
-library(pROC)
+Within logistic regression we have:
+
+$y* = \beta_0 + \beta x + \varepsilon$
+
+Within caret, probit and logistic 
 
 ```{r echo=F}
-source("https://bioconductor.org/biocLite.R")
-biocLite("VGAM")
-
-
-library(caret)
-data(GermanCredit)
-Train <- createDataPartition(GermanCredit$Class, p=0.6, list=FALSE)
-training <- GermanCredit[ Train, ]
-testing <- GermanCredit[ -Train, ]
-mod_fit <- train(Class ~ Age + ForeignWorker + Property.RealEstate + Housing.Own + 
-                   CreditHistory.Critical,  data=training, method="glm", family="binomial")
-                   exp(coef(mod_fit$finalModel))
-                   
-                   mod_fit_one <- glm(Class ~ Age + ForeignWorker + Property.RealEstate + Housing.Own + 
-                     CreditHistory.Critical, data=training, family="binomial")
-
-mod_fit_two <- glm(Class ~ Age + ForeignWorker, data=training, family="binomial")
-
 library(pROC)
-# Compute AUC for predicting Class with the variable CreditHistory.Critical
-f1 = roc(Class ~ CreditHistory.Critical, data=training) 
-plot(f1, col="red")
-## 
-## Call:
-## roc.formula(formula = Class ~ CreditHistory.Critical, data = training)
-## 
-## Data: CreditHistory.Critical in 180 controls (Class Bad) < 420 cases (Class Good).
-## Area under the curve: 0.5944
 library(ROCR)
-# Compute AUC for predicting Class with the model
-prob <- predict(mod_fit_one, newdata=testing, type="response")
-pred <- prediction(prob, testing$Class)
+
+Dpred <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/Arabidopsis/Arabidopsis_Botrytis_pred_transpose_3.csv", header = TRUE, sep = ",", row.names=1)
+
+mod_fit2 <- train(y ~ ., data=data.frame(x = D[,3:ncol(D)], y = as.factor(D$Class)), method="glm", family="binomial")
+
+prob <- predict(mod_fit2, newdata=data.frame(x = Dpred[,3:ncol(Dpred)], y = as.factor(Dpred$Class)), type="prob")
+pred <- prediction(prob$`1`, as.factor(Dpred$Class))
 perf <- performance(pred, measure = "tpr", x.measure = "fpr")
 plot(perf)
 auc <- performance(pred, measure = "auc")
@@ -405,16 +406,52 @@ auc <- auc@y.values[[1]]
 auc
 ```
 
-
-
+We therefore show good ability to predict the state of infection with expression of various genes. 
 
 ## GP classification
 
-Example GP regression using kernlab
+Bayesian nonparametric approaches to classification exist, and again come with the added advantage that they have a treatment for uncertainity in the inference procedure. In particular we can perofrm classificaiton using GPs. Unlike Gaussian process regression, Gaussian process classification is not analytically tractible and we must instead use approximations. 
+GPCs have been implemented in \texttt{caret}. Here we have a choice of including a polynomial kernel, implemented via:
 
 ```{r echo=F}
-t2 <- train(y~., data=data.frame(x=Xs,y=D[25:nrow(D),geneindex]), "gaussprPoly")
+mod_fit2 <- train(y ~ ., data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="gaussprPoly")
 ```
+
+
+```{r echo=F}
+library(pROC)
+library(ROCR)
+mod_fit2 <- train(y ~ ., data=data.frame(x = D[,3:ncol(D)], y = as.factor(D$Class)), method="gaussprPoly")
+
+prob <- predict(mod_fit2, newdata=data.frame(x = Dpred[,3:ncol(Dpred)], y = as.factor(Dpred$Class)), type="prob")
+pred <- prediction(prob$`1`, as.factor(Dpred$Class))
+perf <- performance(pred, measure = "tpr", x.measure = "fpr")
+plot(perf)
+auc <- performance(pred, measure = "auc")
+auc <- auc@y.values[[1]]
+auc
+```
+
+We therefore show good ability to predict the state of infection with expression of various genes. 
+
+### Other classification approaches.
+
+```{r echo=F}
+mod_fit <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="LogitBoost", family="binomial")
+
+mod_fit <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="bayesglm", family="binomial")
+
+mod_fit2 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="cforest")
+
+mod_fit2 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="svmRadialWeights")
+
+mod_fit2 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="plr")
+
+mod_fit2 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="multinom")
+
+```
+
+## Resources
 
 
 [Caret examples](https://github.com/tobigithub/caret-machine-learning)
