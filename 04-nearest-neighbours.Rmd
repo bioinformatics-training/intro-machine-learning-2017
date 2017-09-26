@@ -741,56 +741,12 @@ We can also measure correlation between observed and predicted values.
 cor(concRatioTest, test_pred)
 ```
 
-<!--
-## Caret
-
-pre-processing
-identification of correlated predictors
-
-
-Parallel processing with doMC
-registerDoMC()
-getDoParWorkers()
-
-## Curse of dimensionality
-Pre-processing data using dimensionality reduction.
-
-transformation functionality in caret
-
-## Examples
-
-centre1 <- read.csv("data/serum_proteomics/male_centre1.csv")
-centre2 <- read.csv("data/serum_proteomics/male_centre2.csv")
-
-c1sub <- centre1[,c(1,5,6,9,10)]
-c2sub <- centre2[,c(1,5,6,9,10)]
-
-res <- FNN::knn(c1sub[,2:5], c1sub[,2:5], cl=c1sub$Diagnostic_group, k=1)
-table(c1sub$Diagnostic_group, res)
-
-res <- FNN::knn(c1sub[,2:5], c2sub[,2:5], cl=c1sub$Diagnostic_group, k=1)
-table(c2sub$Diagnostic_group, res)
-
-bias / variance trade-off
-
-include:
-division into training and test set
-preprocessing - illustrate with diagram
-
--->
 
 
 ## Exercises
 
 ### Exercise 1 {#knnEx1}
-Classification
 
-Try different methods of feature selection
-
-### Exercise 2 {#knnEx2}
-Regression
-
-Alzheimers & gene expression? MMSE and gene expression?
 
 
 

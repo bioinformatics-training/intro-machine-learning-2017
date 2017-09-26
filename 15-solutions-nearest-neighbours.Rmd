@@ -41,7 +41,7 @@ nzv <- nearZeroVar(morphTrain, saveMetrics=T)
 nzv
 ```
 
-Data check: are all predictors on same scale
+Data check: are all predictors on same scale?
 ```{r echo=T}
 summary(morphTrain)
 ```
@@ -96,6 +96,7 @@ for(i in 1:100) seeds[[i]] <- sample.int(1000, length(tuneParam$k))
 seeds[[101]] <- sample.int(1000,1)
 ```
 
+<!--
 Define a pre-processor (named transformations) and transform morphTrain
 ```{r echo=T}
 transformations <- preProcess(morphTrain, 
@@ -103,8 +104,9 @@ transformations <- preProcess(morphTrain,
                               cutoff=0.75)
 morphTrainT <- predict(transformations, morphTrain)
 ```
+-->
 
-Set training parameters
+Set training parameters. In the example in chapter \@ref(nearest-neighbours) pre-processing was performed outside the cross-validation process to save time for the purposes of the demonstration. Here we have a relatively small data set, so we can do pre-processing within each iteration of the cross-validation process. We specify the option  ```preProcOptions=list(cutoff=0.75)``` to set a value for the pairwise correlation coefficient cutoff.
 ```{r echo=T}
 train_ctrl <- trainControl(method="repeatedcv",
                    number = 10,
@@ -122,3 +124,16 @@ knnFit <- train(morphTrain, varietyTrain,
                 trControl=train_ctrl)
 knnFit
 ```
+
+Plot cross validation accuracy as a function of _k_
+```{r cvAccuracyMorphTrain, fig.cap='Accuracy (repeated cross-validation) as a function of neighbourhood size for the wheat seeds data set.', out.width='100%', fig.asp=0.6, fig.align='center', echo=T}
+plot(knnFit)
+```
+
+Predict the class (wheat variety) of the observations in the test set.
+```{r echo=T}
+test_pred <- predict(knnFit, morphTest)
+confusionMatrix(test_pred, varietyTest)
+```
+
+
