@@ -3,64 +3,122 @@
 Solutions to exercises of chapter \@ref(nearest-neighbours).
 
 ## Exercise 1
-<!--
+
+Load libraries
 ```{r echo=T}
 library(caret)
+library(RColorBrewer)
 library(doMC)
-registerDoMC()
-
-
-data(segmentationData)
-
-segClass <- segmentationData$Class
-segData <- segmentationData[,4:61]
-
-set.seed(42)
-trainIndex <- createDataPartition(y=segClass, times=1, p=0.5, list=F)
-segDataTrain <- segData[trainIndex,]
-segDataTest <- segData[-trainIndex,]
-segClassTrain <- segClass[trainIndex]
-segClassTest <- segClass[-trainIndex]
-
-subsets<-c(5,10,15)
-
-tuneParam <- data.frame(k=seq(5,500,20))
-
-tuneParam <- data.frame(k=c(25,50))
-
-transformations <- preProcess(segDataTrain, 
-                              method=c("YeoJohnson", "center", "scale", "corr"),
-                              cutoff=0.75)
-segDataTrain <- predict(transformations, segDataTrain)
-
-train_ctrl <- trainControl(method="repeatedcv",
-                   number = 5,
-                   repeats=5)
-
-myRFE <- caretFuncs
-myRFE$summary <- twoClassSummary
-
-rfe_ctrl <- rfeControl(functions=myRFE,
-                       method="repeatedcv",
-                       number=5,
-                       repeats=5
-                       )
-
-knn_rfe <- rfe(segDataTrain,
-               segClassTrain,
-               sizes=subsets,
-               trControl = train_ctrl,
-               rfeControl = rfe_ctrl,
-               # now arguments to `train`:
-               method = "knn",
-               tuneGrid = tuneParam)
-
-knn_rfe
-
-
-
+library(corrplot)
 ```
--->
 
-## Exercise 2
+Prepare for parallel processing
+```{r echo=T}
+registerDoMC()
+```
 
+Load data
+```{r echo=T}
+load("data/wheat_seeds/wheat_seeds.Rda")
+```
+
+Partition data
+```{r echo=T}
+set.seed(42)
+trainIndex <- createDataPartition(y=variety, times=1, p=0.7, list=F)
+varietyTrain <- variety[trainIndex]
+morphTrain <- morphometrics[trainIndex,]
+varietyTest <- variety[-trainIndex]
+morphTest <- morphometrics[-trainIndex,]
+
+summary(varietyTrain)
+summary(varietyTest)
+```
+
+Data check: zero and near-zero predictors
+```{r echo=T}
+nzv <- nearZeroVar(morphTrain, saveMetrics=T)
+nzv
+```
+
+Data check: are all predictors on same scale
+```{r echo=T}
+summary(morphTrain)
+```
+
+```{r wheatBoxplots, fig.cap='Boxplots of the 7 geometric parameters in the wheat data set',,  out.width='75%', fig.asp=1, fig.align='center', echo=T }
+featurePlot(x = morphTrain, 
+            y = varietyTrain, 
+            plot = "box", 
+            ## Pass in options to bwplot() 
+            scales = list(y = list(relation="free"),
+                          x = list(rot = 90)),  
+            layout = c(3,3))
+```
+
+Data check: pairwise correlations between predictors
+```{r wheatCorrelogram, fig.cap='Correlogram of the wheat seed data set.', out.width='75%', fig.asp=1, fig.align='center', echo=T}
+corMat <- cor(morphTrain)
+corrplot(corMat, order="hclust", tl.cex=1)
+```
+
+```{r echo=T}
+highCorr <- findCorrelation(corMat, cutoff=0.75)
+length(highCorr)
+names(morphTrain)[highCorr]
+```
+
+Data check: skewness
+```{r wheatDensityPlots, fig.cap='Density plots of the 7 geometric parameters in the wheat data set',,  out.width='75%', fig.asp=1, fig.align='center', echo=T }
+featurePlot(x = morphTrain, 
+            y = varietyTrain,
+            plot = "density", 
+            ## Pass in options to xyplot() to 
+            ## make it prettier
+            scales = list(x = list(relation="free"), 
+                          y = list(relation="free")), 
+            adjust = 1.5, 
+            pch = "|", 
+            layout = c(3, 3), 
+            auto.key = list(columns = 3))
+```
+            
+Create a 'grid' of values of _k_ for evaluation:
+```{r echo=T}
+tuneParam <- data.frame(k=seq(1,50,2))
+```
+            
+Generate a list of seeds for reproducibility (optional) based on grid size
+```{r echo=T}
+set.seed(42)
+seeds <- vector(mode = "list", length = 101)
+for(i in 1:100) seeds[[i]] <- sample.int(1000, length(tuneParam$k))
+seeds[[101]] <- sample.int(1000,1)
+```
+
+Define a pre-processor (named transformations) and transform morphTrain
+```{r echo=T}
+transformations <- preProcess(morphTrain, 
+                              method=c("center", "scale", "corr"),
+                              cutoff=0.75)
+morphTrainT <- predict(transformations, morphTrain)
+```
+
+Set training parameters
+```{r echo=T}
+train_ctrl <- trainControl(method="repeatedcv",
+                   number = 10,
+                   repeats = 10,
+                   preProcOptions=list(cutoff=0.75),
+                   seeds = seeds)
+```
+
+Run training
+```{r echo=T}
+knnFit <- train(morphTrain, varietyTrain, 
+                method="knn",
+                preProcess = c("center", "scale", "corr"),
+                tuneGrid=tuneParam,
+                trControl=train_ctrl)
+knnFit
+```

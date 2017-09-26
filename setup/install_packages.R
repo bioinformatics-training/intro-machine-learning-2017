@@ -22,7 +22,8 @@ cran_packages <- c("ggplot2",
 "UsingR",
 "Rafalib",
 "downloader",
-"lattice"
+"lattice",
+"e1071"
 )
 
 # vector of bioconductor packages to be installed
