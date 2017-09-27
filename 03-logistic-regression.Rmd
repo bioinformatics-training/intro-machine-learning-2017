@@ -1,14 +1,6 @@
-<<<<<<< HEAD
-# Logistic regression
-=======
 # Logistic regression {#logistic-regression}
->>>>>>> 634734233afdb3dfc9a40a09faa8cc06d917ce62
 
-<!-- Chris -->
-
-<<<<<<< HEAD
-
-Supervised learning typically involves regression or classification. Regression aims to identify how a particular (continuous) variable of interest, $\mathbf{y}$, is influenced by a set of explanatory variables, $\mathbf{X}$. This involves identifying a function that predicts $y$ from $X$ (trends), which, of course, allows prediction of $y*$ at a new input where there has been no observation $X*$ (forecasting). LINK BACK TO LINEAR MODELS. Classificaiton algorithms, on the other hand, deal with discrete (categorical) valued outpus. A notable example would be where the output is either $0$ or $1$ (logistic). Other categorical values could be when the data falls in to one of three categories "group 1", "group 2" or "group 3". The aim here, is to learn how different input values of $X$ map to a particular output (category), and ultimately to assign categories to a new set of observations, $X*$, whose response variable is unknown.
+Supervised learning typically involves a component of regression or a component of classification. Regression aims to identify how a particular (continuous) variable of interest, $\mathbf{y}$, is influenced by a set of explanatory variables, $\mathbf{X}$. This involves identifying a function that predicts $y$ from $X$ (trends), which, of course, allows prediction of $y*$ at a new input where there has been no observation $X*$ (forecasting). LINK BACK TO LINEAR MODELS. Classificaiton algorithms, on the other hand, deal with discrete (categorical) valued outpus. A notable example would be where the output is either $0$ or $1$ (logistic). Other categorical values could be when the data falls in to one of three categories "group 1", "group 2" or "group 3". The aim here, is to learn how different input values of $X$ map to a particular output (category), and ultimately to assign categories to a new set of observations, $X*$, whose response variable is unknown.
 
 Within this chapter we will cover aspects of linear and nonlinear regression and classification, using examples taken from plant datasets. OUTLINE EXACTLY WHAT WE DO.
 
@@ -453,7 +445,7 @@ mod_fit2 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)
 
 ## Resources
 
-
+A variety of 
 [Caret examples](https://github.com/tobigithub/caret-machine-learning)
 [GPML](http://www.gaussianprocess.org/gpml/code/matlab/doc/)
 [GPy](https://github.com/SheffieldML/GPy)
@@ -462,10 +454,7 @@ mod_fit2 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)
 [Tensorflow](https://www.tensorflow.org)
 [Theano](http://deeplearning.net/software/theano/)
 
-### Ensemble classifiers
-
 =======
 ## Exercises
 
 Solutions to exercises can be found in appendix \@ref(solutions-logistic-regression).
->>>>>>> 634734233afdb3dfc9a40a09faa8cc06d917ce62
