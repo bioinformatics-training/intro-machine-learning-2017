@@ -80,7 +80,7 @@ Exercise 3.5: Try fitting plotting the GP for the optimised values of the hyperp
 
 We need to borrow the following snippets of code from the main text.
 
-```{r echo=F}
+```{r echo=T}
 require(MASS)
 require(plyr)
 require(reshape2)
