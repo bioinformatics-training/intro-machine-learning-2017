@@ -148,7 +148,7 @@ Excercise 8.4. Does the data separate well? Perform k-means cluster analysis on 
 
 Excercise 8.5. Perform a differential expression analysis between blastocyst cells and the PGCs.
 
-## Nonlinear Dimensionality Reduction (#nonlinear-dimensionality-reduction)
+## Nonlinear Dimensionality Reduction {#nonlinear-dimensionality-reduction}
 
 Whilst [PCA]{#linear-dimensionality-reduction} is extremely useful for exploratory analysis, it is not always appropriate, particularly for datasets with nonlinearities. A large number of nonlinear dimensionality reduction techniques have therefore been developed. Perhaps the most commonly applied technique is t-distributed stochastic neighbour embedding (tSNE) [@maaten2008visualizing,@van2009learning,@van2012visualizing,@van2014accelerating].
 
