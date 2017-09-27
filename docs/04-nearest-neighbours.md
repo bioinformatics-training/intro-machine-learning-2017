@@ -2,53 +2,24 @@
 
 <!-- Matt -->
 
-<!-- 
-Get ideas on presentation from Harvard bioinformatics website. In particular, use of dataset with two variables (crabs??), because easier to display. Performance of classifier as k increases (should initially improve and then get worse - starts to lose flexibility).
-
-In exercises could introduce application of knn to regression.
-
-GENERAL:
-SPLOM for displaying datasets with small number of variables
-
-FEATURE SELECTION
-filter methods  /  wrapper methods / genetic algorithms
-
-Refer to scikit learn
-
-FEATURE SCALING
-
-BIAS-VARIANCE TRADEOFF
-In statistics and machine learning, the bias–variance tradeoff (or dilemma) is the problem of simultaneously minimizing two sources of error that prevent supervised learning algorithms from generalizing beyond their training set[citation needed].:
-
-    The bias is error from erroneous assumptions in the learning algorithm. High bias can cause an algorithm to miss the relevant relations between features and target outputs (underfitting).
-    The variance is error from sensitivity to small fluctuations in the training set. High variance can cause an algorithm to model the random noise in the training data, rather than the intended outputs (overfitting).
-
-
--->
 ## Introduction
-memory based and require no model to be fit
+_k_-NN is by far the simplest method of supervised learning we will cover in this course. It is a non-parametric method that can be used for both classification (predicting class membership) and regression (estimating continuous variables). _k_-NN is categorized as instance based (memory based) learning, because all computation is deferred until classification. The most computationally demanding aspects of _k_-NN are finding neighbours and storing the entire learning set.
 
-classification and non-linear regression
+A simple _k_-NN classification rule (figure \@ref(fig:knnClassification)) would proceed as follows:
 
-bias and variance
+1. when presented with a new observation, find the _k_ closest samples in the learning set
+2. predict the class by majority vote
 
-computational load - finding neighbours and storing the entire training set
+<div class="figure" style="text-align: center">
+<img src="images/knn_classification.svg" alt="Illustration of _k_-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object. If k=3 (solid line circle) the test object is assigned to the red triangle class. If k=5 the test object is assigned to the blue square class.  By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282" width="75%" />
+<p class="caption">(\#fig:knnClassification)Illustration of _k_-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object. If k=3 (solid line circle) the test object is assigned to the red triangle class. If k=5 the test object is assigned to the blue square class.  By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282</p>
+</div>
 
-k-d tree / linear search
+A basic implementation of _k_-NN regression would calculate the average of the numerical outcome of the _k_ nearest neighbours. 
 
-system.time k-d tree search vs linear search
+The number of neighbours _k_ can have a considerable impact on the predictive performance of _k_-NN in both classification and regression. The optimal value of _k_ should be chosen using cross-validation.
 
-library(class)
-
-class::knn
-
-importance of centering a scaling
-
-increase in neighbours - increase in ties
-
-
-
-### Measuring distance between objects
+Euclidean distance is the most widely used distance metric in _k_-nn, and will be used in the examples and exercises in this chapter. However, other distance metrics can be used.
 
 **Euclidean distance:**
 \begin{equation}
@@ -62,15 +33,9 @@ increase in neighbours - increase in ties
 <p class="caption">(\#fig:euclideanDistanceDiagram)Euclidean distance.</p>
 </div>
 
-## Classification
 
-### Algorithm
-<div class="figure" style="text-align: center">
-<img src="images/knn_classification.svg" alt="Illustration of _k_-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object. If k=3 (solid line circle) the test object is assigned to the red triangle class. If k=5 the test object is assigned to the blue square class.  By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282" width="75%" />
-<p class="caption">(\#fig:knnClassification)Illustration of _k_-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object. If k=3 (solid line circle) the test object is assigned to the red triangle class. If k=5 the test object is assigned to the blue square class.  By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282</p>
-</div>
+## Classification: simulated data
 
-### Simulated data
 A simulated data set will be used to demonstrate:
 
 * bias-variance trade-off
@@ -78,7 +43,7 @@ A simulated data set will be used to demonstrate:
 * plotting decision boundaries
 * choosing the optimum value of _k_
 
-The dataset is partitioned into training and test sets.
+The dataset has been partitioned into training and test sets.
 
 Load data
 
@@ -616,10 +581,12 @@ ggplot(xgrid, aes(V1,V2)) +
 <p class="caption">(\#fig:simDataBinClassDecisionBoundaryK83)Binary classification of the simulated training and test sets with _k_=83.</p>
 </div>
 
-### Data pre-processing
+## Classification: cell segmentation {#knn-cell-segmentation}
 
-#### Cell segmentation data set
-Pre-processing will be demonstrated using the cell segmentation data of [@Hill2007]
+The simulated data in our previous example were randomly sampled from a normal (Gaussian) distribution and so did not require pre-processing. In practice, data collected in real studies often require transformation and/or filtering. Furthermore, the simulated data contained only two predictors; in practice, you are likely to have many variables. For example, in a gene expression study you might have thousands of variables. When using _k_-nn for classification or regression, removing variables that are not associated with the outcome of interest will improve the predictive power of the model. The process of choosing the best predictors from the available variables is known as *feature selection*. For honest estimates of model performance, pre-processing and feature selection should be performed within the loops of the cross validation process.
+
+### Cell segmentation data set 
+Pre-processing and feature selection will be demonstrated using the cell segmentation data of [@Hill2007].
 
 <div class="figure" style="text-align: center">
 <img src="images/Hill_2007_cell_segmentation.jpg" alt="Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340" width="75%" />
@@ -699,15 +666,15 @@ str(segmentationData)
 ```
 The first column of **segmentationData** is a unique identifier for each cell and the second column is a factor indicating how the observations were characterized into training and test sets in the original study; these two variables are irrelevant for the purposes of this demonstration and so can be discarded. 
 
-The third column *Case* contains the class labels: *PS* (poorly-segmented) and *WS* (well-segmented). Columns 4-61 are the 58 measurements available to be used as predictors. Let's put the class labels in a vector and the predictors in their own data.frame.
+The third column *Case* contains the class labels: *PS* (poorly-segmented) and *WS* (well-segmented). Columns 4-61 are the 58 morphological measurements available to be used as predictors. Let's put the class labels in a vector and the predictors in their own data.frame.
 
 ```r
 segClass <- segmentationData$Class
 segData <- segmentationData[,4:61]
 ```
 
-#### Data splitting
-The first step in the analysis is to partition the data into training and test sets, using the **createDataPartition** function in [caret](http://cran.r-project.org/web/packages/caret/index.html).
+### Data splitting
+Before starting analysis we must partition the data into training and test sets, using the **createDataPartition** function in [caret](http://cran.r-project.org/web/packages/caret/index.html).
 
 ```r
 set.seed(42)
@@ -740,7 +707,11 @@ summary(segClassTest)
 
 _**N.B. The test set is set aside for now. It will be used only ONCE, to test the final model.**_
 
-#### Removal of zero and near zero-variance predictors
+### Identification of data quality issues
+
+Let's check our training data set for some undesirable characteristics which may impact model performance and should be addressed through pre-processing. 
+
+#### Zero and near zero-variance predictors
 The function **nearZeroVar** identifies predictors that have one unique value. It also diagnoses predictors having both of the following characteristics:
 
 * very few unique values relative to the number of samples
@@ -816,7 +787,7 @@ nzv
 ## YCentroid                1.000000     35.742574   FALSE FALSE
 ```
 
-#### Centring and scaling
+#### Scaling
 The variables in this data set are on different scales, for example:
 
 ```r
@@ -837,10 +808,10 @@ summary(segDataTrain$TotalIntenCh2)
 ##       1   15850   49650   53140   72300  362500
 ```
 
-In this situation it is important to centre and scale each predictor. A predictor variable is centered by subtracting the mean of the predictor from each value. To scale a predictor variable, each value is divided by its standard deviation. After centring and scaling the predictor variable has a mean of 0 and a standard deviation of 1. Centring and scaling will be peformed within the cross-validation process.
+In this situation it is important to centre and scale each predictor. A predictor variable is centered by subtracting the mean of the predictor from each value. To scale a predictor variable, each value is divided by its standard deviation. After centring and scaling the predictor variable has a mean of 0 and a standard deviation of 1. 
 
 
-#### Resolving skewness
+#### Skewness
 Many of the predictors in the segmentation data set exhibit skewness, _i.e._ the distribution of their values is asymmetric, for example:
 
 ```r
@@ -856,9 +827,11 @@ qplot(segDataTrain$IntenCoocASMCh3, binwidth=0.1) +
 
 [caret](http://cran.r-project.org/web/packages/caret/index.html) provides various methods for transforming skewed variables to normality, including the Box-Cox [@BoxCox] and Yeo-Johnson [@YeoJohnson] transformations.
 
-#### Removal of correlated predictors
+#### Correlated predictors
 
 Many of the variables in the segmentation data set are highly correlated.
+
+A correlogram provides a helpful visualization of the patterns of pairwise correlation within the data set.
 
 
 ```r
@@ -872,7 +845,9 @@ corrplot(corMat, order="hclust", tl.cex=0.4)
 <p class="caption">(\#fig:segDataCorrelogram)Correlogram of the segmentation data set.</p>
 </div>
 
-The **preProcess** function in [caret](http://cran.r-project.org/web/packages/caret/index.html) has an option, **corr** to remove highly correlated variables. It considers the absolute values of pair-wise correlations. If two variables are highly correlated, **preProcess** looks at the mean absolute correlation of each variable and removes the variable with the largest mean absolute correlation.
+The **preProcess** function in [caret](http://cran.r-project.org/web/packages/caret/index.html) has an option, **corr** to remove highly correlated variables. It considers the absolute values of pair-wise correlations. If two variables are highly correlated, **preProcess** looks at the mean absolute correlation of each variable and removes the variable with the largest mean absolute correlation. 
+
+In the case of data-sets comprised of many highly correlated variables, an alternative to removing correlated predictors is the transformation of the entire data set to a lower dimensional space, using a technique such as principal component analysis (PCA). Methods for dimensionality reduction will be explored in chapter \@ref(dimensionality-reduction).
 
 <!--
 
@@ -890,16 +865,8 @@ segDataTrain <- segDataTrain[,-highCorr]
 ```
 -->
 
-#### Dimensionality reduction
-In the case of data-sets comprised of many highly correlated variables, an alternative to removing correlated predictors is the transformation of the entire data set to a lower dimensional space, using a technique such as principal component analysis (PCA). Methods for dimensionality reduction will be explored in chapter \@ref(dimensionality-reduction).
 
-
-
-### Feature selection
-
-wrapper and filter methods
-
-#### Cross-validated performance without feature selection
+### Fit model without feature selection
 
 <!-- original settings:
 set.seed(42)
@@ -950,6 +917,8 @@ transformations <- preProcess(segDataTrain,
 segDataTrain <- predict(transformations, segDataTrain)
 ```
 
+The ```cutoff``` refers to the correlation coefficient threshold.
+
 
 ```r
 str(segDataTrain)
@@ -986,6 +955,7 @@ str(segDataTrain)
 ##  $ YCentroid              : num  -2.098 1.447 1.118 -0.251 -0.138 ...
 ```
 
+Perform cross validation to find best value of _k_.
 
 ```r
 knnFit <- train(segDataTrain, segClassTrain, 
@@ -1074,7 +1044,8 @@ plot(knnFit)
 </div>
 
 
-#### Univariate (_t_-test) filter
+### Feature selection using filter
+
 We will use the same **trainingControl** settings and **tuning grid** as before. 
 
 ```r
@@ -1082,16 +1053,34 @@ train_ctrl <- trainControl(method="repeatedcv",
                    number = 5,
                    repeats = 5
                    )
+```
 
+Let's define a filter using Caret's Selection By Filter (SBF) function:
+
+```r
 mySBF <- caretSBF
 mySBF$summary <- twoClassSummary
+```
+
+We will use a simple t-test to eliminate the predictors that differ the least between classes. Since we are performing many hypothesis tests we will use Holm's method to control the family wise error rate.
+
+```r
 mySBF$score <- function(x, y) {
   out <- t.test(x ~ y)$p.value 
   out <- p.adjust(out, method="holm")
   out
 }
-mySBF$filter <- function(score, x, y) { score <= 0.01 }
+```
 
+Now to set a p-value threshold for our t-test filter.
+
+```r
+mySBF$filter <- function(score, x, y) { score <= 0.01 }
+```
+
+Let's run the cross-validation. The cross-validation will run in two nested loops. Feature selection will occur in the outer loop. Features selected at each iteration of the outer loop will be passed to the inner loop, where the optimum value of k will be found for that set of features.
+
+```r
 sbf_ctrl <- sbfControl(functions = mySBF,
                                 method = "repeatedcv",
                                 number = 5,
@@ -1117,7 +1106,7 @@ knn_sbf
 ## Resampling performance:
 ## 
 ##     ROC   Sens   Spec   ROCSD  SensSD  SpecSD
-##  0.8826 0.8298 0.7672 0.02181 0.03119 0.05828
+##  0.8862 0.8329 0.7744 0.02101 0.02967 0.06419
 ## 
 ## Using the training set, 16 variables were selected:
 ##    ConvexHullPerimRatioCh1, EntropyIntenCh1, FiberWidthCh1, IntenCoocASMCh4, IntenCoocContrastCh3...
@@ -1131,7 +1120,7 @@ knn_sbf
 Much information about the final model is stored in **knn_sbf**. To reveal the identities of the predictors selected for the final model run:
 
 ```r
-knn_sbf$optVariables
+predictors(knn_sbf)
 ```
 
 ```
@@ -1152,8 +1141,8 @@ knn_sbf$results
 ```
 
 ```
-##         ROC      Sens      Spec      ROCSD    SensSD     SpecSD
-## 1 0.8825705 0.8298462 0.7672222 0.02181001 0.0311926 0.05827819
+##         ROC      Sens      Spec      ROCSD     SensSD    SpecSD
+## 1 0.8861709 0.8329231 0.7744444 0.02100535 0.02966945 0.0641851
 ```
 
 To retrieve the optimum value of k found during training run:
@@ -1166,7 +1155,7 @@ knn_sbf$fit$finalModel$k
 ## [1] 15
 ```
 
-Let's test the final model.
+Let's predict our test set using our final model.
 
 ```r
 segDataTest <- predict(transformations, segDataTest)
@@ -1507,57 +1496,46 @@ cor(concRatioTest, test_pred)
 ## [1] 0.7278034
 ```
 
-<!--
-## Caret
-
-pre-processing
-identification of correlated predictors
-
-
-Parallel processing with doMC
-registerDoMC()
-getDoParWorkers()
-
-## Curse of dimensionality
-Pre-processing data using dimensionality reduction.
-
-transformation functionality in caret
-
-## Examples
-
-centre1 <- read.csv("data/serum_proteomics/male_centre1.csv")
-centre2 <- read.csv("data/serum_proteomics/male_centre2.csv")
-
-c1sub <- centre1[,c(1,5,6,9,10)]
-c2sub <- centre2[,c(1,5,6,9,10)]
-
-res <- FNN::knn(c1sub[,2:5], c1sub[,2:5], cl=c1sub$Diagnostic_group, k=1)
-table(c1sub$Diagnostic_group, res)
-
-res <- FNN::knn(c1sub[,2:5], c2sub[,2:5], cl=c1sub$Diagnostic_group, k=1)
-table(c2sub$Diagnostic_group, res)
-
-bias / variance trade-off
-
-include:
-division into training and test set
-preprocessing - illustrate with diagram
-
--->
 
 
 ## Exercises
 
 ### Exercise 1 {#knnEx1}
-Classification
+The seeds data set [https://archive.ics.uci.edu/ml/datasets/seeds](https://archive.ics.uci.edu/ml/datasets/seeds) contains morphological measurements on the kernels of three varieties of wheat: Kama, Rosa and Canadian.
 
-Try different methods of feature selection
+Load the data into your R session using:
 
-### Exercise 2 {#knnEx2}
-Regression
+```r
+load("data/wheat_seeds/wheat_seeds.Rda")
+```
 
-Alzheimers & gene expression? MMSE and gene expression?
+The data are split into two objects. **morphometrics** is a data.frame containing the morphological measurements:
 
+```r
+str(morphometrics)
+```
 
+```
+## 'data.frame':	210 obs. of  7 variables:
+##  $ area        : num  15.3 14.9 14.3 13.8 16.1 ...
+##  $ perimeter   : num  14.8 14.6 14.1 13.9 15 ...
+##  $ compactness : num  0.871 0.881 0.905 0.895 0.903 ...
+##  $ kernLength  : num  5.76 5.55 5.29 5.32 5.66 ...
+##  $ kernWidth   : num  3.31 3.33 3.34 3.38 3.56 ...
+##  $ asymCoef    : num  2.22 1.02 2.7 2.26 1.35 ...
+##  $ grooveLength: num  5.22 4.96 4.83 4.8 5.17 ...
+```
+
+**variety** is a factor containing the corresponding classes:
+
+```r
+str(variety)
+```
+
+```
+##  Factor w/ 3 levels "Canadian","Kama",..: 2 2 2 2 2 2 2 2 2 2 ...
+```
+
+Your task is to build a _k_-nn classifier which will predict the variety of wheat from a seeds morphological measurements. You do not need to perform feature selection, but you will want to pre-process the data.
 
 Solutions to exercises can be found in appendix \@ref(solutions-nearest-neighbours).

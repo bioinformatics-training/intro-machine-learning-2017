@@ -1,7 +1,22 @@
 # Support vector machines {#svm}
 
 ## Introduction
+Support vector machines (SVMs) are models of supervised learning. The SVM approach emerged from the computer science community in the 1990s. This chapter will focus exclusively on the use of SVMs for classification, but it should be noted that they can also be used for regression. The SVM is an extension of the support vector classifier (SVC), which is turn is an extension of the maximum margin classifier.
 
+### Maximum margin classifier
+Let's start by definining a hyperplane. In _p_-dimensional space a hyperplane is a flat affine subspace of _p_-1. 
+
+```{r svmSeparatingHyperplanes, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Separating hyperplanes. H1 does not separate the classes. H2 does, but only with a small margin. H3 separates them with the maximum margin. By User:ZackWeinberg, based on PNG version by User:Cyc [CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons"}
+knitr::include_graphics("images/Svm_separating_hyperplanes.svg")
+```
+
+```{r svmKernelMachine, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Kernel machine. By Alisneaky - Own work, CC0, https://commons.wikimedia.org/w/index.php?curid=14941564"}
+knitr::include_graphics("images/svm_kernel_machine.png")
+```
+
+```{r svmMaxSepHyperplaneWithMargin, echo=F, out.width='75%', fig.align='center', fig.cap="Maximum-margin hyperplane and margins for an SVM trained with samples from two classes. Samples on the margin are called the support vectors. By Cyc - Own work, Public Domain, https://commons.wikimedia.org/w/index.php?curid=3566688"}
+knitr::include_graphics("images/Svm_max_sep_hyperplane_with_margin.png")
+```
 
 
 <!-- Matt -->
@@ -17,7 +32,9 @@
 ```
 
 
-## Classification
+## Example - training an SVM
+
+
 
 
 ### Example - simulated data
@@ -45,71 +62,21 @@ getDoParWorkers()
 
 MUST GENERATE A LIST OF SEEDS IF WE USE PARALLEL PROCESSING, FOR REPRODUCIBILITY
 
-We will return to the cell segmentation data set [@Hill2007] we looked at earlier.
+## Exercises
+
+### Exercise 1
+
+In this exercise we will return to the cell segmentation data set that we attempted to classify in section \@knn-cell-segmentation of the nearest neighbours chapter.
 ```{r echo=T}
 data(segmentationData)
-segClass <- segmentationData$Class
-segData <- segmentationData[,4:61]
-set.seed(42)
-trainIndex <- createDataPartition(y=segClass, times=1, p=0.5, list=F)
-segDataTrain <- segData[trainIndex,]
-segDataTest <- segData[-trainIndex,]
-segClassTrain <- segClass[trainIndex]
-segClassTest <- segClass[-trainIndex]
-
-transformations <- preProcess(segDataTrain, 
-                              method=c("YeoJohnson", "center", "scale", "corr"),
-                              cutoff=0.75)
-segDataTrain <- predict(transformations, segDataTrain)
 ```
 
-
-We will pass the twoClassSummary function into model training through **trainControl**. Additionally we would like the model to predict class probabilities so that we can calculate the ROC curve, so we use the **classProbs** option.
-```{r echo=T}
-cvCtrl <- trainControl(method = "repeatedcv", repeats = 3,
-                        summaryFunction = twoClassSummary,
-                        classProbs = TRUE)
-```
-
-Tune SVM over the cost parameter
-```{r echo=T}
-svmTune <- train(x = segDataTrain,
-                 y = segClassTrain,
-                 method = "svmRadial",
-                 # The default grid of cost parameters go from 2^-2,
-                 # 0.5 to 1,
-                 # Well fit 9 values in that sequence via the tuneLength
-                 # argument.
-                 tuneLength = 9,
-                 ## Also add options from preProcess here too
-                 preProc = c("center", "scale"),
-                 metric = "ROC",
-                 trControl = cvCtrl)
-
-svmTune
-
-```
+The aim of the exercise is to build a binary classifier to predict the quality of segmentation (poorly segmented or well segmented) based on the various morphological features. Do not worry about feature selection, but you may want to pre-process the data. Select a radial kernel SVM and tune over the cost function C. Produce a ROC curve to show the performance of the classifier on the test set. 
 
 
-```{r echo=T}
-svmTune$finalModel
-```
+Solutions to exercises can be found in appendix \@ref(solutions-svm)
 
-
-SVM accuracy profile
-
-```{r svmAccuracyProfile, fig.cap='SVM accuracy profile.', out.width='80%', fig.asp=0.7, fig.align='center', echo=T}
-plot(svmTune, metric = "ROC", scales = list(x = list(log =
-2)))
-```
-
-Test set results
-
-```{r echo=T}
-segDataTest <- predict(transformations, segDataTest)
-svmPred <- predict(svmTune, segDataTest)
-confusionMatrix(svmPred, segClassTest)
-```
+<!--
 
 ## Serum proteomics
 ```{r echo=T}
@@ -148,13 +115,4 @@ svmTune$finalModel
 
 ```
 
-<!--GENERATE TWO  DIFFERENT MODELS AND COMPARE -->
-LINEAR
-RBM
-
-
-<!--REPEAT CLASSIFICATION EXAMPLE FOR SERUM PROTEOMICS -->
-
-## Exercises
-
-Solutions to exercises can be found in appendix \@ref(solutions-svm)
+-->

@@ -4,5 +4,123 @@ Solutions to exercises of chapter \@ref(svm).
 
 ## Exercise 1
 
-## Exercise 2
+Load required libraries
+```{r echo=T}
+library(caret)
+library(doMC)
+library(pROC)
+```
 
+Setup parallel processing
+```{r echo=T}
+registerDoMC()
+getDoParWorkers()
+```
+
+MUST GENERATE A LIST OF SEEDS IF WE USE PARALLEL PROCESSING, FOR REPRODUCIBILITY
+
+Load data
+```{r echo=T}
+data(segmentationData)
+```
+
+```{r echo=T}
+segClass <- segmentationData$Class
+```
+
+Extract predictors from segmentationData
+```{r echo=T}
+segData <- segmentationData[,4:61]
+```
+
+Partition data
+```{r echo=T}
+set.seed(42)
+trainIndex <- createDataPartition(y=segClass, times=1, p=0.5, list=F)
+segDataTrain <- segData[trainIndex,]
+segDataTest <- segData[-trainIndex,]
+segClassTrain <- segClass[trainIndex]
+segClassTest <- segClass[-trainIndex]
+```
+
+We already know what pre-processing steps are required for this data set, having worked with it before in section \@knn-cell-segmentation of the nearest neighbours chapter.
+```{r echo=T}
+transformations <- preProcess(segDataTrain, 
+                              method=c("YeoJohnson", "center", "scale", "corr"),
+                              cutoff=0.75)
+segDataTrain <- predict(transformations, segDataTrain)
+```
+
+Set seeds for reproducibility (optional). We will be trying 9 values of the tuning parameter with 5 repeats of 5 fold cross-validation, so we need the following list of seeds.
+```{r echo=T}
+set.seed(42)
+seeds <- vector(mode = "list", length = 26)
+for(i in 1:25) seeds[[i]] <- sample.int(1000, 9)
+seeds[[26]] <- sample.int(1000,1)
+```
+
+We will pass the twoClassSummary function into model training through **trainControl**. Additionally we would like the model to predict class probabilities so that we can calculate the ROC curve, so we use the **classProbs** option. 
+```{r echo=T}
+cvCtrl <- trainControl(method = "repeatedcv", 
+                       repeats = 5,
+                       number = 5,
+                       summaryFunction = twoClassSummary,
+                       classProbs = TRUE,
+                       seeds=seeds)
+```
+
+Tune SVM over the cost parameter. The default grid of cost parameters start at 0.25 and double at each iteration. Choosing ```tuneLength = 9``` will give us cost parameters of 0.25, 0.5, 1, 2, 4, 8, 16, 32 and 64. The train function will calculate an appropriate value of sigma (the kernel parameter) from the data.
+```{r echo=T}
+svmTune <- train(x = segDataTrain,
+                 y = segClassTrain,
+                 method = "svmRadial",
+                 tuneLength = 9,
+                 preProc = c("center", "scale"),
+                 metric = "ROC",
+                 trControl = cvCtrl)
+
+svmTune
+
+```
+
+```{r echo=T}
+svmTune$finalModel
+```
+
+SVM accuracy profile
+```{r svmAccuracyProfile, fig.cap='SVM accuracy profile.', out.width='80%', fig.asp=0.7, fig.align='center', echo=T}
+plot(svmTune, metric = "ROC", scales = list(x = list(log =2)))
+```
+
+Test set results
+```{r echo=T}
+segDataTest <- predict(transformations, segDataTest)
+svmPred <- predict(svmTune, segDataTest)
+confusionMatrix(svmPred, segClassTest)
+```
+
+Get predicted class probabilities
+```{r echo=T}
+svmProbs <- predict(svmTune, segDataTest, type="prob")
+head(svmProbs)
+```
+
+Build a ROC curve
+```{r echo=T}
+svmROC <- roc(segClassTest, svmProbs[,"PS"])
+auc(svmROC)
+```
+
+Plot ROC curve, including the threshold with the highest sum sensitivity + specificity.
+```{r svmROCcurve, fig.cap='SVM accuracy profile.', out.width='80%', fig.asp=1, fig.align='center', echo=T}
+plot(svmROC, type = "S", 
+     print.thres = "best",
+     print.thres.col = "blue",
+     print.thres.pch = 19,
+     print.thres.cex=1.5)
+```
+
+Calculate area under ROC curve
+```{r echo=T}
+auc(svmROC)
+```

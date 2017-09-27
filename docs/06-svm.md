@@ -10,7 +10,23 @@
 
 <!-- regression and classification -->
 
+
+
+
+
 ## Classification
+
+
+### Example - simulated data
+
+
+```r
+linearly_separable <- read.csv("data/sim_data_svm/linearly_separable.csv", header=F)
+circles <- read.csv("data/sim_data_svm/circles.csv", header=F)
+moons <- read.csv("data/sim_data_svm/moons.csv", header=F)
+```
+
+### Example -  cell segmentation data
 Load required libraries
 
 ```r
@@ -75,7 +91,7 @@ segDataTrain <- predict(transformations, segDataTrain)
 ```
 
 
-We will pass the twoClassSummary function into model training through **trainControl**. Additionally we would like the model to predict class probabilities so that we can calculate the ROC curve, so we use the **classProbs** option.
+We will pass the twoClassSummary function into model training through **trainControl**. Additionally we would like the model to predict class probabilities so that we can calculate the ROC curve, so we use the **classProbs** option. 
 
 ```r
 cvCtrl <- trainControl(method = "repeatedcv", repeats = 3,
@@ -221,6 +237,19 @@ confusionMatrix(svmPred, segClassTest)
 ## 
 ```
 
+<!--GENERATE TWO  DIFFERENT MODELS AND COMPARE -->
+LINEAR
+RBM
+
+
+<!--REPEAT CLASSIFICATION EXAMPLE FOR SERUM PROTEOMICS -->
+
+## Exercises
+
+Solutions to exercises can be found in appendix \@ref(solutions-svm)
+
+<!--
+
 ## Serum proteomics
 
 ```r
@@ -304,13 +333,4 @@ svmTune$finalModel
 ## Probability model included.
 ```
 
-<!--GENERATE TWO  DIFFERENT MODELS AND COMPARE -->
-LINEAR
-RBM
-
-
-<!--REPEAT CLASSIFICATION EXAMPLE FOR SERUM PROTEOMICS -->
-
-## Exercises
-
-Solutions to exercises can be found in appendix \@ref(solutions-svm)
+-->

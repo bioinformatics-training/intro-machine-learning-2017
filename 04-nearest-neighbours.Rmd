@@ -2,55 +2,23 @@
 
 <!-- Matt -->
 
-<!-- 
-Get ideas on presentation from Harvard bioinformatics website. In particular, use of dataset with two variables (crabs??), because easier to display. Performance of classifier as k increases (should initially improve and then get worse - starts to lose flexibility).
-
-In exercises could introduce application of knn to regression.
-
-GENERAL:
-SPLOM for displaying datasets with small number of variables
-
-FEATURE SELECTION
-filter methods  /  wrapper methods / genetic algorithms
-
-Refer to scikit learn
-
-FEATURE SCALING
-
-BIAS-VARIANCE TRADEOFF
-In statistics and machine learning, the bias–variance tradeoff (or dilemma) is the problem of simultaneously minimizing two sources of error that prevent supervised learning algorithms from generalizing beyond their training set[citation needed].:
-
-    The bias is error from erroneous assumptions in the learning algorithm. High bias can cause an algorithm to miss the relevant relations between features and target outputs (underfitting).
-    The variance is error from sensitivity to small fluctuations in the training set. High variance can cause an algorithm to model the random noise in the training data, rather than the intended outputs (overfitting).
-
-
--->
 ## Introduction
-memory based and require no model to be fit
+_k_-NN is by far the simplest method of supervised learning we will cover in this course. It is a non-parametric method that can be used for both classification (predicting class membership) and regression (estimating continuous variables). _k_-NN is categorized as instance based (memory based) learning, because all computation is deferred until classification. The most computationally demanding aspects of _k_-NN are finding neighbours and storing the entire learning set.
 
-classification and non-linear regression
+A simple _k_-NN classification rule (figure \@ref(fig:knnClassification)) would proceed as follows:
 
-bias and variance
+1. when presented with a new observation, find the _k_ closest samples in the learning set
+2. predict the class by majority vote
 
-computational load - finding neighbours and storing the entire training set
+```{r knnClassification, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Illustration of _k_-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object. If k=3 (solid line circle) the test object is assigned to the red triangle class. If k=5 the test object is assigned to the blue square class.  By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282"}
+knitr::include_graphics("images/knn_classification.svg")
+```
 
-k-d tree / linear search
+A basic implementation of _k_-NN regression would calculate the average of the numerical outcome of the _k_ nearest neighbours. 
 
-system.time k-d tree search vs linear search
+The number of neighbours _k_ can have a considerable impact on the predictive performance of _k_-NN in both classification and regression. The optimal value of _k_ should be chosen using cross-validation.
 
-library(class)
-
-class::knn
-
-importance of centering a scaling
-
-increase in neighbours - increase in ties
-
-
-
-### Measuring distance between objects
-
-Euclidean distance is the most widely used distance metric in _k_-nn.
+Euclidean distance is the most widely used distance metric in _k_-nn, and will be used in the examples and exercises in this chapter. However, other distance metrics can be used.
 
 **Euclidean distance:**
 \begin{equation}
@@ -68,11 +36,6 @@ segments(x[1], y[1], x[2], y[2], lwd=4, col="grey30")
 text(0.75,2, expression(paste('p(x'[1],'y'[1],')')), cex=1.7)
 text(4.5,4, expression(paste('q(x'[2],'y'[2],')')), cex=1.7)
 text(2.5,0.5, expression(paste('dist(p,q)'==sqrt((x[2]-x[1])^2 + (y[2]-y[1])^2))), cex=1.7)
-```
-
-### Algorithm
-```{r knnClassification, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Illustration of _k_-nn classification. In this example we have two classes: blue squares and red triangles. The green circle represents a test object. If k=3 (solid line circle) the test object is assigned to the red triangle class. If k=5 the test object is assigned to the blue square class.  By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282"}
-knitr::include_graphics("images/knn_classification.svg")
 ```
 
 
@@ -385,12 +348,12 @@ ggplot(xgrid, aes(V1,V2)) +
         axis.title=element_text(size=20,face="bold"))
 ```
 
-## Classification: cell segmentation
+## Classification: cell segmentation {#knn-cell-segmentation}
 
-The simulated data in our previous example were randomly sampled from a normal (Gaussian) distribution and so did not require pre-processing. In practice, data collected in real studies often require transformation and/or filtering. Furthermore, the simulated data contained only two predictors; in practice, you are likely to have many variables. For example, in a gene expression study you might have thousands of variables. When using _k_-nn for classification or regression, removing variables that are not associated with the outcome of interest will improve the predictive power of the model. The process of choosing the best predictors from the available variables is known as *feature selection*. For honest estimates of model performance, pre-processing and feature selection should be performed within the loops of the cross validation process.
+The simulated data in our previous example were randomly sampled from a normal (Gaussian) distribution and so did not require pre-processing. In practice, data collected in real studies often require transformation and/or filtering. Furthermore, the simulated data contained only two predictors; in practice, you are likely to have many variables. For example, in a gene expression study you might have thousands of variables. When using _k_-nn for classification or regression, removing variables that are not associated with the outcome of interest may improve the predictive power of the model. The process of choosing the best predictors from the available variables is known as *feature selection*. For honest estimates of model performance, pre-processing and feature selection should be performed within the loops of the cross validation process.
 
-#### Cell segmentation data set
-Pre-processing and feature selection will be demonstrated using the cell segmentation data of [@Hill2007]
+### Cell segmentation data set 
+Pre-processing and feature selection will be demonstrated using the cell segmentation data of [@Hill2007].
 
 ```{r imageSegmentationHCS, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340"}
 knitr::include_graphics("images/Hill_2007_cell_segmentation.jpg")
@@ -403,7 +366,7 @@ str(segmentationData)
 ```
 The first column of **segmentationData** is a unique identifier for each cell and the second column is a factor indicating how the observations were characterized into training and test sets in the original study; these two variables are irrelevant for the purposes of this demonstration and so can be discarded. 
 
-The third column *Case* contains the class labels: *PS* (poorly-segmented) and *WS* (well-segmented). Columns 4-61 are the 58 measurements available to be used as predictors. Let's put the class labels in a vector and the predictors in their own data.frame.
+The third column *Case* contains the class labels: *PS* (poorly-segmented) and *WS* (well-segmented). Columns 4-61 are the 58 morphological measurements available to be used as predictors. Let's put the class labels in a vector and the predictors in their own data.frame.
 ```{r echo=T}
 segClass <- segmentationData$Class
 segData <- segmentationData[,4:61]
@@ -490,13 +453,6 @@ segDataTrain <- segDataTrain[,-highCorr]
 -->
 
 
-### Feature selection
-
-wrapper and filter methods
-
-Determination of which 
-
-
 ### Fit model without feature selection
 
 <!-- original settings:
@@ -565,23 +521,38 @@ plot(knnFit)
 ```
 
 
-### Univariate (_t_-test) filter
+### Feature selection using filter
+
 We will use the same **trainingControl** settings and **tuning grid** as before. 
 ```{r echo=T}
 train_ctrl <- trainControl(method="repeatedcv",
                    number = 5,
                    repeats = 5
                    )
+```
 
+Let's define a filter using Caret's Selection By Filter (SBF) function:
+```{r echo=T}
 mySBF <- caretSBF
 mySBF$summary <- twoClassSummary
+```
+
+We will use a simple t-test to eliminate the predictors that differ the least between classes. Since we are performing many hypothesis tests we will use Holm's method to control the family wise error rate.
+```{r echo=T}
 mySBF$score <- function(x, y) {
   out <- t.test(x ~ y)$p.value 
   out <- p.adjust(out, method="holm")
   out
 }
-mySBF$filter <- function(score, x, y) { score <= 0.01 }
+```
 
+Now to set a p-value threshold for our t-test filter.
+```{r echo=T}
+mySBF$filter <- function(score, x, y) { score <= 0.01 }
+```
+
+Let's run the cross-validation. The cross-validation will run in two nested loops. Feature selection will occur in the outer loop. Features selected at each iteration of the outer loop will be passed to the inner loop, where the optimum value of k will be found for that set of features.
+```{r echo=T}
 sbf_ctrl <- sbfControl(functions = mySBF,
                                 method = "repeatedcv",
                                 number = 5,
@@ -746,8 +717,23 @@ cor(concRatioTest, test_pred)
 ## Exercises
 
 ### Exercise 1 {#knnEx1}
+The seeds data set [https://archive.ics.uci.edu/ml/datasets/seeds](https://archive.ics.uci.edu/ml/datasets/seeds) contains morphological measurements on the kernels of three varieties of wheat: Kama, Rosa and Canadian.
 
+Load the data into your R session using:
+```{r echo=T}
+load("data/wheat_seeds/wheat_seeds.Rda")
+```
 
+The data are split into two objects. **morphometrics** is a data.frame containing the morphological measurements:
+```{r echo=T}
+str(morphometrics)
+```
 
+**variety** is a factor containing the corresponding classes:
+```{r echo=T}
+str(variety)
+```
+
+Your task is to build a _k_-nn classifier which will predict the variety of wheat from a seeds morphological measurements. You do not need to perform feature selection, but you will want to pre-process the data.
 
 Solutions to exercises can be found in appendix \@ref(solutions-nearest-neighbours).

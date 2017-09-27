@@ -10,16 +10,14 @@ if variables are in same units - don't standardize, otherwise standardize
 
 ## Introduction
 
-What is clustering - add figure showing idea of minimizing intra-cluster variation and maximizing inter-cluster variation.
+Clustering attempts to find groups (clusters) of similar objects. The members of a cluster should be more similar to each other, than objects in other clusters. Clustering algorithms aim to minimize intra-cluster variation and maximize inter-cluster variation.
 
+Methods of clustering can be broadly divided into two types:
 
+**Hierarchic** techniques produce dendrograms (trees) through a process of division or agglomeration.
 
+**Partitioning** algorithms divide objects into non-overlapping subsets (examples include k-means and DBSCAN)
 
-Hierarchic (produce dendrogram) vs partitioning methods
-
-* Hierarchic agglomerative
-* k-means
-* DBSCAN
 
 <div class="figure" style="text-align: center">
 <img src="09-clustering_files/figure-html/clusterTypes-1.png" alt="Example clusters. **A**, *blobs*; **B**, *aggregation* [@Gionis2007]; **C**, *noisy moons*; **D**, *different density*; **E**, *anisotropic distributions*; **F**, *no structure*." width="80%" />
@@ -28,17 +26,7 @@ Hierarchic (produce dendrogram) vs partitioning methods
 
 ## Distance metrics
 
-dist function
-cor as.dist(1-cor(x))
-
-**Minkowski distance:**
-\begin{equation}
-  distance\left(x,y,p\right)=\left(\sum_{i=1}^{n} abs(x_i-y_i)^p\right)^{1/p}
-  (\#eq:minkowski)
-\end{equation}
-
-Graphical explanation of euclidean, manhattan and max (Chebyshev?)
-
+Various distance metrics can be used with clustering algorithms. We will use Euclidean distance in the examples and exercises in this chapter.
 
 
 ## Hierarchic agglomerative
@@ -49,8 +37,6 @@ Graphical explanation of euclidean, manhattan and max (Chebyshev?)
 <p class="caption">(\#fig:hierarchicClusteringDemo)Building a dendrogram using hierarchic agglomerative clustering.</p>
 </div>
 
-
-Get to see clusters for all number of clusters k
 
 ### Linkage algorithms
 
@@ -466,7 +452,15 @@ heatmap.2(e[idxTop40,], labCol=tissue, trace="none",
 
 ### Algorithm
 
-Pseudocode
+Pseudocode for the K-means algorithm
+```
+randomly choose k objects as initial centroids
+while true:
+  1. create k clusters by assigning each object to closest centroid
+  2. compute k new centroids by averaging the objects in each cluster
+  3. if none of the centroids differ from the previous iteration:
+        return the current set of clusters
+```
 
 
 <div class="figure" style="text-align: center">
@@ -655,8 +649,6 @@ res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 ```
 
 ```
-## Warning: did not converge in 10 iterations
-
 ## Warning: did not converge in 10 iterations
 ```
 Failure to converge, so increase number of iterations.
@@ -1424,32 +1416,7 @@ The silhouette analysis suggests that DBSCAN has found clusters of poor quality 
 
 
 
-## Summary
-
-### Applications
-
-### Strengths
-
-### Limitations
-
-<!--
-Not appropriate for phylogenetic analysis!!
--->
-
-
-
-
-
 ## Exercises
-
-<!--
-1. Toy/synthetic clusters
-2. mouse mammary time-course (kmeans and dbscan)
-3. dimensionality reduction before clustering (helpful for visualization if using a partitioning method) - possibly use parasite data?
-4. exercise involving heatmap
-
--->
-
 
 ### Exercise 1 {#clusteringEx1}
 
@@ -1545,7 +1512,7 @@ ggplot(data = imgDF, aes(x = x, y = y)) +
 This should be all the information you need to perform this exercise.
 
 ### Exercise 2 {#clusteringEx2}
-
+Try applying clustering to one of the data sets that was used for classification earlier in the course. Do any clusters found correspond to the classes defined for those data sets?
 
 **Solutions to exercises can be found in appendix \@ref(solutions-clustering).**
 
