@@ -130,6 +130,7 @@ We can run tSNE using the following command:
 
 ```{r echo=T}
 library(Rtsne)
+set.seed(1)
 tsne_model_1 = Rtsne(as.matrix(t(D)), check_duplicates=FALSE, pca=TRUE, perplexity=100, theta=0.5, dims=2)
 ```
 
