@@ -114,7 +114,7 @@ X <- matrix( c(2,4,2,0,0,0,0,0,0,0,
 
 Or we can visualise by plot a few of the genes:
 
-```{r echo=F}
+```{r echo=T}
 plot(1:10,X[1,],type="l",col="red",xlim=c(0, 14),xlab="Time",ylab="Expression")
 points(1:10,X[2,],type="l",col="blue")
 points(1:10,X[5,],type="l",col="black")
@@ -190,7 +190,7 @@ scatterplot3d(D3,color=colors, main="3D Scatterplot",xlab="x",ylab="y",zlab="z")
 
 We can run tSNE on this dataset and try to condense the data down from a three-dimensional to a two-dimensional representation. Unlike PCA, which has no real free parameters, tSNE has a variety of parameters that need to be set. First, we have the perplexity parameter which, in essence, balances local and global aspects of the data. For low values of perplexity, the algorithm will tend to entirely focus on keeping datapoints locally together.
 
-```{r echo=F}
+```{r echo=T}
 tsne_model_1 = Rtsne(as.matrix(D3), check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
 y1 <- tsne_model_1$Y[which(D[1,]==-1),1:2]
 tsne_model_1 <- Rtsne(as.matrix(D3), check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
@@ -201,7 +201,7 @@ points(tsne_model_1$Y[101:200,1:2],type="p",col="blue")
 
 Note that here we have set the perplexity parameter reasonably low, and tSNE appears to have identified a lot of local structure that (we know) doesn't exist. Let's try a larger value for the perplexity parameter. 
 
-```{r echo=F}
+```{r echo=T}
 y1 <- tsne_model_1$Y[which(D[1,]==-1),1:2]
 tsne_model_1 <- Rtsne(as.matrix(D3), check_duplicates=FALSE, pca=TRUE, perplexity=50, theta=0.5, dims=2)
 
@@ -213,7 +213,7 @@ points(tsne_model_1$Y[101:200,1:2],type="p",col="blue")
 
 In our previous example we showed that if the perplexity parameter was correctly set, tSNE seperated out the two populations very well. If we plot the original data next to the tSNE reduced dimensionality represention, however, we will notice something interesting:
 
-```{r echo=F}
+```{r echo=T}
 par(mfrow=c(1,2))
 scatterplot3d(D3,color=colors, main="3D Scatterplot",xlab="x",ylab="y",zlab="z")
 plot(tsne_model_1$Y[1:100,1:2],type="p",col="red",xlim=c(-45, 45),ylim=c(-45, 45),xlab="tSNE1", ylab="tSNE2")
@@ -226,7 +226,7 @@ Whilst in the origianl data the two groups had very different variances, in the 
 
 A final important point to note is that tSNE is stochastic in nature. Unlike PCA which, for the same dataset, will always yield the same result, if you run tSNE twice you will likely find different results. We can illustrate this below, by running tSNE again for perplexity $30$, and plotting the results alongside the previous ones.
 
-```{r echo=F}
+```{r echo=T}
 set.seed(123456)
 
 tsne_model_1 <- Rtsne(as.matrix(D3), check_duplicates=FALSE, pca=TRUE, perplexity=30, theta=0.5, dims=2)
