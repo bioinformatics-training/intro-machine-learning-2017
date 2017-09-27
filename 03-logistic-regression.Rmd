@@ -214,7 +214,7 @@ Exercise 3.5 (optional): Try plotting some sample function from the posterior GP
 
 Let's start by adding more observations. Here's what the posterior fit looks like if we include 4 observations (at $x \in [-4,-2,0,1]$):
 
-```{r echo=F}
+```{r echo=T}
 f <- data.frame(x=c(-4,-2,0,1),
                 y=sin(c(-4,-2,0,1)))
 x <- f$x
@@ -235,7 +235,7 @@ lines(x.star,f.star.bar-2*sqrt(diag(cov.f.star)),type = 'l',pch=22, lty=2, col="
 
 Definitely getting better, and we still have a good grasp of where the model is uncertain. With $7$ observations:
 
-```{r echo=F}
+```{r echo=T}
 f <- data.frame(x=c(-4,-3,-2,-1,0,1,2),
                 y=sin(c(-4,-3,-2,-1,0,1,2)))
 x <- f$x
@@ -453,7 +453,7 @@ auc
 
 In some instances, ensemble learning, which combines predictions from multiple algorithms, can increase the predictive accuracy in classification tasks. A large variety of classification algorithms are availble in \texttt{caret}, including random forests, support vector machines, Bayesian generalised linear models. Some of these approaches have been implemented below.
 
-```{r echo=F}
+```{r echo=T}
 mod_fit1 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="plr")
 
 mod_fit2 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="LogitBoost", family="binomial")
