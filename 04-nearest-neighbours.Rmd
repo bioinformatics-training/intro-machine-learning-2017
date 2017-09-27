@@ -596,7 +596,7 @@ confusionMatrix(test_pred$pred, segClassTest)
 
 
 
-## Regression
+## Regression {#knn-regression}
 
 _k_-nn can also be applied to the problem of regression as we will see in the following example. The **BloodBrain** dataset in the [caret](http://cran.r-project.org/web/packages/caret/index.html) package contains data on 208 chemical compounds, organized in two objects:
 
