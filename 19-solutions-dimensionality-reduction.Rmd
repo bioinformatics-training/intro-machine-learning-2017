@@ -7,7 +7,7 @@ Solutions to exercises of chapter \@ref(dimensionality-reduction).
 We can read the data in using the following command:
 
 ```{r echo=T}
-D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/PGC_transcriptomics/PGC_transcriptomics.csv", header = TRUE, sep = ",", row.names=1)
+D <- read.csv(file = "data/PGC_transcriptomics/PGC_transcriptomics.csv", header = TRUE, sep = ",", row.names=1)
 genenames <- rownames(D)
 genenames <- genenames[4:nrow(D)]
 ```
@@ -76,7 +76,7 @@ clusterresults[1,which(clusterresults[2,]==4)]
 
 ## Excercise 8.4.
 
-In our previous section we identified clusters assocated with various groups. In our application cluster 1 was associated primarily with pre-implantation cells, with cluster 3 associated with PGCs. We could therefore empircally look for genes that are differentially expressed. Since we know SOX17 is associated with PGC specification let's first compare the expression levels of SOX17 in the two groups:
+In our previous section we identified clusters assocated with various groups. In our application cluster 1 was associated primarily with pre-implantation cells, with cluster 3 associated with PGCs. We could therefore empircally look for genes that are differentially expressed. Since we know SOX17 is associated with PGC specification [@irie2015sox17,@tang2015unique] let's first compare the expression levels of SOX17 in the two groups:
 
 ```{r echo=T}
 t.test(D[which(genenames=="SOX17")+3, which(clusterresults[2,]==1)],D[which(genenames=="SOX17")+3, which(clusterresults[2,]==3)])
@@ -92,7 +92,6 @@ pvalstore[i]  <-  pvals$p.value
 }
 sortedgenes <- genenames[order(pvalstore)]
 ```
-
 
 ## Exercise 8.4
 
@@ -112,7 +111,7 @@ genenames <- genenames[4:nrow(D)]
 text(pcaresult$rotation[,1:2], genenames, , cex = .4)
 ```
 
-We now see a number of genes that are potetially associated with PGCs. These include a number of known PGCs, for example, both SOX17 and PRDM1 (which can be found at co-ordintes PC1=0, PC2= 0.04) represent two key specifiers of human PGC fate (Irie et al., 2015; Tang et al., 2015; Kobayashi et al., 2017). We further note a number of other key regulators, such as DAZL, have been implicated in germ cell development, with DAZL over expressed ESCs forming spermatogonia-like colonies in a rare instance upon xenotransplantation (Panula et al., 2016).
+We now see a number of genes that are potetially associated with PGCs. These include a number of known PGCs, for example, both SOX17 and PRDM1 (which can be found at co-ordintes PC1=0, PC2= 0.04) represent two key specifiers of human PGC fate [@irie2015sox17,@tang2015unique,@kobayashi2017principles]. We further note a number of other key regulators, such as DAZL, have been implicated in germ cell development, with DAZL over expressed ESCs forming spermatogonia-like colonies in a rare instance upon xenotransplantation [@panula2016over].
 
 We can similarly look at regions associated with early embryogenesis by concentrating on the lower half of the plot:
 
@@ -123,7 +122,7 @@ genenames <- genenames[4:nrow(D)]
 text(pcaresult$rotation[,1:2], genenames, , cex = .4)
 ```
 
-This appears to identify a number of genes associated with embryogenesis, for example, DPPA3, which encodes for a maternally inhereted factor, Stella, required for normal pre-implantation development (Bortvin et al., 2004; Payer et al., 2003) as well as regulation of transcriptional and endogenous retrovirus programs during maternal-to-zygotic transition (Huang et al., 2017).
+This appears to identify a number of genes associated with embryogenesis, for example, DPPA3, which encodes for a maternally inhereted factor, Stella, required for normal pre-implantation development [@bortvin2004dppa3,@payer2003stella] as well as regulation of transcriptional and endogenous retrovirus programs during maternal-to-zygotic transition [@Huang2017stella].
 
 ## Excercise 8.6. 
 
