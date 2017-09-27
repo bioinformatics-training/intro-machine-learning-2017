@@ -95,7 +95,7 @@ sortedgenes <- genenames[order(pvalstore)]
 
 ## Exercise 8.4
 
-Within our example, the original axes of our data have very obvious solutions: the axes represent the expression levels of individual genes. The PCs, however, represent linear combinations of various genes, and do not have obvious interpretations. To find an intuition, we can project the original axes (genes) into the new co-ordinate system. This is stored in ```{r echo=F} pcaresult$rotation ``` variable.
+Within our example, the original axes of our data have very obvious solutions: the axes represent the expression levels of individual genes. The PCs, however, represent linear combinations of various genes, and do not have obvious interpretations. To find an intuition, we can project the original axes (genes) into the new co-ordinate system. This is stored in \texttt{pcaresult$rotation} variable.
 
 ```{r echo=T}
 plot(pcaresult$rotation[,1:2],type="n")
