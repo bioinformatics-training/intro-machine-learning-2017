@@ -28,8 +28,21 @@ cran_packages <- c("ggplot2",
 "class",
 "randomForest",
 "rpart",
-"rpart.plot"
+"rpart.plot",
+"party",
+"stepPlr",
+"caTools",
+"arm",
+"kernlab",
+"nnet"
 )
+
+library("stepPlr")
+library("caTools")
+library("arm")
+library("party")
+library("kernlab")
+library("nnet")
 
 # vector of bioconductor packages to be installed
 bioc_packages <- c("EBImage")
