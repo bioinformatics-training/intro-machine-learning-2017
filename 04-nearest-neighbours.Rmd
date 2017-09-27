@@ -108,6 +108,7 @@ library(caret)
 knn1train <- class::knn(train=xtrain, test=xtrain, cl=ytrain, k=1)
 confusionMatrix(knn1train, ytrain)
 ```
+The classifier performs perfectly on the training set, because with _k_=1, each observation is being predicted by itself!
 <!--
 table(ytrain,knn1train)
 cat("KNN prediction error for training set: ", 1-mean(as.numeric(as.vector(knn1train))==ytrain), "\n")
@@ -118,6 +119,7 @@ Now let use the training set to predict on the test set.
 knn1test <- class::knn(train=xtrain, test=xtest, cl=ytrain, k=1)
 confusionMatrix(knn1test, ytest)
 ```
+Performance on the test set is not so good. This is an example of a classifier being over-fitted to the training set. 
 <!--
 table(ytest, knn1test)
 cat("KNN prediction error for test set: ", 1-mean(as.numeric(as.vector(knn1test))==ytest), "\n")
@@ -217,15 +219,16 @@ ggplot(misclass_errors, aes(x=k, y=error, group=set)) +
         legend.text=element_text(size=12), 
         axis.title.x=element_text(face="italic", size=12))
 ```
+We see excessive variance (overfitting) at low values of _k_, and bias (underfitting) at high values of _k_.
 
 ### Choosing _k_
 
-We will use the caret library.
+We will use the caret library. Caret provides a unified interface to a huge range of supervised learning packages in R. The design of its tools encourages best practice, especially in relation to cross-validation and testing. Additionally, it has automatic parallel processing built in, which is a significant advantage when dealing with large data sets.
 ```{r echo=T}
 library(caret)
 ```
 
-[caret](http://cran.r-project.org/web/packages/caret/index.html) has automatic parallel processing built in. To take advantage of this feature we simply need to load the [doMC](http://cran.r-project.org/web/packages/doMC/index.html) package and register workers: 
+To take advantage of Caret's parallel processing functionality, we simply need to load the [doMC](http://cran.r-project.org/web/packages/doMC/index.html) package and register workers: 
 ```{r echo=T}
 library(doMC)
 registerDoMC()
@@ -261,7 +264,7 @@ There are two options for choosing the values of _k_ to be evaluated by the **tr
 1. Pass a data.frame of values of _k_ to the **tuneGrid** argument of **train**.
 2. Specify the number of different levels of _k_ using the **tuneLength** function and allow **train** to pick the actual values.
 
-We will use the first option, so that we can try the values of _k_ we examined earlier. We need to convert the vector of values of k we created earlier and convert it into a data.frame.
+We will use the first option, so that we can try the values of _k_ we examined earlier. The vector of values of _k_ we created earlier should be converted into a data.frame.
 
 ```{r echo=T}
 s <- data.frame(s)

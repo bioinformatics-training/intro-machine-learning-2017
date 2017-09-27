@@ -4,7 +4,7 @@
 Support vector machines (SVMs) are models of supervised learning, applicable to both classification and regression problems. The SVM is an extension of the support vector classifier (SVC), which is turn is an extension of the maximum margin classifier. 
 
 ### Maximum margin classifier
-Let's start by definining a hyperplane. In _p_-dimensional space a hyperplane is a flat affine subspace of _p_-1. 
+Let's start by definining a hyperplane. In _p_-dimensional space a hyperplane is a flat affine subspace of _p_-1. Figure \@ref(fig:svmSeparatingHyperplanes) shows three different hyperplanes and objects of two different classes. H2 and H3 are two of many possible hyperplanes that separate the two classes of observations. A separating hyperplane forms a natural linear decision boundary, classifying new objects according to which side of the line they are located.
 
 ```{r svmSeparatingHyperplanes, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Separating hyperplanes. H1 does not separate the classes. H2 does, but only with a small margin. H3 separates them with the maximum margin. By User:ZackWeinberg, based on PNG version by User:Cyc [CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons"}
 knitr::include_graphics("images/Svm_separating_hyperplanes.svg")
