@@ -2,22 +2,22 @@
 
 Solutions to exercises of chapter \@ref(logistic-regression).
 
-Excercise 3.1.
+Exercise 3.1.
 
 ```{r echo=T}
 options(warn=-1)
 
 geneindex <- 36
-D <- read.csv(file = "/Users/christopher_penfold/Desktop/MLCourse/intro-machine-learning/data/Arabidopsis/Arabidopsis_Botrytis_transpose_2.csv", header = TRUE, sep = ",", row.names=1)
+D <- read.csv(file = "data/Arabidopsis/Arabidopsis_Botrytis_transpose_2.csv", header = TRUE, sep = ",", row.names=1)
 genenames <- colnames(D)
 Xs <- D$Time[1:24]
 plot(Xs,(D[1:24,geneindex]),type="p",col="black",ylim=c(min(D[,geneindex])-0.2, max(D[,geneindex]+0.2)),main=genenames[geneindex],xlab = "Time", ylab = "log_2 expression")
 points(Xs,(D[25:nrow(D),geneindex]),type="p",col="red")
 ```
 
-Excercise 3.2. The caret package has a variety of features that are of use in ML. In the previous example, above, we fitted a linear model to a gene to identify parameters and make predictions using all the data. A better approach would be to partition the data into a test We can make use of the caret functionality to split our data into training and test sets, which should allow us to guage uncertainty in our parameters and the strength of the model.
+Exercise 3.2. The caret package has a variety of features that are of use in ML. In the previous example, above, we fitted a linear model to a gene to identify parameters and make predictions using all the data. A better approach would be to partition the data into a test We can make use of the caret functionality to split our data into training and test sets, which should allow us to gauge uncertainty in our parameters and the strength of the model.
 
-Excercise 3.3. Linear regression can generally be applied for any number of variables. A notable example, would be to regress the expression pattern of a gene against putative regulators.
+Exercise 3.3. Linear regression can generally be applied for any number of variables. A notable example, would be to regress the expression pattern of a gene against putative regulators.
 
 
 ```{r echo=T}
@@ -76,7 +76,7 @@ covPer <- function(X1,X2,l=1,sig=1,p=1) {
 ```
 
 
-Excercise 3.5: Try fitting plotting the GP for the optimised values of the hyperparmeters. 
+Exercise 3.5: Try fitting plotting the GP for the optimised values of the hyperparameters. 
 
 We need to borrow the following snippets of code from the main text.
 
@@ -120,7 +120,7 @@ lines(x.star,y2,type = 'l',col="blue")
 lines(x.star,y3,type = 'l',col="blue")
 ```
 
-Excercise 3.6: Try fitting plotting the GP for the optimised values of the hyperparmeters. 
+Exercise 3.6: Try fitting plotting the GP for the optimised values of the hyperparameters. 
 
 ```{r echo=T}
 calcML <- function(f,l=1,sig=1) {
@@ -225,7 +225,7 @@ calcMLn <- function(f,l=1,sig=1,sigman=0.1) {
 }
 ```
 
-Excercise 3.8 (optional): Write a function for determining differential expression for two genes. Hint: we are interested in comparing two models, and using Bayes Factor to determine if the genes are differentially expressed. 
+Exercise 3.8 (optional): Write a function for determining differential expression for two genes. Hint: we are interested in comparing two models, and using Bayes' Factor to determine if the genes are differentially expressed. 
 
 ```{r echo=T}
 f <- data.frame(x=D[25:nrow(D),1]/48, y=D[25:nrow(D),geneindex])
@@ -259,6 +259,6 @@ BF <- (MLs[1]+MLs[2]) -MLs[3]
 BF
 ```
 
-So from the Bayes' Factor there's some slight evidence for model 1 (differential expressoin) over model 2 (non-differential expression).
+So from the Bayes' Factor there's some slight evidence for model 1 (differential expression) over model 2 (non-differential expression).
 
 

@@ -24,7 +24,7 @@ pcaresult <- prcomp(t(D[4:nrow(D),1:ncol(D)]), center = TRUE, scale. = FALSE)
 
 Here we have opted to centre the data, but have not normalised each gene to be zero-mean. This is beacuse we are dealing entirely with gene expression, rather than a variety of variables that may exist on different scales. 
 
-We can extract the positions of individual cells from the \texttt{pcaresult$x} variable. In the snipped below we index the different cells types (ESC, pre-implantation cells, primoridial germ cells and somatic cells) for easier plotting. 
+We can extract the positions of individual cells from the \texttt{pcaresult$x} variable. In the snipped below we index the different cells types (ESC, pre-implantation cells, primordial germ cells and somatic cells) for easier plotting. 
 
 ```{r echo=T}
 y1 <- pcaresult$x[which(D[1,]==-1),1:2] # PCA
@@ -43,11 +43,11 @@ points(y4,type="p",col="green")
 legend(-95, 50, legend=c("ESC", "preimp", "PGC", "soma"), col=c("red", "black", "blue", "green"), pch="o", bty="n", cex=0.8)
 ```
 
-From the plot, we can see PCA has done a reasonable job of seperating out various cells. For example, a cluster of PGCs appears at the top of the plot, with somatic cells towards the lower right hand side. Pre-implantation embryos and ESCs appear to cluser together: perhaps this is not surprising as the ESCs are derived from blastocyst cells. Loosely, we can intepret the PC1 as dividing pre-implantation cells from somatic cells, with PC2 seperating out PGCs.
+From the plot, we can see PCA has done a reasonable job of separating out various cells. For example, a cluster of PGCs appears at the top of the plot, with somatic cells towards the lower right hand side. Pre-implantation embryos and ESCs appear to cluster together: perhaps this is not surprising as the ESCs are derived from blastocyst cells. Loosely, we can interpret the PC1 as dividing pre-implantation cells from somatic cells, with PC2 separating out PGCs.
 
-## Excercise 8.3. 
+## Exercise 8.3. 
 
-In the previous excercise we used PCA to reduce the dimensionality of our data from thousands of genes down to two principle components. By eye, PCA appeared to do a reasonable job seperating out different cell types. A useful next step might therefore be to perform clustering on the reduced dimensional space, which can be done using:
+In the previous exercise we used PCA to reduce the dimensionality of our data from thousands of genes down to two principle components. By eye, PCA appeared to do a reasonable job separating out different cell types. A useful next step might therefore be to perform clustering on the reduced dimensional space, which can be done using:
 
 ```{r echo=T}
 clust <- kmeans(pcaresult$x[,1:2], 4, iter.max = 1000)
@@ -65,7 +65,7 @@ Labels[which(D[1,]==2)] = "soma"
 clusterresults <- rbind(Labels,clust$cluster)
 ```
 
-We note that, in general PGCs fall into one or more sepearate clusters, with soma also seperating out well. ESCs and pre-implantation tend to fall into identical clusters. We can take a look at what cell types fall into a specific cluster:
+We note that, in general PGCs fall into one or more separate clusters, with soma also separating out well. ESCs and pre-implantation tend to fall into identical clusters. We can take a look at what cell types fall into a specific cluster:
 
 ```{r echo=T}
 clusterresults[1,which(clusterresults[2,]==1)]
@@ -74,9 +74,9 @@ clusterresults[1,which(clusterresults[2,]==3)]
 clusterresults[1,which(clusterresults[2,]==4)]
 ```
 
-## Excercise 8.4.
+## Exercise 8.4.
 
-In our previous section we identified clusters assocated with various groups. In our application cluster 1 was associated primarily with pre-implantation cells, with cluster 3 associated with PGCs. We could therefore empircally look for genes that are differentially expressed. Since we know SOX17 is associated with PGC specification [@irie2015sox17,@tang2015unique] let's first compare the expression levels of SOX17 in the two groups:
+In our previous section we identified clusters associated with various groups. In our application cluster 1 was associated primarily with pre-implantation cells, with cluster 3 associated with PGCs. We could therefore empirically look for genes that are differentially expressed. Since we know SOX17 is associated with PGC specification [@irie2015sox17,@tang2015unique] let's first compare the expression levels of SOX17 in the two groups:
 
 ```{r echo=T}
 t.test(D[which(genenames=="SOX17")+3, which(clusterresults[2,]==1)],D[which(genenames=="SOX17")+3, which(clusterresults[2,]==3)])
@@ -95,14 +95,14 @@ sortedgenes <- genenames[order(pvalstore)]
 
 ## Exercise 8.4
 
-Within our example, the original axes of our data have very obvious solutions: the axes represent the expression levels of individual genes. The PCs, however, represent linear combinations of various genes, and do not have obvious intepretations. To find an intuition, we can project the original axes (genes) into the new co-ordinate system. This is stored in ```{r echo=F} pcaresult$rotation ``` variable.
+Within our example, the original axes of our data have very obvious solutions: the axes represent the expression levels of individual genes. The PCs, however, represent linear combinations of various genes, and do not have obvious interpretations. To find an intuition, we can project the original axes (genes) into the new co-ordinate system. This is stored in ```{r echo=F} pcaresult$rotation ``` variable.
 
 ```{r echo=T}
 plot(pcaresult$rotation[,1:2],type="n")
 text(pcaresult$rotation[,1:2], genenames, cex = .4)
 ```
 
-Okay, this plot is a little busy, so let's focus in on a particular region. Recall that PGCs seemed to lie towards the upper section of the plot (that is PC2 seperated out PGCs from other cell types), so we'll take a look at the top section:
+Okay, this plot is a little busy, so let's focus in on a particular region. Recall that PGCs seemed to lie towards the upper section of the plot (that is PC2 separated out PGCs from other cell types), so we'll take a look at the top section:
 
 ```{r echo=T}
 plot(pcaresult$rotation[,1:2],type="n",xlim=c(-0.07, 0.07),ylim=c(0.04, 0.1))
@@ -111,7 +111,7 @@ genenames <- genenames[4:nrow(D)]
 text(pcaresult$rotation[,1:2], genenames, , cex = .4)
 ```
 
-We now see a number of genes that are potetially associated with PGCs. These include a number of known PGCs, for example, both SOX17 and PRDM1 (which can be found at co-ordintes PC1=0, PC2= 0.04) represent two key specifiers of human PGC fate [@irie2015sox17,@tang2015unique,@kobayashi2017principles]. We further note a number of other key regulators, such as DAZL, have been implicated in germ cell development, with DAZL over expressed ESCs forming spermatogonia-like colonies in a rare instance upon xenotransplantation [@panula2016over].
+We now see a number of genes that are potentially associated with PGCs. These include a number of known PGCs, for example, both SOX17 and PRDM1 (which can be found at co-ordinates PC1=0, PC2= 0.04) represent two key specifiers of human PGC fate [@irie2015sox17,@tang2015unique,@kobayashi2017principles]. We further note a number of other key regulators, such as DAZL, have been implicated in germ cell development, with DAZL over expressed ESCs forming spermatogonia-like colonies in a rare instance upon xenotransplantation [@panula2016over].
 
 We can similarly look at regions associated with early embryogenesis by concentrating on the lower half of the plot:
 
@@ -122,9 +122,9 @@ genenames <- genenames[4:nrow(D)]
 text(pcaresult$rotation[,1:2], genenames, , cex = .4)
 ```
 
-This appears to identify a number of genes associated with embryogenesis, for example, DPPA3, which encodes for a maternally inhereted factor, Stella, required for normal pre-implantation development [@bortvin2004dppa3,@payer2003stella] as well as regulation of transcriptional and endogenous retrovirus programs during maternal-to-zygotic transition [@Huang2017stella].
+This appears to identify a number of genes associated with embryogenesis, for example, DPPA3, which encodes for a maternally inherited factor, Stella, required for normal pre-implantation development [@bortvin2004dppa3,@payer2003stella] as well as regulation of transcriptional and endogenous retrovirus programs during maternal-to-zygotic transition [@Huang2017stella].
 
-## Excercise 8.6. 
+## Exercise 8.6. 
 
 We can run tSNE using the following command:
 
@@ -149,7 +149,7 @@ points(y4,type="p",col="green")
 legend(-40, 40, legend=c("ESC", "preimp", "PGC", "soma"), col=c("red", "black", "blue", "green"),pch="o", bty="n", cex=0.8)
 ```
 
-## Excercise 8.7.
+## Exercise 8.7.
 
 We can plot the expression patterns for pre-implantation embryos:
 
@@ -173,7 +173,7 @@ legend(-10, 10, legend=c("Ooc", "Zyg", "2C", "4C","8C","Mor","Blast"), col=c("to
 ```
 
 
-## Excercise 8.8.
+## Exercise 8.8.
 
 Before we perform any clustering let's generate labels for the pre-implantation data.
 
@@ -198,4 +198,4 @@ clust <- kmeans(tsne_model_1$Y[which(D[1,]==0 & D[3,]<7 & D[3,]>-1),1:2], 4, ite
 rbind(Labels,clust$cluster)
 ```
 
-Note that, using tSNE we appear to have identified clear stucture seperating out the majority of blastocyst cells from other. Sperate clusters appear to exist for other cell types as well, that were not immediately obvious in the PCA analyses of these datasets. In general, the PCA analysis seperated out early-embryogenesis from soma and PGCs, due to large differences in the expression patterns of those cell types; comparatively, the expression patterns for the pre-implantation embryos were close together in the reduced dimensionality space. Due to its nonlilnear nature, tSNE was able, in this case to more accurately sepearte out different cells types.   
+Note that, using tSNE we appear to have identified clear structure separating out the majority of blastocyst cells from other. Separate clusters appear to exist for other cell types as well, that were not immediately obvious in the PCA analyses of these datasets. In general, the PCA analysis separated out early-embryogenesis from soma and PGCs, due to large differences in the expression patterns of those cell types; comparatively, the expression patterns for the pre-implantation embryos were close together in the reduced dimensionality space. Due to its nonlinear nature, tSNE was able, in this case to more accurately separate out different cells types.   
