@@ -4,8 +4,6 @@ Solutions to exercises of chapter \@ref(svm).
 
 ## Exercise 1
 
-## Exercise 2
-
 Load required libraries
 
 ```r
@@ -125,14 +123,13 @@ cvCtrl <- trainControl(method = "repeatedcv",
                        seeds=seeds)
 ```
 
-Tune SVM over the cost parameter. The default grid of cost parameters start at 0.25 and double at each iteration. Choosing ```tuneLength = 9``` will give us cost parameters of 0.25, 0.5, 1, 2, 4, 8, 16, 32 and 64. The train function will calculate the value of $$sigma$$ from the data.
+Tune SVM over the cost parameter. The default grid of cost parameters start at 0.25 and double at each iteration. Choosing ```tuneLength = 9``` will give us cost parameters of 0.25, 0.5, 1, 2, 4, 8, 16, 32 and 64. The train function will calculate an appropriate value of sigma (the kernel parameter) from the data.
 
 ```r
 svmTune <- train(x = segDataTrain,
                  y = segClassTrain,
                  method = "svmRadial",
                  tuneLength = 9,
-                 preProc = c("center", "scale"),
                  metric = "ROC",
                  trControl = cvCtrl)
 ```
@@ -163,7 +160,7 @@ svmTune
 ##   27 predictor
 ##    2 classes: 'PS', 'WS' 
 ## 
-## Pre-processing: centered (27), scaled (27) 
+## No pre-processing
 ## Resampling: Cross-Validated (5 fold, repeated 5 times) 
 ## Summary of sample sizes: 808, 808, 808, 808, 808, 808, ... 
 ## Resampling results across tuning parameters:

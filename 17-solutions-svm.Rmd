@@ -75,7 +75,6 @@ svmTune <- train(x = segDataTrain,
                  y = segClassTrain,
                  method = "svmRadial",
                  tuneLength = 9,
-                 preProc = c("center", "scale"),
                  metric = "ROC",
                  trControl = cvCtrl)
 
@@ -88,7 +87,7 @@ svmTune$finalModel
 ```
 
 SVM accuracy profile
-```{r svmAccuracyProfile, fig.cap='SVM accuracy profile.', out.width='80%', fig.asp=0.7, fig.align='center', echo=T}
+```{r svmAccuracyProfileCellSegment, fig.cap='SVM accuracy profile.', out.width='80%', fig.asp=0.7, fig.align='center', echo=T}
 plot(svmTune, metric = "ROC", scales = list(x = list(log =2)))
 ```
 
@@ -112,7 +111,7 @@ auc(svmROC)
 ```
 
 Plot ROC curve, including the threshold with the highest sum sensitivity + specificity.
-```{r svmROCcurve, fig.cap='SVM accuracy profile.', out.width='80%', fig.asp=1, fig.align='center', echo=T}
+```{r svmROCcurveCellSegment, fig.cap='SVM ROC curve for cell segmentation data set.', out.width='80%', fig.asp=1, fig.align='center', echo=T}
 plot(svmROC, type = "S", 
      print.thres = "best",
      print.thres.col = "blue",

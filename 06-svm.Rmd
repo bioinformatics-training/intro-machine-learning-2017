@@ -10,9 +10,6 @@ Let's start by definining a hyperplane. In _p_-dimensional space a hyperplane is
 knitr::include_graphics("images/Svm_separating_hyperplanes.svg")
 ```
 
-```{r svmKernelMachine, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Kernel machine. By Alisneaky - Own work, CC0, https://commons.wikimedia.org/w/index.php?curid=14941564"}
-knitr::include_graphics("images/svm_kernel_machine.png")
-```
 
 ```{r svmMaxSepHyperplaneWithMargin, echo=F, out.width='75%', fig.align='center', fig.cap="Maximum-margin hyperplane and margins for an SVM trained with samples from two classes. Samples on the margin are called the support vectors. By Cyc - Own work, Public Domain, https://commons.wikimedia.org/w/index.php?curid=3566688"}
 knitr::include_graphics("images/Svm_max_sep_hyperplane_with_margin.png")
@@ -25,42 +22,190 @@ knitr::include_graphics("images/Svm_max_sep_hyperplane_with_margin.png")
 
 <!-- regression and classification -->
 
+## Support vector classifier
 
-```{r echo=T}
-
+<!--First generate a data set.-->
+```{r svcTestData, fig.cap='Example data with linearly separable groups.', out.width='75%', fig.asp=1, fig.align='center', echo=F}
+set.seed (1)
+x=matrix(rnorm(20*2), ncol=2)
+y=c(rep(-1,10), rep(1,10))
+x[y==1,]=x[y==1,] + 1
+plot(x, col=(3-y))
 
 ```
 
+```{r svcCost10, fig.cap='Support vector classifier with cost=10.', out.width='75%', fig.asp=1, fig.align='center', echo=F}
+dat=data.frame(x=x, y=as.factor(y))
+library(e1071)
+svmfit=svm(y~., data=dat, kernel="linear", cost=10, scale=FALSE)
+plot(svmfit, dat)
+```
+
+```{r svcCost01, fig.cap='Support vector classifier with cost=0.1.', out.width='75%', fig.asp=1, fig.align='center', echo=F}
+svmfit=svm(y~., data=dat, kernel="linear", cost=0.1, scale=FALSE)
+plot(svmfit , dat)
+```
+
+## Support Vector Machine
+```{r svmExampleData, fig.cap='Example data for demonstrating SVM.', out.width='75%', fig.asp=1, fig.align='center', echo=F}
+set.seed (1)
+x=matrix(rnorm(200*2), ncol=2)
+x[1:100,]=x[1:100,]+2
+x[101:150,]=x[101:150,]-2
+y=c(rep(1,150),rep(2,50))
+dat=data.frame(x=x,y=as.factor(y))
+plot(x, col=y)
+```
+
+```{r svmKernelMachine, echo=FALSE, out.width='75%', fig.align='center', fig.cap="Kernel machine. By Alisneaky - Own work, CC0, https://commons.wikimedia.org/w/index.php?curid=14941564"}
+knitr::include_graphics("images/svm_kernel_machine.png")
+```
+
+```{r svmExampleCost1, fig.cap='SVM with cost 1.', out.width='75%', fig.asp=1, fig.align='center', echo=F}
+train=sample(200,100)
+svmfit=svm(y~., data=dat[train,], kernel="radial", gamma=1,
+cost =1)
+plot(svmfit , dat[train ,])
+```
+
+```{r svmExampleCost1e5, fig.cap='SVM with cost 100000.', out.width='75%', fig.asp=1, fig.align='center', echo=F}
+svmfit=svm(y~., data=dat[train,], kernel="radial",gamma=1, cost=1e5)
+plot(svmfit ,dat[train ,])
+```
 
 ## Example - training an SVM
+Training of an SVM will be demonstrated on a 2-dimensional simulated data set, with a non-linear decision boundary.
 
-
-
-
-### Example - simulated data
-
-```{r echo=T}
-linearly_separable <- read.csv("data/sim_data_svm/linearly_separable.csv", header=F)
-circles <- read.csv("data/sim_data_svm/circles.csv", header=F)
-moons <- read.csv("data/sim_data_svm/moons.csv", header=F)
-```
-
-### Example -  cell segmentation data
+### Setup environment
 Load required libraries
 ```{r echo=T}
 library(caret)
-
+library(RColorBrewer)
+library(ggplot2)
+library(doMC)
+library(pROC)
 ```
 
-
-Setup parallel processing
+Initialize parallel processing
 ```{r echo=T}
-library(doMC)
 registerDoMC()
 getDoParWorkers()
 ```
 
-MUST GENERATE A LIST OF SEEDS IF WE USE PARALLEL PROCESSING, FOR REPRODUCIBILITY
+### Partition data
+Load data
+```{r echo=T}
+moons <- read.csv("data/sim_data_svm/moons.csv", header=F)
+str(moons)
+```
+
+V1 and V2 are the predictors; V3 is the class. 
+
+Partition data into training and test set
+```{r echo=T}
+set.seed(42)
+trainIndex <- createDataPartition(y=moons$V3, times=1, p=0.7, list=F)
+moonsTrain <- moons[trainIndex,]
+moonsTest <- moons[-trainIndex,]
+
+summary(moonsTrain$V3)
+summary(moonsTest$V3)
+```
+
+### Visualize training data
+```{r svmMoonsTrainSet, fig.cap='Scatterplot of the training data', out.width='50%', fig.asp=1, fig.align='center', echo=T}
+point_shapes <- c(15,17)
+bp <- brewer.pal(3,"Dark2")
+point_colours <- ifelse(moonsTrain$V3=="A", bp[1], bp[2])
+point_shapes <- ifelse(moonsTrain$V3=="A", 15, 17)
+
+point_size = 2
+
+ggplot(moonsTrain, aes(V1,V2)) + 
+  geom_point(col=point_colours, shape=point_shapes, 
+             size=point_size) + 
+  theme_bw() +
+  theme(plot.title = element_text(size=25, face="bold"), axis.text=element_text(size=15),
+        axis.title=element_text(size=20,face="bold"))
+
+
+```
+
+
+### Model cross-validation and tuning
+Set seeds for reproducibility. We will be trying 9 values of the tuning parameter with 10 repeats of 10 fold cross-validation, so we need the following list of seeds.
+```{r echo=T}
+set.seed(42)
+seeds <- vector(mode = "list", length = 101)
+for(i in 1:100) seeds[[i]] <- sample.int(1000, 9)
+seeds[[101]] <- sample.int(1000,1)
+```
+
+We will pass the twoClassSummary function into model training through trainControl. Additionally we would like the model to predict class probabilities so that we can calculate the ROC curve, so we use the classProbs option.
+```{r echo=T}
+cvCtrl <- trainControl(method = "repeatedcv", 
+                       repeats = 5,
+                       number = 5,
+                       summaryFunction = twoClassSummary,
+                       classProbs = TRUE,
+                       seeds=seeds)
+```
+
+We set the **method** of the **train** function to **svmRadial** to specify a radial kernel SVM. In this implementation we only have to tune one parameter, **cost**. An appropriate value of the **sigma** parameter (used to the kernel feature space) is estimated from the data. The default grid of cost parameters start at 0.25 and double at each iteration. Choosing tuneLength = 9 will give us cost parameters of 0.25, 0.5, 1, 2, 4, 8, 16, 32 and 64. 
+```{r echo=T}
+svmTune <- train(x = moonsTrain[,c(1:2)],
+                 y = moonsTrain[,3],
+                 method = "svmRadial",
+                 tuneLength = 9,
+                 preProc = c("center", "scale"),
+                 metric = "ROC",
+                 trControl = cvCtrl)
+                 
+svmTune
+```
+
+```{r echo=T}
+svmTune$finalModel
+```
+
+### Prediction performance measures
+SVM accuracy profile
+```{r svmAccuracyProfileMoons, fig.cap='SVM accuracy profile for moons data set.', out.width='80%', fig.asp=0.7, fig.align='center', echo=T}
+plot(svmTune, metric = "ROC", scales = list(x = list(log =2)))
+```
+
+Predictions on test set.
+```{r echo=T}
+svmPred <- predict(svmTune, moonsTest[,c(1:2)])
+confusionMatrix(svmPred, moonsTest[,3])
+```
+
+Get predicted class probabilities so we can build ROC curve.
+```{r echo=T}
+svmProbs <- predict(svmTune, moonsTest[,c(1:2)], type="prob")
+head(svmProbs)
+```
+
+Build a ROC curve.
+```{r echo=T}
+svmROC <- roc(moonsTest[,3], svmProbs[,"A"])
+auc(svmROC)
+```
+
+Plot ROC curve, including the threshold with the highest sum sensitivity + specificity.
+```{r svmROCcurveMoons, fig.cap='SVM accuracy profile.', out.width='80%', fig.asp=1, fig.align='center', echo=T}
+plot(svmROC, type = "S", 
+     print.thres = "best",
+     print.thres.col = "blue",
+     print.thres.pch = 19,
+     print.thres.cex=1.5)
+```
+
+Calculate area under ROC curve. 
+```{r echo=T}
+auc(svmROC)
+```
+
 
 ## Exercises
 
@@ -75,44 +220,3 @@ The aim of the exercise is to build a binary classifier to predict the quality o
 
 
 Solutions to exercises can be found in appendix \@ref(solutions-svm)
-
-<!--
-
-## Serum proteomics
-```{r echo=T}
-centre1 <- read.csv("data/serum_proteomics/male_centre1.csv")
-centre2 <- read.csv("data/serum_proteomics/male_centre2.csv")
-
-diag_cent1 <- centre1$Diagnostic_group
-prot_cent1 <- centre1[,2:18]
-
-diag_cent2 <- centre2$Diagnostic_group
-prot_cent2 <- centre2[,2:18]
-
-# featurePlot(x=prot_cent1, y=diag_cent1, plot="pairs")
-
-transformations <- preProcess(prot_cent1, 
-                              method=c("center", "scale"),
-                              cutoff=0.75)
-prot_cent1 <- predict(transformations, prot_cent1)
-
-svmTune <- train(x = prot_cent1,
-                 y = diag_cent1,
-                 method = "svmRadial",
-                 # The default grid of cost parameters go from 2^-2,
-                 # 0.5 to 1,
-                 # Well fit 9 values in that sequence via the tuneLength
-                 # argument.
-                 tuneLength = 9,
-                 ## Also add options from preProcess here too
-                 preProc = c("center", "scale"),
-                 metric = "ROC",
-                 trControl = cvCtrl)
-
-svmTune
-
-svmTune$finalModel
-
-```
-
--->
