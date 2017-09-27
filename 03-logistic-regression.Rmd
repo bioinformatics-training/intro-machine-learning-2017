@@ -454,6 +454,12 @@ auc
 In some instances, ensemble learning, which combines predictions from multiple algorithms, can increase the predictive accuracy in classification tasks. A large variety of classification algorithms are availble in \texttt{caret}, including random forests, support vector machines, Bayesian generalised linear models. Some of these approaches have been implemented below.
 
 ```{r echo=T}
+library("stepPlr")
+library("caTools")
+library("arm")
+library("party")
+library("kernlab")
+library("nnet")
 mod_fit1 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="plr")
 
 mod_fit2 <- train(y ~ x, data=data.frame(x = D$AT1G03960, y = as.factor(D$Class)), method="LogitBoost", family="binomial")
