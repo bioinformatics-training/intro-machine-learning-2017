@@ -34,9 +34,27 @@ cran_packages <- c("ggplot2",
 "caTools",
 "arm",
 "kernlab",
-"nnet"
+"nnet",
+"neuralnet",
+"MASS",
+"NeuralNetTools",
+"ISLR",
+"caTools",
+"boot",
+"faraway"
 )
 
+library(NeuralNetTools)
+library(MASS)
+library(ISLR)
+library(caTools) # sample.split
+library(boot) # cv.glm
+library(faraway) # compact lm summary "sumary" function
+library(caret) # useful tools for machine learning
+library(corrplot)
+library(MASS)
+library(neuralnet)
+library(boot)
 
 # vector of bioconductor packages to be installed
 bioc_packages <- c("EBImage")
