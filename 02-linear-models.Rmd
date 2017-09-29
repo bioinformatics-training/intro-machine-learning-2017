@@ -289,7 +289,7 @@ $$
 $$
 $AA^{-1} = I$
 
-**Estimating parameters**$\theta$
+**Estimating parameters** $\theta$
 
 For the models above to be useful we have to estimate the unknown $\theta$s. In the second example, we want to describe a physical process for which we can't have unknown parameters. In the third example, we better understand inheritance by estimating how much, on average, the father's height affects the son's height. In the fourth example, we want to determine if there is in fact a difference: if $\theta_1 \neq 0$.
 
@@ -303,7 +303,7 @@ Once we find the minimum, we will call the values the least squares estimates (L
 What actually happens when we invoke lm?
 Inside of lm, we will form a design matrix $\mathbf{X}$ and calculate the Cost function: $\boldsymbol{\beta}$, which minimizes the sum of squares. The formula for this solution is:
 
-$$ \hat{\boldsymbol{\theta}} = (\mathbf{X}^\top \mathbf{X})^{-1} \mathbf{X}^\top \mathbf{Y} $$
+$$ \hat{\boldsymbol{\beta}} = (\mathbf{X}^\top \mathbf{X})^{-1} \mathbf{X}^\top \mathbf{Y} $$
 We can calculate this in R using matrix multiplication operator %*%, the inverse function solve, and the transpose function t.
 
 
