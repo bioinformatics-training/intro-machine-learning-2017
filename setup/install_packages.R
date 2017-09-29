@@ -37,12 +37,6 @@ cran_packages <- c("ggplot2",
 "nnet"
 )
 
-library("stepPlr")
-library("caTools")
-library("arm")
-library("party")
-library("kernlab")
-library("nnet")
 
 # vector of bioconductor packages to be installed
 bioc_packages <- c("EBImage")

@@ -209,8 +209,8 @@ plot(svmTune, metric = "ROC", scales = list(x = list(log =2)))
 ```
 
 <div class="figure" style="text-align: center">
-<img src="17-solutions-svm_files/figure-html/svmAccuracyProfile-1.png" alt="SVM accuracy profile." width="80%" />
-<p class="caption">(\#fig:svmAccuracyProfile)SVM accuracy profile.</p>
+<img src="17-solutions-svm_files/figure-html/svmAccuracyProfileCellSegment-1.png" alt="SVM accuracy profile." width="80%" />
+<p class="caption">(\#fig:svmAccuracyProfileCellSegment)SVM accuracy profile.</p>
 </div>
 
 Test set results
@@ -282,15 +282,15 @@ Plot ROC curve, including the threshold with the highest sum sensitivity + speci
 
 ```r
 plot(svmROC, type = "S", 
-     print.thres = "best",
+     print.thres = 0.5,
      print.thres.col = "blue",
      print.thres.pch = 19,
      print.thres.cex=1.5)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="17-solutions-svm_files/figure-html/svmROCcurve-1.png" alt="SVM accuracy profile." width="80%" />
-<p class="caption">(\#fig:svmROCcurve)SVM accuracy profile.</p>
+<img src="17-solutions-svm_files/figure-html/svmROCcurveCellSegment-1.png" alt="SVM ROC curve for cell segmentation data set." width="80%" />
+<p class="caption">(\#fig:svmROCcurveCellSegment)SVM ROC curve for cell segmentation data set.</p>
 </div>
 
 Calculate area under ROC curve

@@ -4,64 +4,89 @@
 Support vector machines (SVMs) are models of supervised learning, applicable to both classification and regression problems. The SVM is an extension of the support vector classifier (SVC), which is turn is an extension of the maximum margin classifier. 
 
 ### Maximum margin classifier
-Let's start by definining a hyperplane. In _p_-dimensional space a hyperplane is a flat affine subspace of _p_-1. 
+Let's start by definining a hyperplane. In _p_-dimensional space a hyperplane is a flat affine subspace of _p_-1. Figure \@ref(fig:svmSeparatingHyperplanes2) shows three separating hyperplanes and objects of two different classes. A separating hyperplane forms a natural linear decision boundary, classifying new objects according to which side of the line they are located.
 
 <div class="figure" style="text-align: center">
-<img src="images/Svm_separating_hyperplanes.svg" alt="Separating hyperplanes. H1 does not separate the classes. H2 does, but only with a small margin. H3 separates them with the maximum margin. By User:ZackWeinberg, based on PNG version by User:Cyc [CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons" width="75%" />
-<p class="caption">(\#fig:svmSeparatingHyperplanes)Separating hyperplanes. H1 does not separate the classes. H2 does, but only with a small margin. H3 separates them with the maximum margin. By User:ZackWeinberg, based on PNG version by User:Cyc [CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons</p>
+<img src="images/svm.9.2.png" alt="Left: two classes of observations (blue, purple) and three separating hyperplanes. Right: separating hyperplane shown as black line and grid indicates decision rule." width="90%" />
+<p class="caption">(\#fig:svmSeparatingHyperplanes2)Left: two classes of observations (blue, purple) and three separating hyperplanes. Right: separating hyperplane shown as black line and grid indicates decision rule.</p>
 </div>
 
+If the classes of observations can be separated by a hyperplane, then there will in fact be an infinite number of hyperplanes. So which of the possible hyperplanes do we choose to be our decision boundary? 
+
+The **maximal margin hyperplane** is the separating hyperplane that is farthest from the training observations. The perpendicular distance from a given hyperplane to the nearest training observation is known as the **margin**. The maximal margin hyperplane is the separating hyperplane for which the margin is largest.
 
 <div class="figure" style="text-align: center">
-<img src="images/Svm_max_sep_hyperplane_with_margin.png" alt="Maximum-margin hyperplane and margins for an SVM trained with samples from two classes. Samples on the margin are called the support vectors. By Cyc - Own work, Public Domain, https://commons.wikimedia.org/w/index.php?curid=3566688" width="75%" />
-<p class="caption">(\#fig:svmMaxSepHyperplaneWithMargin)Maximum-margin hyperplane and margins for an SVM trained with samples from two classes. Samples on the margin are called the support vectors. By Cyc - Own work, Public Domain, https://commons.wikimedia.org/w/index.php?curid=3566688</p>
+<img src="images/svm.9.3.png" alt="Maximal margin hyperplane shown as solid line. Margin is the distance from the solid line to either of the dashed lines. The support vectors are the points on the dashed line." width="75%" />
+<p class="caption">(\#fig:svmMaximalMarginHyperplane)Maximal margin hyperplane shown as solid line. Margin is the distance from the solid line to either of the dashed lines. The support vectors are the points on the dashed line.</p>
 </div>
 
+Figure \@ref(fig:svmMaximalMarginHyperplane) shows three training observations that are equidistant from the maximal margin hyperplane and lie on the dashed lines indicating the margin. These are the **support vectors**. If these points were moved slightly, the maximal margin hyperplane would also move, hence the term *support*. The maximal margin hyperplane is set by the **support vectors** alone; it is not influenced by any other observations.
 
-<!-- Matt -->
-
-<!--REPEAT CLASSIFICATION EXAMPLE FOR SERUM PROTEOMICS -->
-
-<!-- regression and classification -->
+The maximal margin hyperplane is a natural decision boundary, but only if a separating hyperplane exists. In practice there may be non separable cases which prevent the use of the maximal margin classifier.
+<div class="figure" style="text-align: center">
+<img src="images/svm.9.4.png" alt="The two classes cannot be separated by a hyperplane and so the maximal margin classifier cannot be used." width="75%" />
+<p class="caption">(\#fig:svmNonSeparableCase)The two classes cannot be separated by a hyperplane and so the maximal margin classifier cannot be used.</p>
+</div>
 
 ## Support vector classifier
+Even if a separating hyperplane exists, it may not be the best decision boundary. The maximal margin classifier is extremely sensitive to individual observations, so may overfit the training data.
 
-<!--First generate a data set.-->
 <div class="figure" style="text-align: center">
-<img src="06-svm_files/figure-html/svcTestData-1.png" alt="Example data with linearly separable groups." width="75%" />
-<p class="caption">(\#fig:svcTestData)Example data with linearly separable groups.</p>
+<img src="images/svm.9.5.png" alt="Left: two classes of observations and a maximum margin hyperplane (solid line). Right: Hyperplane (solid line) moves after the addition of a new observation (original hyperplane is dashed line)." width="90%" />
+<p class="caption">(\#fig:svmHyperplaneShift)Left: two classes of observations and a maximum margin hyperplane (solid line). Right: Hyperplane (solid line) moves after the addition of a new observation (original hyperplane is dashed line).</p>
 </div>
 
-<div class="figure" style="text-align: center">
-<img src="06-svm_files/figure-html/svcCost10-1.png" alt="Support vector classifier with cost=10." width="75%" />
-<p class="caption">(\#fig:svcCost10)Support vector classifier with cost=10.</p>
-</div>
+
+It would be better to choose a classifier base on a hyperplane that:
+
+* is more robust to individual observations
+* provides better classification of most of the training variables
+
+In other words, we might tolerate some misclassifications if the prediction of the remaining observations is more reliable. The **support vector classifier** does this by allowing some observations to be on the wrong side of the margin or even on the wrong side of the hyperplane. Observations on the wrong side of the hyperplane are misclassifications.
 
 <div class="figure" style="text-align: center">
-<img src="06-svm_files/figure-html/svcCost01-1.png" alt="Support vector classifier with cost=0.1." width="75%" />
-<p class="caption">(\#fig:svcCost01)Support vector classifier with cost=0.1.</p>
+<img src="images/svm.9.6.png" alt="Left: observations on the wrong side of the margin. Right: observations on the wrong side of the margin and observations on the wrong side of the hyperplane." width="90%" />
+<p class="caption">(\#fig:svmObsOnWrongSideHyperplane)Left: observations on the wrong side of the margin. Right: observations on the wrong side of the margin and observations on the wrong side of the hyperplane.</p>
+</div>
+
+The support vector classifier has a tuning parameter, _C_, that determines the number and severity of the violations to the margin. If _C_ = 0, then no violations to the margin will be tolerated, which is equivalent to the maximal margin classifier. As _C_ increases, the classifier becomes more tolerant of violations to the margin, and so the margin widens.
+
+The optimal value of _C_ is chosen through cross-validation.  
+
+_C_ is described as a tuning parameter, because it controls the bias-variance trade-off:
+
+* a small _C_ results in narrow margins that are rarely violated; the model will have low bias, but high variance.
+* as _C_ increases the margins widen allowing more violations; the bias of the model will increase, but its variance will decrease.
+
+The **support vectors** are the observations that lie directly on the margin, or on the wrong side of the margin for their class. The only observations that affect the classifier are the support vectors. As _C_ increases, the margin widens and the number of support vectors increases. In other words, when _C_ increases more observations are involved in determining the decision boundary of the classifier.
+
+<div class="figure" style="text-align: center">
+<img src="images/svm.9.7.png" alt="Margin of a support vector classifier changing with tuning parameter C. Largest value of C was used in the top left panel, and smaller values in the top right, bottom left and bottom right panels." width="75%" />
+<p class="caption">(\#fig:svmMarginC)Margin of a support vector classifier changing with tuning parameter C. Largest value of C was used in the top left panel, and smaller values in the top right, bottom left and bottom right panels.</p>
 </div>
 
 ## Support Vector Machine
-<div class="figure" style="text-align: center">
-<img src="06-svm_files/figure-html/svmExampleData-1.png" alt="Example data for demonstrating SVM." width="75%" />
-<p class="caption">(\#fig:svmExampleData)Example data for demonstrating SVM.</p>
-</div>
+The support vector classifier performs well if we have linearly separable classes, however this isn't always the case.
 
 <div class="figure" style="text-align: center">
-<img src="images/svm_kernel_machine.png" alt="Kernel machine. By Alisneaky - Own work, CC0, https://commons.wikimedia.org/w/index.php?curid=14941564" width="75%" />
+<img src="images/svm.9.8.png" alt="Two classes of observations with a non-linear boundary between them." width="90%" />
+<p class="caption">(\#fig:svmNonLinearBoundary)Two classes of observations with a non-linear boundary between them.</p>
+</div>
+
+The SVM uses the **kernel trick** to project the data into higher dimensions where a separating linear hyperplane may be found.
+
+<div class="figure" style="text-align: center">
+<img src="images/svm_kernel_machine.png" alt="Kernel machine. By Alisneaky - Own work, CC0, https://commons.wikimedia.org/w/index.php?curid=14941564" width="80%" />
 <p class="caption">(\#fig:svmKernelMachine)Kernel machine. By Alisneaky - Own work, CC0, https://commons.wikimedia.org/w/index.php?curid=14941564</p>
 </div>
 
-<div class="figure" style="text-align: center">
-<img src="06-svm_files/figure-html/svmExampleCost1-1.png" alt="SVM with cost 1." width="75%" />
-<p class="caption">(\#fig:svmExampleCost1)SVM with cost 1.</p>
-</div>
 
 <div class="figure" style="text-align: center">
-<img src="06-svm_files/figure-html/svmExampleCost1e5-1.png" alt="SVM with cost 100000." width="75%" />
-<p class="caption">(\#fig:svmExampleCost1e5)SVM with cost 100000.</p>
+<img src="images/svm.9.9.png" alt="Left: SVM with polynomial kernel of degree 3. Right: SVM with radial kernel." width="90%" />
+<p class="caption">(\#fig:svmPolyAndRadialKernelSVM)Left: SVM with polynomial kernel of degree 3. Right: SVM with radial kernel.</p>
 </div>
+
+
 
 ## Example - training a classifier
 Training of an SVM will be demonstrated on a 2-dimensional simulated data set, with a non-linear decision boundary.
@@ -296,6 +321,8 @@ svmTune$finalModel
 ## Probability model included.
 ```
 
+
+
 ### Prediction performance measures
 SVM accuracy profile
 
@@ -376,7 +403,7 @@ Plot ROC curve, including the threshold with the highest sum sensitivity + speci
 
 ```r
 plot(svmROC, type = "S", 
-     print.thres = "best",
+     print.thres = 0.5,
      print.thres.col = "blue",
      print.thres.pch = 19,
      print.thres.cex=1.5)
@@ -386,6 +413,13 @@ plot(svmROC, type = "S",
 <img src="06-svm_files/figure-html/svmROCcurveMoons-1.png" alt="SVM accuracy profile." width="80%" />
 <p class="caption">(\#fig:svmROCcurveMoons)SVM accuracy profile.</p>
 </div>
+**Sensitivity (true positive rate)**
+
+_TPR = TP/P = TP/(TP+FN)_
+
+**Specificity (true negative rate)**
+
+_SPC = TN/N = TN/(TN+FP)_
 
 Calculate area under ROC curve. 
 
@@ -397,6 +431,63 @@ auc(svmROC)
 ## Area under the curve: 0.9575
 ```
 
+### Plot decision boundary
+Create a grid so we can predict across the full range of our variables V1 and V2.
+
+```r
+gridSize <- 150 
+v1limits <- c(min(moons$V1),max(moons$V1))
+tmpV1 <- seq(v1limits[1],v1limits[2],len=gridSize)
+v2limits <- c(min(moons$V2), max(moons$V2))
+tmpV2 <- seq(v2limits[1],v2limits[2],len=gridSize)
+xgrid <- expand.grid(tmpV1,tmpV2)
+names(xgrid) <- names(moons)[1:2]
+```
+
+Predict values of all elements of grid.
+
+```r
+V3 <- as.numeric(predict(svmTune, xgrid))
+xgrid <- cbind(xgrid, V3)
+```
+
+Plot
+
+```r
+point_shapes <- c(15,17)
+point_colours <- brewer.pal(3,"Dark2")
+point_size = 2
+
+trainClassNumeric <- ifelse(moonsTrain$V3=="A", 1, 2)
+testClassNumeric <- ifelse(moonsTest$V3=="A", 1, 2)
+
+ggplot(xgrid, aes(V1,V2)) +
+  geom_point(col=point_colours[V3], shape=16, size=0.3) +
+  geom_point(data=moonsTrain, aes(V1,V2), col=point_colours[trainClassNumeric],
+             shape=point_shapes[trainClassNumeric], size=point_size) +
+  geom_contour(data=xgrid, aes(x=V1, y=V2, z=V3), breaks=1.5, col="grey30") +
+  ggtitle("train") +
+  theme_bw() +
+  theme(plot.title = element_text(size=25, face="bold"), axis.text=element_text(size=15),
+        axis.title=element_text(size=20,face="bold"))
+
+ggplot(xgrid, aes(V1,V2)) +
+  geom_point(col=point_colours[V3], shape=16, size=0.3) +
+  geom_point(data=moonsTest, aes(V1,V2), col=point_colours[testClassNumeric],
+             shape=point_shapes[testClassNumeric], size=point_size) +
+  geom_contour(data=xgrid, aes(x=V1, y=V2, z=V3), breaks=1.5, col="grey30") +
+  ggtitle("test") +
+  theme_bw() +
+  theme(plot.title = element_text(size=25, face="bold"), axis.text=element_text(size=15),
+        axis.title=element_text(size=20,face="bold"))
+```
+
+<div class="figure" style="text-align: center">
+<img src="06-svm_files/figure-html/simDataBinClassDecisionBoundarySVM-1.png" alt="Decision boundary created by radial kernel SVM." width="50%" /><img src="06-svm_files/figure-html/simDataBinClassDecisionBoundarySVM-2.png" alt="Decision boundary created by radial kernel SVM." width="50%" />
+<p class="caption">(\#fig:simDataBinClassDecisionBoundarySVM)Decision boundary created by radial kernel SVM.</p>
+</div>
+
+
 ## Example - regression
 This example serves to demonstrate the use of SVMs in regression, but perhaps more importantly, it highlights the power and flexibility of the [caret](http://cran.r-project.org/web/packages/caret/index.html) package. Earlier we used _k_-NN for a regression analysis of the **BloodBrain** dataset (see section \@ref(knn-regression)). We will repeat the regression analysis, but this time we will fit a radial kernel SVM. Remarkably, a re-run of this analysis using a completely different type of model, requires changes to only two lines of code.
 
@@ -404,114 +495,7 @@ The pre-processing steps and generation of seeds are identical, therefore if the
 
 ```r
 data(BloodBrain)
-str(bbbDescr)
-```
 
-```
-## 'data.frame':	208 obs. of  134 variables:
-##  $ tpsa                : num  12 49.3 50.5 37.4 37.4 ...
-##  $ nbasic              : int  1 0 1 0 1 1 1 1 1 1 ...
-##  $ negative            : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ vsa_hyd             : num  167.1 92.6 295.2 319.1 299.7 ...
-##  $ a_aro               : int  0 6 15 15 12 11 6 12 12 6 ...
-##  $ weight              : num  156 151 366 383 326 ...
-##  $ peoe_vsa.0          : num  76.9 38.2 58.1 62.2 74.8 ...
-##  $ peoe_vsa.1          : num  43.4 25.5 124.7 124.7 118 ...
-##  $ peoe_vsa.2          : num  0 0 21.7 13.2 33 ...
-##  $ peoe_vsa.3          : num  0 8.62 8.62 21.79 0 ...
-##  $ peoe_vsa.4          : num  0 23.3 17.4 0 0 ...
-##  $ peoe_vsa.5          : num  0 0 0 0 0 0 0 0 0 0 ...
-##  $ peoe_vsa.6          : num  17.24 0 8.62 8.62 8.62 ...
-##  $ peoe_vsa.0.1        : num  18.7 49 83.8 83.8 83.8 ...
-##  $ peoe_vsa.1.1        : num  43.5 0 49 68.8 36.8 ...
-##  $ peoe_vsa.2.1        : num  0 0 0 0 0 ...
-##  $ peoe_vsa.3.1        : num  0 0 0 0 0 0 0 0 0 0 ...
-##  $ peoe_vsa.4.1        : num  0 0 5.68 5.68 5.68 ...
-##  $ peoe_vsa.5.1        : num  0 13.567 2.504 0 0.137 ...
-##  $ peoe_vsa.6.1        : num  0 7.9 2.64 2.64 2.5 ...
-##  $ a_acc               : int  0 2 2 2 2 2 2 2 0 2 ...
-##  $ a_acid              : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ a_base              : int  1 0 1 1 1 1 1 1 1 1 ...
-##  $ vsa_acc             : num  0 13.57 8.19 8.19 8.19 ...
-##  $ vsa_acid            : num  0 0 0 0 0 0 0 0 0 0 ...
-##  $ vsa_base            : num  5.68 0 0 0 0 ...
-##  $ vsa_don             : num  5.68 5.68 5.68 5.68 5.68 ...
-##  $ vsa_other           : num  0 28.1 43.6 28.3 19.6 ...
-##  $ vsa_pol             : num  0 13.6 0 0 0 ...
-##  $ slogp_vsa0          : num  18 25.4 14.1 14.1 14.1 ...
-##  $ slogp_vsa1          : num  0 23.3 34.8 34.8 34.8 ...
-##  $ slogp_vsa2          : num  3.98 23.86 0 0 0 ...
-##  $ slogp_vsa3          : num  0 0 76.2 76.2 76.2 ...
-##  $ slogp_vsa4          : num  4.41 0 3.19 3.19 3.19 ...
-##  $ slogp_vsa5          : num  32.9 0 9.51 0 0 ...
-##  $ slogp_vsa6          : num  0 0 0 0 0 0 0 0 0 0 ...
-##  $ slogp_vsa7          : num  0 70.6 148.1 144 140.7 ...
-##  $ slogp_vsa8          : num  113.2 0 75.5 75.5 75.5 ...
-##  $ slogp_vsa9          : num  33.3 41.3 28.3 55.5 26 ...
-##  $ smr_vsa0            : num  0 23.86 12.63 3.12 3.12 ...
-##  $ smr_vsa1            : num  18 25.4 27.8 27.8 27.8 ...
-##  $ smr_vsa2            : num  4.41 0 0 0 0 ...
-##  $ smr_vsa3            : num  3.98 5.24 8.43 8.43 8.43 ...
-##  $ smr_vsa4            : num  0 20.8 29.6 21.4 20.3 ...
-##  $ smr_vsa5            : num  113.2 70.6 235.1 235.1 234.6 ...
-##  $ smr_vsa6            : num  0 5.26 76.25 76.25 76.25 ...
-##  $ smr_vsa7            : num  66.2 33.3 0 31.3 0 ...
-##  $ tpsa.1              : num  16.6 49.3 51.7 38.6 38.6 ...
-##  $ logp.o.w.           : num  2.948 0.889 4.439 5.254 3.8 ...
-##  $ frac.anion7.        : num  0 0.001 0 0 0 0 0.001 0 0 0 ...
-##  $ frac.cation7.       : num  0.999 0 0.986 0.986 0.986 0.986 0.996 0.946 0.999 0.976 ...
-##  $ andrewbind          : num  3.4 -3.3 12.8 12.8 10.3 10 10.4 15.9 12.9 9.5 ...
-##  $ rotatablebonds      : int  3 2 8 8 8 8 8 7 4 5 ...
-##  $ mlogp               : num  2.5 1.06 4.66 3.82 3.27 ...
-##  $ clogp               : num  2.97 0.494 5.137 5.878 4.367 ...
-##  $ mw                  : num  155 151 365 382 325 ...
-##  $ nocount             : int  1 3 5 4 4 4 4 3 2 4 ...
-##  $ hbdnr               : int  1 2 1 1 1 1 2 1 1 0 ...
-##  $ rule.of.5violations : int  0 0 1 1 0 0 0 0 1 0 ...
-##  $ alert               : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ prx                 : int  0 1 6 2 2 2 1 0 0 4 ...
-##  $ ub                  : num  0 3 5.3 5.3 4.2 3.6 3 4.7 4.2 3 ...
-##  $ pol                 : int  0 2 3 3 2 2 2 3 4 1 ...
-##  $ inthb               : int  0 0 0 0 0 0 1 0 0 0 ...
-##  $ adistm              : num  0 395 1365 703 746 ...
-##  $ adistd              : num  0 10.9 25.7 10 10.6 ...
-##  $ polar_area          : num  21.1 117.4 82.1 65.1 66.2 ...
-##  $ nonpolar_area       : num  379 248 638 668 602 ...
-##  $ psa_npsa            : num  0.0557 0.4743 0.1287 0.0974 0.11 ...
-##  $ tcsa                : num  0.0097 0.0134 0.0111 0.0108 0.0118 0.0111 0.0123 0.0099 0.0106 0.0115 ...
-##  $ tcpa                : num  0.1842 0.0417 0.0972 0.1218 0.1186 ...
-##  $ tcnp                : num  0.0103 0.0198 0.0125 0.0119 0.013 0.0125 0.0162 0.011 0.0109 0.0122 ...
-##  $ ovality             : num  1.1 1.12 1.3 1.3 1.27 ...
-##  $ surface_area        : num  400 365 720 733 668 ...
-##  $ volume              : num  656 555 1224 1257 1133 ...
-##  $ most_negative_charge: num  -0.617 -0.84 -0.801 -0.761 -0.857 ...
-##  $ most_positive_charge: num  0.307 0.497 0.541 0.48 0.455 ...
-##  $ sum_absolute_charge : num  3.89 4.89 7.98 7.93 7.85 ...
-##  $ dipole_moment       : num  1.19 4.21 3.52 3.15 3.27 ...
-##  $ homo                : num  -9.67 -8.96 -8.63 -8.56 -8.67 ...
-##  $ lumo                : num  3.4038 0.1942 0.0589 -0.2651 0.3149 ...
-##  $ hardness            : num  6.54 4.58 4.34 4.15 4.49 ...
-##  $ ppsa1               : num  349 223 518 508 509 ...
-##  $ ppsa2               : num  679 546 2066 2013 1999 ...
-##  $ ppsa3               : num  31 42.3 64 61.7 61.6 ...
-##  $ pnsa1               : num  51.1 141.8 202 225.4 158.8 ...
-##  $ pnsa2               : num  -99.3 -346.9 -805.9 -894 -623.3 ...
-##  $ pnsa3               : num  -10.5 -44 -43.8 -42 -39.8 ...
-##  $ fpsa1               : num  0.872 0.611 0.719 0.693 0.762 ...
-##  $ fpsa2               : num  1.7 1.5 2.87 2.75 2.99 ...
-##  $ fpsa3               : num  0.0774 0.1159 0.0888 0.0842 0.0922 ...
-##  $ fnsa1               : num  0.128 0.389 0.281 0.307 0.238 ...
-##  $ fnsa2               : num  -0.248 -0.951 -1.12 -1.22 -0.933 ...
-##  $ fnsa3               : num  -0.0262 -0.1207 -0.0608 -0.0573 -0.0596 ...
-##  $ wpsa1               : num  139.7 81.4 372.7 372.1 340.1 ...
-##  $ wpsa2               : num  272 199 1487 1476 1335 ...
-##  $ wpsa3               : num  12.4 15.4 46 45.2 41.1 ...
-##  $ wnsa1               : num  20.4 51.8 145.4 165.3 106 ...
-##  $ wnsa2               : num  -39.8 -126.6 -580.1 -655.3 -416.3 ...
-##   [list output truncated]
-```
-
-```r
 set.seed(42)
 trainIndex <- createDataPartition(y=logBBB, times=1, p=0.8, list=F)
 descrTrain <- bbbDescr[trainIndex,]
@@ -533,7 +517,7 @@ seeds[[26]] <- sample.int(1000,1)
 In the arguments to the ```train``` function we change ```method``` from ```knn``` to ```svmRadial```. The ```tunegrid``` parameter is replaced with ```tuneLength = 9```. Now we are ready to fit an SVM model.
 
 ```r
-knnTune <- train(descrTrain,
+svmTune <- train(descrTrain,
                  concRatioTrain,
                  method="svmRadial",
                  tuneLength = 9,
@@ -544,7 +528,7 @@ knnTune <- train(descrTrain,
                                           preProcOptions=list(cutoff=0.75))
 )
 
-knnTune
+svmTune
 ```
 
 ```
@@ -576,7 +560,7 @@ knnTune
 
 
 ```r
-plot(knnTune)
+plot(svmTune)
 ```
 
 <div class="figure" style="text-align: center">
@@ -588,7 +572,7 @@ Use model to predict outcomes, after first pre-processing the test set.
 
 ```r
 descrTest <- predict(transformations, descrTest)
-test_pred <- predict(knnTune, descrTest)
+test_pred <- predict(svmTune, descrTest)
 ```
 
 Prediction performance can be visualized in a scatterplot.
@@ -614,6 +598,10 @@ cor(concRatioTest, test_pred)
 ```
 ## [1] 0.8196606
 ```
+
+
+## Further reading
+[An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/)
 
 ## Exercises
 
