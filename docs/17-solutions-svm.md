@@ -135,10 +135,6 @@ svmTune <- train(x = segDataTrain,
 ```
 
 ```
-## Loading required package: kernlab
-```
-
-```
 ## 
 ## Attaching package: 'kernlab'
 ```
@@ -147,6 +143,10 @@ svmTune <- train(x = segDataTrain,
 ## The following object is masked from 'package:ggplot2':
 ## 
 ##     alpha
+```
+
+```
+## maximum number of iterations reached 1.031922e-05 7.460141e-06
 ```
 
 ```r
@@ -165,20 +165,20 @@ svmTune
 ## Summary of sample sizes: 808, 808, 808, 808, 808, 808, ... 
 ## Resampling results across tuning parameters:
 ## 
-##   C      ROC        Sens       Spec     
-##    0.25  0.8818932  0.8606154  0.7055556
-##    0.50  0.8871453  0.8673846  0.7044444
-##    1.00  0.8921838  0.8698462  0.7155556
-##    2.00  0.8925641  0.8689231  0.7255556
-##    4.00  0.8857308  0.8658462  0.6950000
-##    8.00  0.8747778  0.8615385  0.6755556
-##   16.00  0.8613462  0.8612308  0.6500000
-##   32.00  0.8518504  0.8572308  0.6338889
-##   64.00  0.8511709  0.8535385  0.6405556
+##   C      ROC        Sens       Spec       
+##    0.25  0.6966090  0.9984615  0.000000000
+##    0.50  0.7503013  0.9984615  0.004444444
+##    1.00  0.7026175  0.9981538  0.004444444
+##    2.00  0.6329594  0.9978462  0.003333333
+##    4.00  0.7502799  0.9978462  0.005000000
+##    8.00  0.7254850  0.9981538  0.004444444
+##   16.00  0.7292115  0.9975385  0.003888889
+##   32.00  0.7502799  0.9981538  0.003888889
+##   64.00  0.7230833  0.9981538  0.005000000
 ## 
-## Tuning parameter 'sigma' was held constant at a value of 0.02492821
+## Tuning parameter 'sigma' was held constant at a value of 0.02416426
 ## ROC was used to select the optimal model using  the largest value.
-## The final values used for the model were sigma = 0.02492821 and C = 2.
+## The final values used for the model were sigma = 0.02416426 and C = 0.5.
 ```
 
 
@@ -190,15 +190,15 @@ svmTune$finalModel
 ## Support Vector Machine object of class "ksvm" 
 ## 
 ## SV type: C-svc  (classification) 
-##  parameter : cost C = 2 
+##  parameter : cost C = 0.5 
 ## 
 ## Gaussian Radial Basis kernel function. 
-##  Hyperparameter : sigma =  0.0249282111402021 
+##  Hyperparameter : sigma =  1 
 ## 
-## Number of Support Vectors : 498 
+## Number of Support Vectors : 1010 
 ## 
-## Objective Function Value : -667.6455 
-## Training error : 0.112871 
+## Objective Function Value : -290.0686 
+## Training error : 0.356436 
 ## Probability model included.
 ```
 
@@ -226,25 +226,25 @@ confusionMatrix(svmPred, segClassTest)
 ## 
 ##           Reference
 ## Prediction  PS  WS
-##         PS 565 112
-##         WS  85 247
+##         PS 650 357
+##         WS   0   2
 ##                                           
-##                Accuracy : 0.8048          
-##                  95% CI : (0.7789, 0.8288)
+##                Accuracy : 0.6462          
+##                  95% CI : (0.6158, 0.6757)
 ##     No Information Rate : 0.6442          
-##     P-Value [Acc > NIR] : < 2e-16         
+##     P-Value [Acc > NIR] : 0.462           
 ##                                           
-##                   Kappa : 0.5668          
-##  Mcnemar's Test P-Value : 0.06397         
+##                   Kappa : 0.0072          
+##  Mcnemar's Test P-Value : <2e-16          
 ##                                           
-##             Sensitivity : 0.8692          
-##             Specificity : 0.6880          
-##          Pos Pred Value : 0.8346          
-##          Neg Pred Value : 0.7440          
-##              Prevalence : 0.6442          
-##          Detection Rate : 0.5600          
-##    Detection Prevalence : 0.6710          
-##       Balanced Accuracy : 0.7786          
+##             Sensitivity : 1.000000        
+##             Specificity : 0.005571        
+##          Pos Pred Value : 0.645482        
+##          Neg Pred Value : 1.000000        
+##              Prevalence : 0.644202        
+##          Detection Rate : 0.644202        
+##    Detection Prevalence : 0.998018        
+##       Balanced Accuracy : 0.502786        
 ##                                           
 ##        'Positive' Class : PS              
 ## 
@@ -258,13 +258,13 @@ head(svmProbs)
 ```
 
 ```
-##          PS         WS
-## 1 0.3616549 0.63834514
-## 2 0.9006741 0.09932587
-## 3 0.7537149 0.24628514
-## 4 0.7098942 0.29010578
-## 5 0.9364351 0.06356489
-## 6 0.7108889 0.28911114
+##          PS        WS
+## 1 0.6435817 0.3564183
+## 2 0.6436550 0.3563450
+## 3 0.6433087 0.3566913
+## 4 0.6436212 0.3563788
+## 5 0.6436427 0.3563573
+## 6 0.6436126 0.3563874
 ```
 
 Build a ROC curve
@@ -275,10 +275,10 @@ auc(svmROC)
 ```
 
 ```
-## Area under the curve: 0.8841
+## Area under the curve: 0.743
 ```
 
-Plot ROC curve, including the threshold with the highest sum sensitivity + specificity.
+Plot ROC curve.
 
 ```r
 plot(svmROC, type = "S", 
@@ -300,5 +300,5 @@ auc(svmROC)
 ```
 
 ```
-## Area under the curve: 0.8841
+## Area under the curve: 0.743
 ```

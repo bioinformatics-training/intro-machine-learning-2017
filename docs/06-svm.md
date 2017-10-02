@@ -254,10 +254,6 @@ svmTune <- train(x = moonsTrain[,c(1:2)],
 ```
 
 ```
-## Loading required package: kernlab
-```
-
-```
 ## 
 ## Attaching package: 'kernlab'
 ```
@@ -285,19 +281,19 @@ svmTune
 ## Resampling results across tuning parameters:
 ## 
 ##   C      ROC        Sens       Spec     
-##    0.25  0.9531122  0.8900000  0.8957143
-##    0.50  0.9573980  0.8857143  0.9071429
-##    1.00  0.9588265  0.8828571  0.9042857
-##    2.00  0.9570918  0.8800000  0.8914286
-##    4.00  0.9583673  0.8714286  0.8942857
-##    8.00  0.9602041  0.8657143  0.8857143
-##   16.00  0.9582143  0.8671429  0.8857143
-##   32.00  0.9546939  0.8571429  0.8971429
-##   64.00  0.9488265  0.8500000  0.8871429
+##    0.25  0.9483673  0.8885714  0.8957143
+##    0.50  0.9536224  0.8900000  0.9042857
+##    1.00  0.9574490  0.8871429  0.9071429
+##    2.00  0.9581122  0.8857143  0.9000000
+##    4.00  0.9573980  0.8814286  0.8971429
+##    8.00  0.9577041  0.8800000  0.8942857
+##   16.00  0.9566837  0.8728571  0.8914286
+##   32.00  0.9536224  0.8685714  0.8800000
+##   64.00  0.9507143  0.8585714  0.8828571
 ## 
-## Tuning parameter 'sigma' was held constant at a value of 1.100359
+## Tuning parameter 'sigma' was held constant at a value of 1.015873
 ## ROC was used to select the optimal model using  the largest value.
-## The final values used for the model were sigma = 1.100359 and C = 8.
+## The final values used for the model were sigma = 1.015873 and C = 2.
 ```
 
 
@@ -309,15 +305,15 @@ svmTune$finalModel
 ## Support Vector Machine object of class "ksvm" 
 ## 
 ## SV type: C-svc  (classification) 
-##  parameter : cost C = 8 
+##  parameter : cost C = 2 
 ## 
 ## Gaussian Radial Basis kernel function. 
-##  Hyperparameter : sigma =  1.10035896819859 
+##  Hyperparameter : sigma =  1 
 ## 
-## Number of Support Vectors : 83 
+## Number of Support Vectors : 92 
 ## 
-## Objective Function Value : -478.4363 
-## Training error : 0.110714 
+## Objective Function Value : -136.1878 
+## Training error : 0.103571 
 ## Probability model included.
 ```
 
@@ -347,8 +343,8 @@ confusionMatrix(svmPred, moonsTest[,3])
 ## 
 ##           Reference
 ## Prediction  A  B
-##          A 55  5
-##          B  5 55
+##          A 56  6
+##          B  4 54
 ##                                           
 ##                Accuracy : 0.9167          
 ##                  95% CI : (0.8521, 0.9593)
@@ -356,15 +352,15 @@ confusionMatrix(svmPred, moonsTest[,3])
 ##     P-Value [Acc > NIR] : <2e-16          
 ##                                           
 ##                   Kappa : 0.8333          
-##  Mcnemar's Test P-Value : 1               
+##  Mcnemar's Test P-Value : 0.7518          
 ##                                           
-##             Sensitivity : 0.9167          
-##             Specificity : 0.9167          
-##          Pos Pred Value : 0.9167          
-##          Neg Pred Value : 0.9167          
+##             Sensitivity : 0.9333          
+##             Specificity : 0.9000          
+##          Pos Pred Value : 0.9032          
+##          Neg Pred Value : 0.9310          
 ##              Prevalence : 0.5000          
-##          Detection Rate : 0.4583          
-##    Detection Prevalence : 0.5000          
+##          Detection Rate : 0.4667          
+##    Detection Prevalence : 0.5167          
 ##       Balanced Accuracy : 0.9167          
 ##                                           
 ##        'Positive' Class : A               
@@ -379,13 +375,13 @@ head(svmProbs)
 ```
 
 ```
-##            A           B
-## 1 0.06833065 0.931669353
-## 2 0.07460720 0.925392800
-## 3 0.99189246 0.008107535
-## 4 0.98795124 0.012048763
-## 5 0.05141950 0.948580502
-## 6 0.92523623 0.074763767
+##            A          B
+## 1 0.04599876 0.95400124
+## 2 0.07465059 0.92534941
+## 3 0.98494249 0.01505751
+## 4 0.98271571 0.01728429
+## 5 0.04227323 0.95772677
+## 6 0.94421478 0.05578522
 ```
 
 Build a ROC curve.
@@ -396,7 +392,7 @@ auc(svmROC)
 ```
 
 ```
-## Area under the curve: 0.9575
+## Area under the curve: 0.9583
 ```
 
 Plot ROC curve, including the threshold with the highest sum sensitivity + specificity.
@@ -428,7 +424,7 @@ auc(svmROC)
 ```
 
 ```
-## Area under the curve: 0.9575
+## Area under the curve: 0.9583
 ```
 
 ### Plot decision boundary
@@ -517,7 +513,7 @@ seeds[[26]] <- sample.int(1000,1)
 In the arguments to the ```train``` function we change ```method``` from ```knn``` to ```svmRadial```. The ```tunegrid``` parameter is replaced with ```tuneLength = 9```. Now we are ready to fit an SVM model.
 
 ```r
-svmTune <- train(descrTrain,
+svmTune2 <- train(descrTrain,
                  concRatioTrain,
                  method="svmRadial",
                  tuneLength = 9,
@@ -528,7 +524,7 @@ svmTune <- train(descrTrain,
                                           preProcOptions=list(cutoff=0.75))
 )
 
-svmTune
+svmTune2
 ```
 
 ```
@@ -539,28 +535,28 @@ svmTune
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (5 fold, repeated 5 times) 
-## Summary of sample sizes: 134, 133, 134, 135, 136, 135, ... 
+## Summary of sample sizes: 134, 136, 134, 133, 135, 134, ... 
 ## Resampling results across tuning parameters:
 ## 
-##   C      RMSE       Rsquared 
-##    0.25  0.5942833  0.4693810
-##    0.50  0.5681785  0.4897385
-##    1.00  0.5498582  0.5066213
-##    2.00  0.5425480  0.5113917
-##    4.00  0.5412196  0.5182026
-##    8.00  0.5377407  0.5282356
-##   16.00  0.5421274  0.5233649
-##   32.00  0.5427669  0.5226361
-##   64.00  0.5427669  0.5226361
+##   C      RMSE       Rsquared    MAE      
+##    0.25  0.7627430  0.02913128  0.6016963
+##    0.50  0.7611882  0.03064440  0.5996817
+##    1.00  0.7575811  0.03222855  0.5958404
+##    2.00  0.7562799  0.03221107  0.5958960
+##    4.00  0.7562374  0.03204845  0.5964901
+##    8.00  0.7562374  0.03204845  0.5964901
+##   16.00  0.7562374  0.03204845  0.5964901
+##   32.00  0.7562374  0.03204845  0.5964901
+##   64.00  0.7562374  0.03204845  0.5964901
 ## 
-## Tuning parameter 'sigma' was held constant at a value of 0.01036271
+## Tuning parameter 'sigma' was held constant at a value of 0.0106761
 ## RMSE was used to select the optimal model using  the smallest value.
-## The final values used for the model were sigma = 0.01036271 and C = 8.
+## The final values used for the model were sigma = 0.0106761 and C = 4.
 ```
 
 
 ```r
-plot(svmTune)
+plot(svmTune2)
 ```
 
 <div class="figure" style="text-align: center">
@@ -572,7 +568,7 @@ Use model to predict outcomes, after first pre-processing the test set.
 
 ```r
 descrTest <- predict(transformations, descrTest)
-test_pred <- predict(svmTune, descrTest)
+test_pred <- predict(svmTune2, descrTest)
 ```
 
 Prediction performance can be visualized in a scatterplot.
@@ -596,7 +592,7 @@ cor(concRatioTest, test_pred)
 ```
 
 ```
-## [1] 0.8196606
+## [1] 0.2477251
 ```
 
 

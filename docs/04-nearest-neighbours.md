@@ -178,6 +178,7 @@ confusionMatrix(knn1train, ytrain)
 ##        'Positive' Class : 0          
 ## 
 ```
+The classifier performs perfectly on the training set, because with _k_=1, each observation is being predicted by itself!
 <!--
 table(ytrain,knn1train)
 cat("KNN prediction error for training set: ", 1-mean(as.numeric(as.vector(knn1train))==ytrain), "\n")
@@ -218,6 +219,7 @@ confusionMatrix(knn1test, ytest)
 ##        'Positive' Class : 0               
 ## 
 ```
+Performance on the test set is not so good. This is an example of a classifier being over-fitted to the training set. 
 <!--
 table(ytest, knn1test)
 cat("KNN prediction error for test set: ", 1-mean(as.numeric(as.vector(knn1test))==ytest), "\n")
@@ -338,16 +340,17 @@ ggplot(misclass_errors, aes(x=k, y=error, group=set)) +
 <img src="04-nearest-neighbours_files/figure-html/misclassErrorsFunK-1.png" alt="Misclassification errors as a function of neighbourhood size." width="100%" />
 <p class="caption">(\#fig:misclassErrorsFunK)Misclassification errors as a function of neighbourhood size.</p>
 </div>
+We see excessive variance (overfitting) at low values of _k_, and bias (underfitting) at high values of _k_.
 
 ### Choosing _k_
 
-We will use the caret library.
+We will use the caret library. Caret provides a unified interface to a huge range of supervised learning packages in R. The design of its tools encourages best practice, especially in relation to cross-validation and testing. Additionally, it has automatic parallel processing built in, which is a significant advantage when dealing with large data sets.
 
 ```r
 library(caret)
 ```
 
-[caret](http://cran.r-project.org/web/packages/caret/index.html) has automatic parallel processing built in. To take advantage of this feature we simply need to load the [doMC](http://cran.r-project.org/web/packages/doMC/index.html) package and register workers: 
+To take advantage of Caret's parallel processing functionality, we simply need to load the [doMC](http://cran.r-project.org/web/packages/doMC/index.html) package and register workers: 
 
 ```r
 library(doMC)
@@ -406,7 +409,7 @@ There are two options for choosing the values of _k_ to be evaluated by the **tr
 1. Pass a data.frame of values of _k_ to the **tuneGrid** argument of **train**.
 2. Specify the number of different levels of _k_ using the **tuneLength** function and allow **train** to pick the actual values.
 
-We will use the first option, so that we can try the values of _k_ we examined earlier. We need to convert the vector of values of k we created earlier and convert it into a data.frame.
+We will use the first option, so that we can try the values of _k_ we examined earlier. The vector of values of _k_ we created earlier should be converted into a data.frame.
 
 
 ```r
@@ -438,24 +441,24 @@ knnFit
 ## Resampling results across tuning parameters:
 ## 
 ##   k    Accuracy  Kappa 
-##     1  0.63375   0.2675
-##     2  0.64125   0.2825
-##     3  0.67925   0.3585
-##     4  0.67200   0.3440
-##     5  0.69675   0.3935
+##     1  0.63300   0.2660
+##     2  0.63875   0.2775
+##     3  0.67375   0.3475
+##     4  0.67900   0.3580
+##     5  0.69575   0.3915
 ##     7  0.71100   0.4220
-##     9  0.71650   0.4330
-##    12  0.71450   0.4290
-##    17  0.72650   0.4530
-##    23  0.73175   0.4635
-##    32  0.73775   0.4755
-##    44  0.74075   0.4815
-##    60  0.74675   0.4935
-##    83  0.75475   0.5095
-##   113  0.73600   0.4720
-##   155  0.72500   0.4500
-##   213  0.70950   0.4190
-##   292  0.69300   0.3860
+##     9  0.71775   0.4355
+##    12  0.71500   0.4300
+##    17  0.72675   0.4535
+##    23  0.73800   0.4760
+##    32  0.73725   0.4745
+##    44  0.73875   0.4775
+##    60  0.74850   0.4970
+##    83  0.75500   0.5100
+##   113  0.73500   0.4700
+##   155  0.72575   0.4515
+##   213  0.70750   0.4150
+##   292  0.68825   0.3765
 ##   400  0.51300   0.0260
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
@@ -583,7 +586,7 @@ ggplot(xgrid, aes(V1,V2)) +
 
 ## Classification: cell segmentation {#knn-cell-segmentation}
 
-The simulated data in our previous example were randomly sampled from a normal (Gaussian) distribution and so did not require pre-processing. In practice, data collected in real studies often require transformation and/or filtering. Furthermore, the simulated data contained only two predictors; in practice, you are likely to have many variables. For example, in a gene expression study you might have thousands of variables. When using _k_-nn for classification or regression, removing variables that are not associated with the outcome of interest will improve the predictive power of the model. The process of choosing the best predictors from the available variables is known as *feature selection*. For honest estimates of model performance, pre-processing and feature selection should be performed within the loops of the cross validation process.
+The simulated data in our previous example were randomly sampled from a normal (Gaussian) distribution and so did not require pre-processing. In practice, data collected in real studies often require transformation and/or filtering. Furthermore, the simulated data contained only two predictors; in practice, you are likely to have many variables. For example, in a gene expression study you might have thousands of variables. When using _k_-nn for classification or regression, removing variables that are not associated with the outcome of interest may improve the predictive power of the model. The process of choosing the best predictors from the available variables is known as *feature selection*. For honest estimates of model performance, pre-processing and feature selection should be performed within the loops of the cross validation process.
 
 ### Cell segmentation data set 
 Pre-processing and feature selection will be demonstrated using the cell segmentation data of [@Hill2007].
@@ -927,28 +930,28 @@ str(segDataTrain)
 ```
 ## 'data.frame':	1010 obs. of  27 variables:
 ##  $ AngleCh1               : num  1.045 0.873 -0.376 -0.994 1.586 ...
-##  $ ConvexHullPerimRatioCh1: num  0.12 -1.34 -0.68 1.81 1.56 ...
+##  $ ConvexHullPerimRatioCh1: num  0.31 -1.221 -0.363 1.22 1.113 ...
 ##  $ EntropyIntenCh1        : num  -2.443 -0.671 -1.688 0.554 0.425 ...
 ##  $ EqEllipseOblateVolCh1  : num  -0.414 1.693 0.711 -1.817 -1.667 ...
 ##  $ FiberAlign2Ch3         : num  -1.8124 0.0933 -0.9679 -0.6188 -0.8721 ...
 ##  $ FiberAlign2Ch4         : num  -1.729 -0.331 1.255 -0.291 0.463 ...
 ##  $ FiberWidthCh1          : num  -0.776 0.878 -0.779 0.712 0.758 ...
-##  $ IntenCoocASMCh4        : num  -0.181 -1.036 -1.079 -1.131 -1.155 ...
+##  $ IntenCoocASMCh4        : num  -0.368 -0.64 -0.652 -0.665 -0.671 ...
 ##  $ IntenCoocContrastCh3   : num  2.4777 0.0604 -0.0816 0.0634 0.6386 ...
 ##  $ IntenCoocContrastCh4   : num  1.101 0.127 1.046 0.602 1.445 ...
 ##  $ IntenCoocMaxCh3        : num  -0.815 -0.232 -0.168 -1.366 -1.37 ...
 ##  $ KurtIntenCh1           : num  -0.97 -0.26 0.562 -0.187 0.296 ...
 ##  $ KurtIntenCh3           : num  -1.506 -1.133 -0.672 -1.908 -1.491 ...
-##  $ KurtIntenCh4           : num  0.68399 -0.00329 -0.09737 -0.1679 -0.79044 ...
+##  $ KurtIntenCh4           : num  0.68398 -0.00329 -0.09737 -0.1679 -0.79044 ...
 ##  $ NeighborAvgDistCh1     : num  2.5376 -1.4791 -0.5357 0.1062 0.0663 ...
 ##  $ NeighborMinDistCh1     : num  3.286 0.289 0.557 -1.679 -1.679 ...
-##  $ ShapeBFRCh1            : num  0.648 -0.609 -0.141 0.89 1.593 ...
+##  $ ShapeBFRCh1            : num  0.6733 -0.5448 -0.0649 0.8849 1.4669 ...
 ##  $ ShapeLWRCh1            : num  1.23 -0.351 1.525 -1.832 -1.717 ...
 ##  $ SkewIntenCh1           : num  -0.213 -0.297 0.384 -2.41 -2.678 ...
 ##  $ SpotFiberCountCh3      : num  -0.366 1.275 1.275 -0.366 -1.573 ...
 ##  $ TotalIntenCh2          : num  -1.701 1.682 -0.233 1.107 1.019 ...
 ##  $ VarIntenCh1            : num  -2.118 -1.346 -1.917 1.062 0.856 ...
-##  $ VarIntenCh3            : num  -1.9155 -0.1836 -0.8001 0.0478 -0.3659 ...
+##  $ VarIntenCh3            : num  -1.9155 -0.1836 -0.8001 0.0478 -0.3658 ...
 ##  $ VarIntenCh4            : num  -2.304 0.332 -1.092 0.843 0.387 ...
 ##  $ WidthCh1               : num  -1.626 1.845 -0.718 -0.188 -0.333 ...
 ##  $ XCentroid              : num  -1.647 -0.241 1.484 -0.412 -0.492 ...
@@ -978,56 +981,56 @@ knnFit
 ## Resampling results across tuning parameters:
 ## 
 ##   k    Accuracy   Kappa    
-##     5  0.7906931  0.5483969
-##    15  0.8083168  0.5888506
-##    25  0.8100990  0.5924026
-##    35  0.8079208  0.5865236
-##    45  0.8063366  0.5814528
-##    55  0.8015842  0.5719387
-##    65  0.8007921  0.5701690
-##    75  0.7990099  0.5651716
-##    85  0.8011881  0.5697020
-##    95  0.8019802  0.5701985
-##   105  0.8019802  0.5704087
-##   115  0.8015842  0.5687150
-##   125  0.8015842  0.5684810
-##   135  0.7998020  0.5637078
-##   145  0.8001980  0.5636599
-##   155  0.7988119  0.5595799
-##   165  0.7972277  0.5560380
-##   175  0.7970297  0.5555436
-##   185  0.7978218  0.5567664
-##   195  0.7974257  0.5554857
-##   205  0.7974257  0.5548076
-##   215  0.7966337  0.5520418
-##   225  0.7958416  0.5492238
-##   235  0.7952475  0.5476906
-##   245  0.7942574  0.5444892
-##   255  0.7956436  0.5471174
-##   265  0.7990099  0.5530818
-##   275  0.7978218  0.5491339
-##   285  0.7966337  0.5449844
-##   295  0.7966337  0.5441319
-##   305  0.7950495  0.5399876
-##   315  0.7940594  0.5361108
-##   325  0.7926733  0.5313431
-##   335  0.7891089  0.5212114
-##   345  0.7855446  0.5104797
-##   355  0.7845545  0.5062078
-##   365  0.7835644  0.5018507
-##   375  0.7800000  0.4912488
-##   385  0.7766337  0.4812860
-##   395  0.7693069  0.4597910
-##   405  0.7615842  0.4346654
-##   415  0.7538614  0.4098402
-##   425  0.7497030  0.3933898
-##   435  0.7415842  0.3657612
-##   445  0.7330693  0.3385091
-##   455  0.7239604  0.3061210
-##   465  0.7182178  0.2829231
-##   475  0.7156436  0.2691460
-##   485  0.7057426  0.2347579
-##   495  0.6966337  0.2017917
+##     5  0.7883168  0.5449241
+##    15  0.7992079  0.5702967
+##    25  0.8114851  0.5960169
+##    35  0.8033663  0.5780284
+##    45  0.8065347  0.5844876
+##    55  0.8047525  0.5809689
+##    65  0.8097030  0.5903493
+##    75  0.8089109  0.5884100
+##    85  0.8067327  0.5829885
+##    95  0.8059406  0.5798239
+##   105  0.8021782  0.5723636
+##   115  0.8047525  0.5770621
+##   125  0.8011881  0.5681088
+##   135  0.8011881  0.5675244
+##   145  0.8013861  0.5675697
+##   155  0.8031683  0.5703946
+##   165  0.8013861  0.5660457
+##   175  0.8011881  0.5654292
+##   185  0.7996040  0.5610611
+##   195  0.7978218  0.5561759
+##   205  0.7982178  0.5568515
+##   215  0.7972277  0.5539169
+##   225  0.7976238  0.5546920
+##   235  0.7968317  0.5520418
+##   245  0.7968317  0.5517094
+##   255  0.7958416  0.5487693
+##   265  0.7956436  0.5475332
+##   275  0.7958416  0.5467831
+##   285  0.7994059  0.5535346
+##   295  0.7978218  0.5492166
+##   305  0.7984158  0.5488107
+##   315  0.7958416  0.5412723
+##   325  0.7968317  0.5424166
+##   335  0.7908911  0.5264160
+##   345  0.7902970  0.5236154
+##   355  0.7873267  0.5143268
+##   365  0.7861386  0.5101993
+##   375  0.7831683  0.5016861
+##   385  0.7796040  0.4900167
+##   395  0.7778218  0.4836628
+##   405  0.7706931  0.4601307
+##   415  0.7596040  0.4287823
+##   425  0.7489109  0.3946052
+##   435  0.7384158  0.3621238
+##   445  0.7326733  0.3390919
+##   455  0.7251485  0.3140993
+##   465  0.7213861  0.2974286
+##   475  0.7154455  0.2720747
+##   485  0.7091089  0.2460255
+##   495  0.7017822  0.2169777
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final value used for the model was k = 25.
@@ -1105,8 +1108,8 @@ knn_sbf
 ## 
 ## Resampling performance:
 ## 
-##     ROC   Sens   Spec   ROCSD  SensSD  SpecSD
-##  0.8862 0.8329 0.7744 0.02101 0.02967 0.06419
+##     ROC   Sens   Spec  ROCSD  SensSD  SpecSD
+##  0.8856 0.8289 0.7689 0.0222 0.02889 0.06873
 ## 
 ## Using the training set, 16 variables were selected:
 ##    ConvexHullPerimRatioCh1, EntropyIntenCh1, FiberWidthCh1, IntenCoocASMCh4, IntenCoocContrastCh3...
@@ -1141,8 +1144,8 @@ knn_sbf$results
 ```
 
 ```
-##         ROC      Sens      Spec      ROCSD     SensSD    SpecSD
-## 1 0.8861709 0.8329231 0.7744444 0.02100535 0.02966945 0.0641851
+##         ROC      Sens      Spec     ROCSD     SensSD     SpecSD
+## 1 0.8856175 0.8289231 0.7688889 0.0222016 0.02889142 0.06873246
 ```
 
 To retrieve the optimum value of k found during training run:
@@ -1152,7 +1155,7 @@ knn_sbf$fit$finalModel$k
 ```
 
 ```
-## [1] 15
+## [1] 25
 ```
 
 Let's predict our test set using our final model.
@@ -1168,25 +1171,25 @@ confusionMatrix(test_pred$pred, segClassTest)
 ## 
 ##           Reference
 ## Prediction  PS  WS
-##         PS 536  99
-##         WS 114 260
+##         PS 543  98
+##         WS 107 261
 ##                                           
-##                Accuracy : 0.7889          
-##                  95% CI : (0.7624, 0.8137)
+##                Accuracy : 0.7968          
+##                  95% CI : (0.7707, 0.8213)
 ##     No Information Rate : 0.6442          
 ##     P-Value [Acc > NIR] : <2e-16          
 ##                                           
-##                   Kappa : 0.5438          
-##  Mcnemar's Test P-Value : 0.3374          
+##                   Kappa : 0.5593          
+##  Mcnemar's Test P-Value : 0.5763          
 ##                                           
-##             Sensitivity : 0.8246          
-##             Specificity : 0.7242          
-##          Pos Pred Value : 0.8441          
-##          Neg Pred Value : 0.6952          
+##             Sensitivity : 0.8354          
+##             Specificity : 0.7270          
+##          Pos Pred Value : 0.8471          
+##          Neg Pred Value : 0.7092          
 ##              Prevalence : 0.6442          
-##          Detection Rate : 0.5312          
-##    Detection Prevalence : 0.6293          
-##       Balanced Accuracy : 0.7744          
+##          Detection Rate : 0.5382          
+##    Detection Prevalence : 0.6353          
+##       Balanced Accuracy : 0.7812          
 ##                                           
 ##        'Positive' Class : PS              
 ## 
@@ -1196,7 +1199,7 @@ confusionMatrix(test_pred$pred, segClassTest)
 
 
 
-## Regression
+## Regression {#knn-regression}
 
 _k_-nn can also be applied to the problem of regression as we will see in the following example. The **BloodBrain** dataset in the [caret](http://cran.r-project.org/web/packages/caret/index.html) package contains data on 208 chemical compounds, organized in two objects:
 
@@ -1428,20 +1431,20 @@ knnTune
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (5 fold, repeated 5 times) 
-## Summary of sample sizes: 134, 133, 134, 135, 136, 135, ... 
+## Summary of sample sizes: 134, 136, 134, 133, 135, 134, ... 
 ## Resampling results across tuning parameters:
 ## 
-##   k   RMSE       Rsquared 
-##    1  0.6558057  0.3842540
-##    2  0.6115146  0.4078611
-##    3  0.5973631  0.4175457
-##    4  0.5900643  0.4209210
-##    5  0.5965506  0.4048469
-##    6  0.6002566  0.3947480
-##    7  0.6069634  0.3847001
-##    8  0.6113786  0.3763523
-##    9  0.6143439  0.3720127
-##   10  0.6161641  0.3718038
+##   k   RMSE       Rsquared   MAE      
+##    1  0.6576546  0.3744545  0.4772796
+##    2  0.6143173  0.3993157  0.4641971
+##    3  0.5993514  0.4058549  0.4543601
+##    4  0.5915781  0.4169025  0.4506419
+##    5  0.5994234  0.3976327  0.4583774
+##    6  0.6073304  0.3839089  0.4605111
+##    7  0.6078634  0.3855648  0.4578382
+##    8  0.6188175  0.3640313  0.4669264
+##    9  0.6208972  0.3611479  0.4703007
+##   10  0.6196800  0.3645381  0.4681070
 ## 
 ## RMSE was used to select the optimal model using  the smallest value.
 ## The final value used for the model was k = 4.

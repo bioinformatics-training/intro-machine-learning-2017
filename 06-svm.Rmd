@@ -298,7 +298,7 @@ seeds[[26]] <- sample.int(1000,1)
 
 In the arguments to the ```train``` function we change ```method``` from ```knn``` to ```svmRadial```. The ```tunegrid``` parameter is replaced with ```tuneLength = 9```. Now we are ready to fit an SVM model.
 ```{r echo=T}
-svmTune <- train(descrTrain,
+svmTune2 <- train(descrTrain,
                  concRatioTrain,
                  method="svmRadial",
                  tuneLength = 9,
@@ -309,17 +309,17 @@ svmTune <- train(descrTrain,
                                           preProcOptions=list(cutoff=0.75))
 )
 
-svmTune
+svmTune2
 ```
 
 ```{r rmseCorSVM, fig.cap='Root Mean Squared Error as a function of cost.', out.width='100%', fig.asp=0.6, fig.align='center', echo=T}
-plot(svmTune)
+plot(svmTune2)
 ```
 
 Use model to predict outcomes, after first pre-processing the test set.
 ```{r echo=T}
 descrTest <- predict(transformations, descrTest)
-test_pred <- predict(svmTune, descrTest)
+test_pred <- predict(svmTune2, descrTest)
 ```
 
 Prediction performance can be visualized in a scatterplot.

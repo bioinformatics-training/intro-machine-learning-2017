@@ -10,7 +10,7 @@ if variables are in same units - don't standardize, otherwise standardize
 
 ## Introduction
 
-Clustering attempts to find groups (clusters) of similar objects. The members of a cluster should be more similar to each other, than objects in other clusters. Clustering algorithms aim to minimize intra-cluster variation and maximize inter-cluster variation.
+Clustering attempts to find groups (clusters) of similar objects. The members of a cluster should be more similar to each other, than to objects in other clusters. Clustering algorithms aim to minimize intra-cluster variation and maximize inter-cluster variation.
 
 Methods of clustering can be broadly divided into two types:
 
@@ -649,6 +649,12 @@ res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 ```
 
 ```
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
+## Warning: did not converge in 10 iterations
+
 ## Warning: did not converge in 10 iterations
 ```
 Failure to converge, so increase number of iterations.
