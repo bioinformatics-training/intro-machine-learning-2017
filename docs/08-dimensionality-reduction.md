@@ -1,10 +1,10 @@
 # Dimensionality reduction {#dimensionality-reduction}
 
-In machine learning, dimensionality reduction broadly refers to any (statistical) modelling that reduce the number of variables in a dataset to a few highly informative ones (Figure \@ref(fig:dimreduc)). This is necessitated by the fact that large datasets, with many variables, are inherently difficult for humans to develop a clear intuition for. Dimensionality reduction is therefore often an integral step in the analysis of large, complex datasets, allowing exploratory analyses and more intuitive visualisation of the datasets that may aid interpretability. 
+In machine learning, dimensionality reduction broadly refers to any (statistical) modelling approach that reduces the number of variables in a dataset down to a few highly informative or representative ones (Figure \@ref(fig:dimreduc)). This is necessitated by the fact that large datasets, with many variables, are inherently difficult for humans to develop a clear intuition for. Dimensionality reduction is therefore often an integral step in the analysis of large, complex datasets, allowing exploratory analyses and more intuitive visualisation of the datasets that may aid interpretability. 
 
 <div class="figure" style="text-align: center">
-<img src="images/swiss_roll_manifold_sculpting.png" alt="Example of a dimensionality reduction." width="55%" />
-<p class="caption">(\#fig:dimreduc)Example of a dimensionality reduction.</p>
+<img src="images/swiss_roll_manifold_sculpting.png" alt="Example of a dimensionality reduction. Here we have a what is essentially a two-dimensional dataset embeded in a three dimensional space (swiss roll dataset)" width="55%" />
+<p class="caption">(\#fig:dimreduc)Example of a dimensionality reduction. Here we have a what is essentially a two-dimensional dataset embeded in a three dimensional space (swiss roll dataset)</p>
 </div>
 
 In biological applications, systems-level measurements are typically used to decipher complex mechanisms. These include measurements of gene expression from collections of microarrays [@Breeze873,@windram2012arabidopsis,@Lewis15,@Bechtold] or RNA-sequencing experiments [@irie2015sox17,@tang2015unique] that may provide expression levels for tens of thousands of genes. Studies like these, based on bulk measurements (that is pooled material), provide observations for many variables (in this case many genes) but with relatively few samples e.g., time points or conditions. The imbalance between the number of variables and the number of observations is referred to as large p, small n, making statistical analysis difficult. Dimensionality reduction techniques may therefore prove to be a useful first step, identifying structure that may exist (which datapoints are most similar) or highlighting which variables are the most informative.
@@ -182,17 +182,23 @@ Whilst [PCA]{#linear-dimensionality-reduction} is extremely useful for explorato
 
 In general, tSNE attempts to take points in a high-dimensional space and find a faithful representation of those points in a lower-dimensional space. The SNE algorithm initially converts the high-dimensional Euclidean distances between datapoints into conditional probabilities. Here $p_{j|i}$, indicates the probability that datapoint $x_i$ would pick $x_j$ as its neighbour if neighbours were picked in proportion to their probability density under a Gaussian centred at $x_i$:
 
-$p_{j|i} = \frac{\exp(-|x_i - x_j|^2/2\sigma_i^2)}{\sum_{k\neq i}\exp(-|x_i - x_k|^2/2\sigma_i^2)}$
+$p_{j|i} = \frac{\exp(-|\mathbf{x}_i - \mathbf{x}_j|^2/2\sigma_i^2)}{\sum_{k\neq l}\exp(-|\mathbf{x}_k - \mathbf{x}_l|^2/2\sigma_i^2)}$
 
-We can define a similar conditional probability for the datapoints in the reduced dimensional space, $y_j$ and $y_j$, as:
+We can define a similar conditional probability for the datapoints in the reduced dimensional space, $y_j$ and $y_j$ as:
 
-$q_{j|i} = \frac{\exp(-|y_i - y_j|^2/2\sigma_i^2)}{\sum_{k\neq i}\exp(-|y_i - y_k|^2/2\sigma_i^2)}$.
+$q_{j|i} = \frac{\exp(-|\mathbf{y}_i - \mathbf{y}_j|^2)}{\sum_{k\neq l}\exp(-|\mathbf{y}_k - \mathbf{y}_l|^2)}$.
 
-If SNE has mapped points $y_i$ and $y_j$ correctly, we have $p_{j|i} = q_{j|i}$. We can therefore attempt to minimise the KL-divergence between distributions:
+Natural extensions to this would instead use a Student-t distribution for the lower dimensional space. 
+
+$q_{j|i} = \frac{(1+|\mathbf{y}_i - \mathbf{y}_j|^2)^{-1}}{\sum_{k\neq l}(1+|\mathbf{y}_i - \mathbf{y}_j|^2)^{-1}}$.
+
+Note here that in many cases this lower dimensionality space can be initialised using PCA or other dimensionality reduction technique.
+
+If SNE has mapped points $\mathbf{y}_i$ and $\mathbf{y}_j$ correctly, we have $p_{j|i} = q_{j|i}$. We can define a similarity measure over these distribution based on the Kullback-Leibler-divergence:
 
 $C = \sum KL(P_i||Q_i)= \sum_i \sum_j p_{i|j} \log \biggl{(} \frac{p_{i|j}}{q_{i|j}} \biggr{)}$
 
-Note that, for SNE, we have assumed Gaussian distributions. It is possible, of course, to choose a heavier tailed distribution such as a t-distribution. 
+If $p_{j|i} = q_{j|i}$ (that is, our reduced dimensionality representation faithfully captures the higher dimensional data), this value will be equal to zero, otherwise it will be a positive number. We thus attempt to minimise this value using gradient descent.
 
 The tSNE algorithm is implemented in R via the \texttt{Rtsne} package.
 

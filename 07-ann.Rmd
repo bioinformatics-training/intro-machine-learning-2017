@@ -225,9 +225,14 @@ The hidden argument accepts a vector with the number of neurons for each hidden 
 
 This is the graphical representation of the model with the weights on each connection:
 
-```{r fig.width=8, fig.height=3}
+```{r out.width='100%', fig.asp=1, echo=T}
 plot(nn)
 ```
+
+```{r echo = F, fig.align = 'center', out.width = '100%'}
+knitr::include_graphics(c("images/ch07PlotNN.svg"))
+```
+
 
 The black lines show the connections between each layer and the weights on each connection while the blue lines show the bias term added in each step. The bias can be thought as the intercept of a linear model.
 

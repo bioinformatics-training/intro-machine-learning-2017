@@ -329,6 +329,9 @@ This is the graphical representation of the model with the weights on each conne
 plot(nn)
 ```
 
+<img src="images/ch07PlotNN.svg" width="100%" style="display: block; margin: auto;" />
+
+
 The black lines show the connections between each layer and the weights on each connection while the blue lines show the bias term added in each step. The bias can be thought as the intercept of a linear model.
 
 The net is essentially a black box so we cannot say that much about the fitting, the weights and the model. Suffice to say that the training algorithm has converged and therefore the model is ready to be used.
@@ -370,7 +373,7 @@ abline(0,1,lwd=2)
 legend('bottomright',legend='LM',pch=18,col='blue', bty='n', cex=.95)
 ```
 
-<img src="07-ann_files/figure-html/unnamed-chunk-16-1.png" width="672" />
+<img src="07-ann_files/figure-html/unnamed-chunk-17-1.png" width="672" />
 
 
 The net is doing a better work than the linear model at predicting medv. Once again, be cautious because this result depends on the train-test split performed above. Below, after the visual plot, we are going to perform a fast cross validation in order to be more confident about the results.
@@ -389,7 +392,7 @@ abline(0,1,lwd=2)
 legend('bottomright',legend=c('NN','LM'),pch=18,col=c('red','blue'))
 ```
 
-<img src="07-ann_files/figure-html/unnamed-chunk-17-1.png" width="672" />
+<img src="07-ann_files/figure-html/unnamed-chunk-18-1.png" width="672" />
 
 *Cross validation* is another very important step of building predictive models. While there are different kind of cross validation methods, the basic idea is repeating the following process a number of time:
 
@@ -497,7 +500,7 @@ boxplot(cv.error,xlab='MSE CV',col='cyan',
         main='CV error (MSE) for NN',horizontal=TRUE)
 ```
 
-<img src="07-ann_files/figure-html/unnamed-chunk-22-1.png" width="672" />
+<img src="07-ann_files/figure-html/unnamed-chunk-23-1.png" width="672" />
 
 The average MSE for the neural network (10.33) is lower than the one of the linear model although there seems to be a certain degree of variation in the MSEs of the cross validation. This may depend on the splitting of the data or the random initialization of the weights in the net. By running the simulation different times with different seeds you can get a more precise point estimate for the average MSE.
 

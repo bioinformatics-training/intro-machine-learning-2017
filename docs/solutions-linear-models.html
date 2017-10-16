@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-10-02">
+<meta name="date" content="2017-10-16">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -121,20 +121,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.1" data-path="linear-models.html"><a href="linear-models.html#linear-models"><i class="fa fa-check"></i><b>3.1</b> Linear models</a></li>
 <li class="chapter" data-level="3.2" data-path="linear-models.html"><a href="linear-models.html#matrix-algebra"><i class="fa fa-check"></i><b>3.2</b> Matrix algebra</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="logistic-regression.html"><a href="logistic-regression.html"><i class="fa fa-check"></i><b>4</b> Logistic regression</a><ul>
+<li class="chapter" data-level="4" data-path="logistic-regression.html"><a href="logistic-regression.html"><i class="fa fa-check"></i><b>4</b> Supervised learning</a><ul>
 <li class="chapter" data-level="4.1" data-path="logistic-regression.html"><a href="logistic-regression.html#regression"><i class="fa fa-check"></i><b>4.1</b> Regression</a><ul>
 <li class="chapter" data-level="4.1.1" data-path="logistic-regression.html"><a href="logistic-regression.html#linear-regression"><i class="fa fa-check"></i><b>4.1.1</b> Linear regression</a></li>
-<li class="chapter" data-level="4.1.2" data-path="logistic-regression.html"><a href="logistic-regression.html#gaussian-process-regression"><i class="fa fa-check"></i><b>4.1.2</b> Gaussian process regression</a></li>
-<li class="chapter" data-level="4.1.3" data-path="logistic-regression.html"><a href="logistic-regression.html#inference-using-gaussian-process-regression"><i class="fa fa-check"></i><b>4.1.3</b> Inference using Gaussian process regression</a></li>
-<li class="chapter" data-level="4.1.4" data-path="logistic-regression.html"><a href="logistic-regression.html#model-selection"><i class="fa fa-check"></i><b>4.1.4</b> Model Selection</a></li>
+<li class="chapter" data-level="4.1.2" data-path="logistic-regression.html"><a href="logistic-regression.html#polynomial-regression"><i class="fa fa-check"></i><b>4.1.2</b> Polynomial regression</a></li>
+<li class="chapter" data-level="4.1.3" data-path="logistic-regression.html"><a href="logistic-regression.html#distributions-of-fits"><i class="fa fa-check"></i><b>4.1.3</b> Distributions of fits</a></li>
+<li class="chapter" data-level="4.1.4" data-path="logistic-regression.html"><a href="logistic-regression.html#gaussian-process-regression"><i class="fa fa-check"></i><b>4.1.4</b> Gaussian process regression</a></li>
 </ul></li>
 <li class="chapter" data-level="4.2" data-path="logistic-regression.html"><a href="logistic-regression.html#classification"><i class="fa fa-check"></i><b>4.2</b> Classification</a><ul>
 <li class="chapter" data-level="4.2.1" data-path="logistic-regression.html"><a href="logistic-regression.html#logistic-regression"><i class="fa fa-check"></i><b>4.2.1</b> Logistic regression</a></li>
+<li class="chapter" data-level="4.2.2" data-path="logistic-regression.html"><a href="logistic-regression.html#gp-classification"><i class="fa fa-check"></i><b>4.2.2</b> GP classification</a></li>
+<li class="chapter" data-level="4.2.3" data-path="logistic-regression.html"><a href="logistic-regression.html#other-classification-approaches."><i class="fa fa-check"></i><b>4.2.3</b> Other classification approaches.</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="logistic-regression.html"><a href="logistic-regression.html#gp-classification"><i class="fa fa-check"></i><b>4.3</b> GP classification</a><ul>
-<li class="chapter" data-level="4.3.1" data-path="logistic-regression.html"><a href="logistic-regression.html#other-classification-approaches."><i class="fa fa-check"></i><b>4.3.1</b> Other classification approaches.</a></li>
-</ul></li>
-<li class="chapter" data-level="4.4" data-path="logistic-regression.html"><a href="logistic-regression.html#resources"><i class="fa fa-check"></i><b>4.4</b> Resources</a></li>
+<li class="chapter" data-level="4.3" data-path="logistic-regression.html"><a href="logistic-regression.html#resources"><i class="fa fa-check"></i><b>4.3</b> Resources</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html"><i class="fa fa-check"></i><b>5</b> Nearest neighbours</a><ul>
 <li class="chapter" data-level="5.1" data-path="nearest-neighbours.html"><a href="nearest-neighbours.html#introduction"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
@@ -305,33 +304,33 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">g &lt;-<span class="st"> </span><span class="fl">9.8</span> ##meters per second
 n &lt;-<span class="st"> </span><span class="dv">25</span>
 tt &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>,<span class="fl">3.4</span>,<span class="dt">len=</span>n) ##time in secs, t is a base function
-f &lt;-<span class="st"> </span><span class="fl">56.67</span>  -<span class="st"> </span><span class="fl">0.5</span>*g*tt^<span class="dv">2</span>
-y &lt;-<span class="st">  </span>f +<span class="st"> </span><span class="kw">rnorm</span>(n,<span class="dt">sd=</span><span class="dv">1</span>)
+f &lt;-<span class="st"> </span><span class="fl">56.67</span>  <span class="op">-</span><span class="st"> </span><span class="fl">0.5</span><span class="op">*</span>g<span class="op">*</span>tt<span class="op">^</span><span class="dv">2</span>
+y &lt;-<span class="st">  </span>f <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(n,<span class="dt">sd=</span><span class="dv">1</span>)
 <span class="kw">plot</span>(tt,y,<span class="dt">ylab=</span><span class="st">&quot;Distance in meters&quot;</span>,<span class="dt">xlab=</span><span class="st">&quot;Time in seconds&quot;</span>)
 <span class="kw">lines</span>(tt,f,<span class="dt">col=</span><span class="dv">2</span>)</code></pre></div>
 <p><img src="13-solutions-linear-models_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <p>In R we can fit this model by simply using the lm function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tt2 &lt;-tt^<span class="dv">2</span>
-fit &lt;-<span class="st"> </span><span class="kw">lm</span>(y~tt+tt2)
-<span class="kw">summary</span>(fit)$coef</code></pre></div>
-<pre><code>##              Estimate Std. Error    t value     Pr(&gt;|t|)
-## (Intercept) 56.214630  0.6148377  91.430031 6.862097e-30
-## tt           1.440205  0.8375386   1.719569 9.955064e-02
-## tt2         -5.365848  0.2379325 -22.551971 1.067821e-16</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tt2 &lt;-tt<span class="op">^</span><span class="dv">2</span>
+fit &lt;-<span class="st"> </span><span class="kw">lm</span>(y<span class="op">~</span>tt<span class="op">+</span>tt2)
+<span class="kw">summary</span>(fit)<span class="op">$</span>coef</code></pre></div>
+<pre><code>##                Estimate Std. Error      t value     Pr(&gt;|t|)
+## (Intercept) 56.84810255  0.6427365  88.44698611 1.420891e-29
+## tt          -0.03768516  0.8755426  -0.04304206 9.660563e-01
+## tt2         -4.89865275  0.2487289 -19.69474569 1.837149e-15</code></pre>
 </div>
 <div id="example-2-1" class="section level2">
 <h2><span class="header-section-number">B.2</span> Example 2</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(father.son,<span class="dt">package=</span><span class="st">&quot;UsingR&quot;</span>)
-x=father.son$fheight
-y=father.son$sheight
+x=father.son<span class="op">$</span>fheight
+y=father.son<span class="op">$</span>sheight
 X &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="dv">1</span>,x)
-thetahat &lt;-<span class="st"> </span><span class="kw">solve</span>( <span class="kw">t</span>(X) %*%<span class="st"> </span>X ) %*%<span class="st"> </span><span class="kw">t</span>(X) %*%<span class="st"> </span>y
+thetahat &lt;-<span class="st"> </span><span class="kw">solve</span>( <span class="kw">t</span>(X) <span class="op">%*%</span><span class="st"> </span>X ) <span class="op">%*%</span><span class="st"> </span><span class="kw">t</span>(X) <span class="op">%*%</span><span class="st"> </span>y
 ###or
-thetahat &lt;-<span class="st"> </span><span class="kw">solve</span>( <span class="kw">crossprod</span>(X) ) %*%<span class="st"> </span><span class="kw">crossprod</span>( X, y )</code></pre></div>
+thetahat &lt;-<span class="st"> </span><span class="kw">solve</span>( <span class="kw">crossprod</span>(X) ) <span class="op">%*%</span><span class="st"> </span><span class="kw">crossprod</span>( X, y )</code></pre></div>
 <p>We can see the results of this by computing the estimated <span class="math inline">\(\hat{\theta}_0+\hat{\theta}_1 x\)</span> for any value of <span class="math inline">\(x\)</span>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newx &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="kw">min</span>(x),<span class="kw">max</span>(x),<span class="dt">len=</span><span class="dv">100</span>)
 X &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="dv">1</span>,newx)
-fitted &lt;-<span class="st"> </span>X%*%thetahat
+fitted &lt;-<span class="st"> </span>X<span class="op">%*%</span>thetahat
 <span class="kw">plot</span>(x,y,<span class="dt">xlab=</span><span class="st">&quot;Father&#39;s height&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;Son&#39;s height&quot;</span>)
 <span class="kw">lines</span>(newx,fitted,<span class="dt">col=</span><span class="dv">2</span>)</code></pre></div>
 <p><img src="13-solutions-linear-models_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>

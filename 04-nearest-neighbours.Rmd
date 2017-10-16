@@ -665,7 +665,7 @@ The optimum value of _k_ can be found by cross-validation, following similar met
 ```{r echo=T}
 set.seed(42)
 seeds <- vector(mode = "list", length = 26)
-for(i in 1:25) seeds[[i]] <- sample.int(1000, 50)
+for(i in 1:25) seeds[[i]] <- sample.int(1000, 10)
 seeds[[26]] <- sample.int(1000,1)
 ```
 

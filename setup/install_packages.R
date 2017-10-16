@@ -42,7 +42,8 @@ cran_packages <- c("ggplot2",
 "caTools",
 "boot",
 "faraway",
-"CVST"
+"CVST",
+"readr"
 )
 
 

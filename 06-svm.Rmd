@@ -142,9 +142,9 @@ ggplot(moonsTrain, aes(V1,V2)) +
 Set seeds for reproducibility. We will be trying 9 values of the tuning parameter with 10 repeats of 10 fold cross-validation, so we need the following list of seeds.
 ```{r echo=T}
 set.seed(42)
-seeds <- vector(mode = "list", length = 101)
-for(i in 1:100) seeds[[i]] <- sample.int(1000, 9)
-seeds[[101]] <- sample.int(1000,1)
+seeds <- vector(mode = "list", length = 26)
+for(i in 1:25) seeds[[i]] <- sample.int(1000, 9)
+seeds[[26]] <- sample.int(1000,1)
 ```
 
 We will pass the twoClassSummary function into model training through trainControl. Additionally we would like the model to predict class probabilities so that we can calculate the ROC curve, so we use the classProbs option.
@@ -272,7 +272,7 @@ ggplot(xgrid, aes(V1,V2)) +
 
 
 ## Example - regression
-This example serves to demonstrate the use of SVMs in regression, but perhaps more importantly, it highlights the power and flexibility of the [caret](http://cran.r-project.org/web/packages/caret/index.html) package. Earlier we used _k_-NN for a regression analysis of the **BloodBrain** dataset (see section \@ref(knn-regression)). We will repeat the regression analysis, but this time we will fit a radial kernel SVM. Remarkably, a re-run of this analysis using a completely different type of model, requires changes to only two lines of code.
+This example serves to demonstrate the use of SVMs in regression, but perhaps more importantly, it highlights the power and flexibility of the [caret](http://cran.r-project.org/web/packages/caret/index.html) package. Earlier we used _k_-NN for a regression analysis of the **BloodBrain** dataset (see section \@ref(knn-regression)). We will repeat the regression analysis, but this time we will fit a linear kernel SVM. Remarkably, a re-run of this analysis using a completely different type of model, requires changes to only two lines of code.
 
 The pre-processing steps and generation of seeds are identical, therefore if the data were still in memory, we could skip this next block of code:
 ```{r echo=T}
@@ -300,13 +300,14 @@ In the arguments to the ```train``` function we change ```method``` from ```knn`
 ```{r echo=T}
 svmTune2 <- train(descrTrain,
                  concRatioTrain,
-                 method="svmRadial",
+                 method="svmLinear2",
                  tuneLength = 9,
                  trControl = trainControl(method="repeatedcv",
                                           number = 5,
                                           repeats = 5,
                                           seeds=seeds,
-                                          preProcOptions=list(cutoff=0.75))
+                                          preProcOptions=list(cutoff=0.75)
+                                          )
 )
 
 svmTune2
@@ -355,6 +356,68 @@ Do not worry about feature selection, but you may want to pre-process the data.
 Select a radial kernel SVM and tune over the cost function C. 
 
 Produce a ROC curve to show the performance of the classifier on the test set. 
+
+```{r echo=T}
+svmRadialE1071 <- list(
+  label = "Support Vector Machines with Radial Kernel - e1071",
+  library = "e1071",
+  type = c("Regression", "Classification"),
+  parameters = data.frame(parameter="cost",
+                          class="numeric",
+                          label="Cost"),
+  grid = function (x, y, len = NULL, search = "grid") 
+    {
+      if (search == "grid") {
+        out <- expand.grid(cost = 2^((1:len) - 3))
+      }
+      else {
+        out <- data.frame(cost = 2^runif(len, min = -5, max = 10))
+      }
+      out
+    },
+  loop=NULL,
+  fit=function (x, y, wts, param, lev, last, classProbs, ...) 
+    {
+      if (any(names(list(...)) == "probability") | is.numeric(y)) {
+        out <- e1071::svm(x = as.matrix(x), y = y, kernel = "radial", 
+                          cost = param$cost, ...)
+      }
+      else {
+        out <- e1071::svm(x = as.matrix(x), y = y, kernel = "radial", 
+                          cost = param$cost, probability = classProbs, ...)
+      }
+      out
+    },
+  predict = function (modelFit, newdata, submodels = NULL) 
+    {
+      predict(modelFit, newdata)
+    },
+  prob = function (modelFit, newdata, submodels = NULL) 
+    {
+      out <- predict(modelFit, newdata, probability = TRUE)
+      attr(out, "probabilities")
+    },
+  predictors = function (x, ...) 
+    {
+      out <- if (!is.null(x$terms)) 
+        predictors.terms(x$terms)
+      else x$xNames
+      if (is.null(out)) 
+        out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
+      if (is.null(out)) 
+        out <- NA
+      out
+    },
+  tags = c("Kernel Methods", "Support Vector Machines", "Regression", "Classifier", "Robust Methods"),
+  levels = function(x) x$levels,
+  sort = function(x)
+  {
+    x[order(x$cost), ]
+  }
+)
+```
+
+
 
 
 

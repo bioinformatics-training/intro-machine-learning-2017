@@ -225,9 +225,9 @@ Set seeds for reproducibility. We will be trying 9 values of the tuning paramete
 
 ```r
 set.seed(42)
-seeds <- vector(mode = "list", length = 101)
-for(i in 1:100) seeds[[i]] <- sample.int(1000, 9)
-seeds[[101]] <- sample.int(1000,1)
+seeds <- vector(mode = "list", length = 26)
+for(i in 1:25) seeds[[i]] <- sample.int(1000, 9)
+seeds[[26]] <- sample.int(1000,1)
 ```
 
 We will pass the twoClassSummary function into model training through trainControl. Additionally we would like the model to predict class probabilities so that we can calculate the ROC curve, so we use the classProbs option.
@@ -281,19 +281,19 @@ svmTune
 ## Resampling results across tuning parameters:
 ## 
 ##   C      ROC        Sens       Spec     
-##    0.25  0.9483673  0.8885714  0.8957143
-##    0.50  0.9536224  0.8900000  0.9042857
-##    1.00  0.9574490  0.8871429  0.9071429
-##    2.00  0.9581122  0.8857143  0.9000000
-##    4.00  0.9573980  0.8814286  0.8971429
-##    8.00  0.9577041  0.8800000  0.8942857
-##   16.00  0.9566837  0.8728571  0.8914286
-##   32.00  0.9536224  0.8685714  0.8800000
-##   64.00  0.9507143  0.8585714  0.8828571
+##    0.25  0.9519898  0.8728571  0.8928571
+##    0.50  0.9564286  0.8842857  0.8971429
+##    1.00  0.9581633  0.8914286  0.9085714
+##    2.00  0.9585204  0.8900000  0.9000000
+##    4.00  0.9595918  0.8885714  0.8928571
+##    8.00  0.9600510  0.8757143  0.8914286
+##   16.00  0.9585714  0.8671429  0.8857143
+##   32.00  0.9545408  0.8671429  0.8842857
+##   64.00  0.9526531  0.8542857  0.8857143
 ## 
-## Tuning parameter 'sigma' was held constant at a value of 1.015873
+## Tuning parameter 'sigma' was held constant at a value of 1.060521
 ## ROC was used to select the optimal model using  the largest value.
-## The final values used for the model were sigma = 1.015873 and C = 2.
+## The final values used for the model were sigma = 1.060521 and C = 8.
 ```
 
 
@@ -305,15 +305,15 @@ svmTune$finalModel
 ## Support Vector Machine object of class "ksvm" 
 ## 
 ## SV type: C-svc  (classification) 
-##  parameter : cost C = 2 
+##  parameter : cost C = 8 
 ## 
 ## Gaussian Radial Basis kernel function. 
 ##  Hyperparameter : sigma =  1 
 ## 
-## Number of Support Vectors : 92 
+## Number of Support Vectors : 81 
 ## 
-## Objective Function Value : -136.1878 
-## Training error : 0.103571 
+## Objective Function Value : -483.3213 
+## Training error : 0.110714 
 ## Probability model included.
 ```
 
@@ -343,8 +343,8 @@ confusionMatrix(svmPred, moonsTest[,3])
 ## 
 ##           Reference
 ## Prediction  A  B
-##          A 56  6
-##          B  4 54
+##          A 55  5
+##          B  5 55
 ##                                           
 ##                Accuracy : 0.9167          
 ##                  95% CI : (0.8521, 0.9593)
@@ -352,15 +352,15 @@ confusionMatrix(svmPred, moonsTest[,3])
 ##     P-Value [Acc > NIR] : <2e-16          
 ##                                           
 ##                   Kappa : 0.8333          
-##  Mcnemar's Test P-Value : 0.7518          
+##  Mcnemar's Test P-Value : 1               
 ##                                           
-##             Sensitivity : 0.9333          
-##             Specificity : 0.9000          
-##          Pos Pred Value : 0.9032          
-##          Neg Pred Value : 0.9310          
+##             Sensitivity : 0.9167          
+##             Specificity : 0.9167          
+##          Pos Pred Value : 0.9167          
+##          Neg Pred Value : 0.9167          
 ##              Prevalence : 0.5000          
-##          Detection Rate : 0.4667          
-##    Detection Prevalence : 0.5167          
+##          Detection Rate : 0.4583          
+##    Detection Prevalence : 0.5000          
 ##       Balanced Accuracy : 0.9167          
 ##                                           
 ##        'Positive' Class : A               
@@ -376,12 +376,12 @@ head(svmProbs)
 
 ```
 ##            A          B
-## 1 0.04599876 0.95400124
-## 2 0.07465059 0.92534941
-## 3 0.98494249 0.01505751
-## 4 0.98271571 0.01728429
-## 5 0.04227323 0.95772677
-## 6 0.94421478 0.05578522
+## 1 0.06975433 0.93024567
+## 2 0.11237177 0.88762823
+## 3 0.98902819 0.01097181
+## 4 0.98920401 0.01079599
+## 5 0.07275020 0.92724980
+## 6 0.92569425 0.07430575
 ```
 
 Build a ROC curve.
@@ -485,7 +485,7 @@ ggplot(xgrid, aes(V1,V2)) +
 
 
 ## Example - regression
-This example serves to demonstrate the use of SVMs in regression, but perhaps more importantly, it highlights the power and flexibility of the [caret](http://cran.r-project.org/web/packages/caret/index.html) package. Earlier we used _k_-NN for a regression analysis of the **BloodBrain** dataset (see section \@ref(knn-regression)). We will repeat the regression analysis, but this time we will fit a radial kernel SVM. Remarkably, a re-run of this analysis using a completely different type of model, requires changes to only two lines of code.
+This example serves to demonstrate the use of SVMs in regression, but perhaps more importantly, it highlights the power and flexibility of the [caret](http://cran.r-project.org/web/packages/caret/index.html) package. Earlier we used _k_-NN for a regression analysis of the **BloodBrain** dataset (see section \@ref(knn-regression)). We will repeat the regression analysis, but this time we will fit a linear kernel SVM. Remarkably, a re-run of this analysis using a completely different type of model, requires changes to only two lines of code.
 
 The pre-processing steps and generation of seeds are identical, therefore if the data were still in memory, we could skip this next block of code:
 
@@ -515,20 +515,21 @@ In the arguments to the ```train``` function we change ```method``` from ```knn`
 ```r
 svmTune2 <- train(descrTrain,
                  concRatioTrain,
-                 method="svmRadial",
+                 method="svmLinear2",
                  tuneLength = 9,
                  trControl = trainControl(method="repeatedcv",
                                           number = 5,
                                           repeats = 5,
                                           seeds=seeds,
-                                          preProcOptions=list(cutoff=0.75))
+                                          preProcOptions=list(cutoff=0.75)
+                                          )
 )
 
 svmTune2
 ```
 
 ```
-## Support Vector Machines with Radial Basis Function Kernel 
+## Support Vector Machines with Linear Kernel 
 ## 
 ## 168 samples
 ##  61 predictor
@@ -538,20 +539,19 @@ svmTune2
 ## Summary of sample sizes: 134, 136, 134, 133, 135, 134, ... 
 ## Resampling results across tuning parameters:
 ## 
-##   C      RMSE       Rsquared    MAE      
-##    0.25  0.7627430  0.02913128  0.6016963
-##    0.50  0.7611882  0.03064440  0.5996817
-##    1.00  0.7575811  0.03222855  0.5958404
-##    2.00  0.7562799  0.03221107  0.5958960
-##    4.00  0.7562374  0.03204845  0.5964901
-##    8.00  0.7562374  0.03204845  0.5964901
-##   16.00  0.7562374  0.03204845  0.5964901
-##   32.00  0.7562374  0.03204845  0.5964901
-##   64.00  0.7562374  0.03204845  0.5964901
+##   cost   RMSE       Rsquared   MAE      
+##    0.25  0.6600942  0.3613530  0.5033959
+##    0.50  0.6868435  0.3408595  0.5255486
+##    1.00  0.7205320  0.3212819  0.5492876
+##    2.00  0.7488398  0.3040829  0.5687824
+##    4.00  0.7681497  0.2959570  0.5826033
+##    8.00  0.7817154  0.2866469  0.5915705
+##   16.00  0.7882145  0.2834861  0.5964804
+##   32.00  0.7896897  0.2830242  0.5975740
+##   64.00  0.7923345  0.2825472  0.5994106
 ## 
-## Tuning parameter 'sigma' was held constant at a value of 0.0106761
 ## RMSE was used to select the optimal model using  the smallest value.
-## The final values used for the model were sigma = 0.0106761 and C = 4.
+## The final value used for the model was cost = 0.25.
 ```
 
 
@@ -592,7 +592,7 @@ cor(concRatioTest, test_pred)
 ```
 
 ```
-## [1] 0.2477251
+## [1] 0.7453403
 ```
 
 
@@ -616,6 +616,69 @@ Do not worry about feature selection, but you may want to pre-process the data.
 Select a radial kernel SVM and tune over the cost function C. 
 
 Produce a ROC curve to show the performance of the classifier on the test set. 
+
+
+```r
+svmRadialE1071 <- list(
+  label = "Support Vector Machines with Radial Kernel - e1071",
+  library = "e1071",
+  type = c("Regression", "Classification"),
+  parameters = data.frame(parameter="cost",
+                          class="numeric",
+                          label="Cost"),
+  grid = function (x, y, len = NULL, search = "grid") 
+    {
+      if (search == "grid") {
+        out <- expand.grid(cost = 2^((1:len) - 3))
+      }
+      else {
+        out <- data.frame(cost = 2^runif(len, min = -5, max = 10))
+      }
+      out
+    },
+  loop=NULL,
+  fit=function (x, y, wts, param, lev, last, classProbs, ...) 
+    {
+      if (any(names(list(...)) == "probability") | is.numeric(y)) {
+        out <- e1071::svm(x = as.matrix(x), y = y, kernel = "radial", 
+                          cost = param$cost, ...)
+      }
+      else {
+        out <- e1071::svm(x = as.matrix(x), y = y, kernel = "radial", 
+                          cost = param$cost, probability = classProbs, ...)
+      }
+      out
+    },
+  predict = function (modelFit, newdata, submodels = NULL) 
+    {
+      predict(modelFit, newdata)
+    },
+  prob = function (modelFit, newdata, submodels = NULL) 
+    {
+      out <- predict(modelFit, newdata, probability = TRUE)
+      attr(out, "probabilities")
+    },
+  predictors = function (x, ...) 
+    {
+      out <- if (!is.null(x$terms)) 
+        predictors.terms(x$terms)
+      else x$xNames
+      if (is.null(out)) 
+        out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
+      if (is.null(out)) 
+        out <- NA
+      out
+    },
+  tags = c("Kernel Methods", "Support Vector Machines", "Regression", "Classifier", "Robust Methods"),
+  levels = function(x) x$levels,
+  sort = function(x)
+  {
+    x[order(x$cost), ]
+  }
+)
+```
+
+
 
 
 

@@ -799,7 +799,7 @@ summary(segDataTrain$IntenCoocASMCh4)
 
 ```
 ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
-## 0.004874 0.017250 0.049460 0.101600 0.121200 0.867800
+## 0.004874 0.017253 0.049458 0.101586 0.121245 0.867845
 ```
 
 ```r
@@ -808,7 +808,7 @@ summary(segDataTrain$TotalIntenCh2)
 
 ```
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##       1   15850   49650   53140   72300  362500
+##       1   15846   49648   53143   72304  362465
 ```
 
 In this situation it is important to centre and scale each predictor. A predictor variable is centered by subtracting the mean of the predictor from each value. To scale a predictor variable, each value is divided by its standard deviation. After centring and scaling the predictor variable has a mean of 0 and a standard deviation of 1. 
@@ -1108,8 +1108,8 @@ knn_sbf
 ## 
 ## Resampling performance:
 ## 
-##     ROC   Sens   Spec  ROCSD  SensSD  SpecSD
-##  0.8856 0.8289 0.7689 0.0222 0.02889 0.06873
+##     ROC   Sens   Spec   ROCSD  SensSD  SpecSD
+##  0.8811 0.8274 0.7639 0.02263 0.02774 0.06551
 ## 
 ## Using the training set, 16 variables were selected:
 ##    ConvexHullPerimRatioCh1, EntropyIntenCh1, FiberWidthCh1, IntenCoocASMCh4, IntenCoocContrastCh3...
@@ -1144,8 +1144,8 @@ knn_sbf$results
 ```
 
 ```
-##         ROC      Sens      Spec     ROCSD     SensSD     SpecSD
-## 1 0.8856175 0.8289231 0.7688889 0.0222016 0.02889142 0.06873246
+##         ROC      Sens      Spec      ROCSD     SensSD     SpecSD
+## 1 0.8810534 0.8273846 0.7638889 0.02263143 0.02774212 0.06551376
 ```
 
 To retrieve the optimum value of k found during training run:
@@ -1402,7 +1402,7 @@ The optimum value of _k_ can be found by cross-validation, following similar met
 ```r
 set.seed(42)
 seeds <- vector(mode = "list", length = 26)
-for(i in 1:25) seeds[[i]] <- sample.int(1000, 50)
+for(i in 1:25) seeds[[i]] <- sample.int(1000, 10)
 seeds[[26]] <- sample.int(1000,1)
 ```
 
@@ -1431,20 +1431,20 @@ knnTune
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (5 fold, repeated 5 times) 
-## Summary of sample sizes: 134, 136, 134, 133, 135, 134, ... 
+## Summary of sample sizes: 135, 134, 136, 134, 133, 135, ... 
 ## Resampling results across tuning parameters:
 ## 
 ##   k   RMSE       Rsquared   MAE      
-##    1  0.6576546  0.3744545  0.4772796
-##    2  0.6143173  0.3993157  0.4641971
-##    3  0.5993514  0.4058549  0.4543601
-##    4  0.5915781  0.4169025  0.4506419
-##    5  0.5994234  0.3976327  0.4583774
-##    6  0.6073304  0.3839089  0.4605111
-##    7  0.6078634  0.3855648  0.4578382
-##    8  0.6188175  0.3640313  0.4669264
-##    9  0.6208972  0.3611479  0.4703007
-##   10  0.6196800  0.3645381  0.4681070
+##    1  0.6520387  0.3985028  0.4632774
+##    2  0.6113262  0.4259039  0.4627144
+##    3  0.5862976  0.4444624  0.4402393
+##    4  0.5828015  0.4437783  0.4407852
+##    5  0.5933604  0.4209923  0.4516132
+##    6  0.5982192  0.4100908  0.4550370
+##    7  0.6032227  0.4002708  0.4531828
+##    8  0.6078117  0.3936972  0.4583254
+##    9  0.6106399  0.3858548  0.4596576
+##   10  0.6149638  0.3799661  0.4629568
 ## 
 ## RMSE was used to select the optimal model using  the smallest value.
 ## The final value used for the model was k = 4.

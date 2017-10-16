@@ -11,9 +11,9 @@ Height and Weight correlation
 
 
 ```r
-women <- read.csv("data/Linear_models/women.csv", header=F)
-caption = 'Height and weight correlation of women in USA.'
-plot(women$V2 ~ women$V3, ylab="weight", xlab="height", xlim=c(0,200), ylim=c(0,100))
+people <- read.csv("data/Linear_models/people.csv", header=F)
+caption = 'Height and weight correlation of people in USA.'
+plot(people$V2 ~ people$V3, ylab="weight", xlab="height", xlim=c(0,200), ylim=c(0,100))
 ```
 
 <img src="02-linear-models_files/figure-html/unnamed-chunk-1-1.png" width="80%" style="display: block; margin: auto;" />
@@ -22,7 +22,7 @@ plot(women$V2 ~ women$V3, ylab="weight", xlab="height", xlim=c(0,200), ylim=c(0,
 
 ```r
 knitr::kable(
-  head(women[, 1:3], 15), booktabs = TRUE,
+  head(people[, 1:3], 15), booktabs = TRUE,
   caption = 'A table of height and weight correlation.'
 )
 ```
@@ -100,10 +100,10 @@ When that happens the value of $CF(\theta_{0},\theta_{1})$ will be 0.
 
 
 ```r
-women <- read.csv("data/Linear_models/women.csv", header=F)
-caption = 'Height and weight correlation of women in USA.'
-plot(women$V2 ~ women$V3, ylab="weight", xlab="height", xlim=c(0,200), ylim=c(0,100))
-fit <- lm(women$V2 ~ women$V3)
+people <- read.csv("data/Linear_models/people.csv", header=F)
+caption = 'Height and weight correlation of people in USA.'
+plot(people$V2 ~ people$V3, ylab="weight", xlab="height", xlim=c(0,200), ylim=c(0,100))
+fit <- lm(people$V2 ~ people$V3)
 abline(fit$coef,lwd=2)
 b <- round(fit$coef,4)
 text(10, 80, paste("y =", b[1], "+", b[2], "x"), adj=c(0,0.5))
