@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-10-16">
+<meta name="date" content="2017-10-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -175,9 +175,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="7.4.1" data-path="svm.html"><a href="svm.html#setup-environment"><i class="fa fa-check"></i><b>7.4.1</b> Setup environment</a></li>
 <li class="chapter" data-level="7.4.2" data-path="svm.html"><a href="svm.html#partition-data-1"><i class="fa fa-check"></i><b>7.4.2</b> Partition data</a></li>
 <li class="chapter" data-level="7.4.3" data-path="svm.html"><a href="svm.html#visualize-training-data"><i class="fa fa-check"></i><b>7.4.3</b> Visualize training data</a></li>
-<li class="chapter" data-level="7.4.4" data-path="svm.html"><a href="svm.html#model-cross-validation-and-tuning"><i class="fa fa-check"></i><b>7.4.4</b> Model cross-validation and tuning</a></li>
-<li class="chapter" data-level="7.4.5" data-path="svm.html"><a href="svm.html#prediction-performance-measures"><i class="fa fa-check"></i><b>7.4.5</b> Prediction performance measures</a></li>
-<li class="chapter" data-level="7.4.6" data-path="svm.html"><a href="svm.html#plot-decision-boundary"><i class="fa fa-check"></i><b>7.4.6</b> Plot decision boundary</a></li>
+<li class="chapter" data-level="7.4.4" data-path="svm.html"><a href="svm.html#define-a-custom-model"><i class="fa fa-check"></i><b>7.4.4</b> Define a custom model</a></li>
+<li class="chapter" data-level="7.4.5" data-path="svm.html"><a href="svm.html#model-cross-validation-and-tuning"><i class="fa fa-check"></i><b>7.4.5</b> Model cross-validation and tuning</a></li>
+<li class="chapter" data-level="7.4.6" data-path="svm.html"><a href="svm.html#prediction-performance-measures"><i class="fa fa-check"></i><b>7.4.6</b> Prediction performance measures</a></li>
+<li class="chapter" data-level="7.4.7" data-path="svm.html"><a href="svm.html#plot-decision-boundary"><i class="fa fa-check"></i><b>7.4.7</b> Plot decision boundary</a></li>
 </ul></li>
 <li class="chapter" data-level="7.5" data-path="svm.html"><a href="svm.html#example---regression"><i class="fa fa-check"></i><b>7.5</b> Example - regression</a></li>
 <li class="chapter" data-level="7.6" data-path="svm.html"><a href="svm.html#further-reading"><i class="fa fa-check"></i><b>7.6</b> Further reading</a></li>
@@ -726,7 +727,7 @@ Figure 5.8: Binary classification of the simulated training and test sets with <
 <p>The simulated data in our previous example were randomly sampled from a normal (Gaussian) distribution and so did not require pre-processing. In practice, data collected in real studies often require transformation and/or filtering. Furthermore, the simulated data contained only two predictors; in practice, you are likely to have many variables. For example, in a gene expression study you might have thousands of variables. When using <em>k</em>-nn for classification or regression, removing variables that are not associated with the outcome of interest may improve the predictive power of the model. The process of choosing the best predictors from the available variables is known as <em>feature selection</em>. For honest estimates of model performance, pre-processing and feature selection should be performed within the loops of the cross validation process.</p>
 <div id="cell-segmentation-data-set" class="section level3">
 <h3><span class="header-section-number">5.3.1</span> Cell segmentation data set</h3>
-<p>Pre-processing and feature selection will be demonstrated using the cell segmentation data of <span class="citation">(A. A. Hill et al. <a href="#ref-Hill2007">2007</a>)</span>.</p>
+<p>Pre-processing and feature selection will be demonstrated using the cell segmentation data of (<span class="citation">A. A. Hill et al. (<a href="#ref-Hill2007">2007</a>)</span>). High Content Screening (HCS) automates the collection and analysis of biological images of cultured cells. However, image segmentation algorithms are not perfect and sometimes to not reliably quantitate the morphology of cells. Hill et al. sought to differentiate between well- and poorly-segmented cells based on the morphometric data collected in HCS. If poorly-segmented cells can be automatically detected and eliminated, then the accuracy of studies using HCS will be improved. Hill et al. collected morphometric data on 2019 cells and asked human reviewers to classify the cells as well- or poorly-segmented.</p>
 <div class="figure" style="text-align: center"><span id="fig:imageSegmentationHCS"></span>
 <img src="images/Hill_2007_cell_segmentation.jpg" alt="Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340" width="75%" />
 <p class="caption">
@@ -1133,7 +1134,7 @@ knn_sbf</code></pre></div>
 ## Resampling performance:
 ## 
 ##     ROC   Sens   Spec   ROCSD  SensSD  SpecSD
-##  0.8811 0.8274 0.7639 0.02263 0.02774 0.06551
+##  0.8847 0.8311 0.7689 0.02118 0.02669 0.07227
 ## 
 ## Using the training set, 16 variables were selected:
 ##    ConvexHullPerimRatioCh1, EntropyIntenCh1, FiberWidthCh1, IntenCoocASMCh4, IntenCoocContrastCh3...
@@ -1155,7 +1156,7 @@ knn_sbf</code></pre></div>
 <p>Here are some performance metrics for the final model:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knn_sbf<span class="op">$</span>results</code></pre></div>
 <pre><code>##         ROC      Sens      Spec      ROCSD     SensSD     SpecSD
-## 1 0.8810534 0.8273846 0.7638889 0.02263143 0.02774212 0.06551376</code></pre>
+## 1 0.8847372 0.8310769 0.7688889 0.02117985 0.02669131 0.07226672</code></pre>
 <p>To retrieve the optimum value of k found during training run:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knn_sbf<span class="op">$</span>fit<span class="op">$</span>finalModel<span class="op">$</span>k</code></pre></div>
 <pre><code>## [1] 25</code></pre>

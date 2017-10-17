@@ -7,8 +7,8 @@ Support vector machines (SVMs) are models of supervised learning, applicable to 
 Let's start by definining a hyperplane. In _p_-dimensional space a hyperplane is a flat affine subspace of _p_-1. Figure \@ref(fig:svmSeparatingHyperplanes2) shows three separating hyperplanes and objects of two different classes. A separating hyperplane forms a natural linear decision boundary, classifying new objects according to which side of the line they are located.
 
 <div class="figure" style="text-align: center">
-<img src="images/svm.9.2.png" alt="Left: two classes of observations (blue, purple) and three separating hyperplanes. Right: separating hyperplane shown as black line and grid indicates decision rule." width="90%" />
-<p class="caption">(\#fig:svmSeparatingHyperplanes2)Left: two classes of observations (blue, purple) and three separating hyperplanes. Right: separating hyperplane shown as black line and grid indicates decision rule.</p>
+<img src="images/svm.9.2.png" alt="Left: two classes of observations (blue, purple) and three separating hyperplanes. Right: separating hyperplane shown as black line and grid indicates decision rule. Source: http://www-bcf.usc.edu/~gareth/ISL/" width="90%" />
+<p class="caption">(\#fig:svmSeparatingHyperplanes2)Left: two classes of observations (blue, purple) and three separating hyperplanes. Right: separating hyperplane shown as black line and grid indicates decision rule. Source: http://www-bcf.usc.edu/~gareth/ISL/</p>
 </div>
 
 If the classes of observations can be separated by a hyperplane, then there will in fact be an infinite number of hyperplanes. So which of the possible hyperplanes do we choose to be our decision boundary? 
@@ -16,24 +16,24 @@ If the classes of observations can be separated by a hyperplane, then there will
 The **maximal margin hyperplane** is the separating hyperplane that is farthest from the training observations. The perpendicular distance from a given hyperplane to the nearest training observation is known as the **margin**. The maximal margin hyperplane is the separating hyperplane for which the margin is largest.
 
 <div class="figure" style="text-align: center">
-<img src="images/svm.9.3.png" alt="Maximal margin hyperplane shown as solid line. Margin is the distance from the solid line to either of the dashed lines. The support vectors are the points on the dashed line." width="75%" />
-<p class="caption">(\#fig:svmMaximalMarginHyperplane)Maximal margin hyperplane shown as solid line. Margin is the distance from the solid line to either of the dashed lines. The support vectors are the points on the dashed line.</p>
+<img src="images/svm.9.3.png" alt="Maximal margin hyperplane shown as solid line. Margin is the distance from the solid line to either of the dashed lines. The support vectors are the points on the dashed line. Source: http://www-bcf.usc.edu/~gareth/ISL/" width="75%" />
+<p class="caption">(\#fig:svmMaximalMarginHyperplane)Maximal margin hyperplane shown as solid line. Margin is the distance from the solid line to either of the dashed lines. The support vectors are the points on the dashed line. Source: http://www-bcf.usc.edu/~gareth/ISL/</p>
 </div>
 
 Figure \@ref(fig:svmMaximalMarginHyperplane) shows three training observations that are equidistant from the maximal margin hyperplane and lie on the dashed lines indicating the margin. These are the **support vectors**. If these points were moved slightly, the maximal margin hyperplane would also move, hence the term *support*. The maximal margin hyperplane is set by the **support vectors** alone; it is not influenced by any other observations.
 
 The maximal margin hyperplane is a natural decision boundary, but only if a separating hyperplane exists. In practice there may be non separable cases which prevent the use of the maximal margin classifier.
 <div class="figure" style="text-align: center">
-<img src="images/svm.9.4.png" alt="The two classes cannot be separated by a hyperplane and so the maximal margin classifier cannot be used." width="75%" />
-<p class="caption">(\#fig:svmNonSeparableCase)The two classes cannot be separated by a hyperplane and so the maximal margin classifier cannot be used.</p>
+<img src="images/svm.9.4.png" alt="The two classes cannot be separated by a hyperplane and so the maximal margin classifier cannot be used. Source: http://www-bcf.usc.edu/~gareth/ISL/" width="75%" />
+<p class="caption">(\#fig:svmNonSeparableCase)The two classes cannot be separated by a hyperplane and so the maximal margin classifier cannot be used. Source: http://www-bcf.usc.edu/~gareth/ISL/</p>
 </div>
 
 ## Support vector classifier
 Even if a separating hyperplane exists, it may not be the best decision boundary. The maximal margin classifier is extremely sensitive to individual observations, so may overfit the training data.
 
 <div class="figure" style="text-align: center">
-<img src="images/svm.9.5.png" alt="Left: two classes of observations and a maximum margin hyperplane (solid line). Right: Hyperplane (solid line) moves after the addition of a new observation (original hyperplane is dashed line)." width="90%" />
-<p class="caption">(\#fig:svmHyperplaneShift)Left: two classes of observations and a maximum margin hyperplane (solid line). Right: Hyperplane (solid line) moves after the addition of a new observation (original hyperplane is dashed line).</p>
+<img src="images/svm.9.5.png" alt="Left: two classes of observations and a maximum margin hyperplane (solid line). Right: Hyperplane (solid line) moves after the addition of a new observation (original hyperplane is dashed line). Source: http://www-bcf.usc.edu/~gareth/ISL/" width="90%" />
+<p class="caption">(\#fig:svmHyperplaneShift)Left: two classes of observations and a maximum margin hyperplane (solid line). Right: Hyperplane (solid line) moves after the addition of a new observation (original hyperplane is dashed line). Source: http://www-bcf.usc.edu/~gareth/ISL/</p>
 </div>
 
 
@@ -45,8 +45,8 @@ It would be better to choose a classifier base on a hyperplane that:
 In other words, we might tolerate some misclassifications if the prediction of the remaining observations is more reliable. The **support vector classifier** does this by allowing some observations to be on the wrong side of the margin or even on the wrong side of the hyperplane. Observations on the wrong side of the hyperplane are misclassifications.
 
 <div class="figure" style="text-align: center">
-<img src="images/svm.9.6.png" alt="Left: observations on the wrong side of the margin. Right: observations on the wrong side of the margin and observations on the wrong side of the hyperplane." width="90%" />
-<p class="caption">(\#fig:svmObsOnWrongSideHyperplane)Left: observations on the wrong side of the margin. Right: observations on the wrong side of the margin and observations on the wrong side of the hyperplane.</p>
+<img src="images/svm.9.6.png" alt="Left: observations on the wrong side of the margin. Right: observations on the wrong side of the margin and observations on the wrong side of the hyperplane. Source: http://www-bcf.usc.edu/~gareth/ISL/" width="90%" />
+<p class="caption">(\#fig:svmObsOnWrongSideHyperplane)Left: observations on the wrong side of the margin. Right: observations on the wrong side of the margin and observations on the wrong side of the hyperplane. Source: http://www-bcf.usc.edu/~gareth/ISL/</p>
 </div>
 
 The support vector classifier has a tuning parameter, _C_, that determines the number and severity of the violations to the margin. If _C_ = 0, then no violations to the margin will be tolerated, which is equivalent to the maximal margin classifier. As _C_ increases, the classifier becomes more tolerant of violations to the margin, and so the margin widens.
@@ -61,8 +61,8 @@ _C_ is described as a tuning parameter, because it controls the bias-variance tr
 The **support vectors** are the observations that lie directly on the margin, or on the wrong side of the margin for their class. The only observations that affect the classifier are the support vectors. As _C_ increases, the margin widens and the number of support vectors increases. In other words, when _C_ increases more observations are involved in determining the decision boundary of the classifier.
 
 <div class="figure" style="text-align: center">
-<img src="images/svm.9.7.png" alt="Margin of a support vector classifier changing with tuning parameter C. Largest value of C was used in the top left panel, and smaller values in the top right, bottom left and bottom right panels." width="75%" />
-<p class="caption">(\#fig:svmMarginC)Margin of a support vector classifier changing with tuning parameter C. Largest value of C was used in the top left panel, and smaller values in the top right, bottom left and bottom right panels.</p>
+<img src="images/svm.9.7.png" alt="Margin of a support vector classifier changing with tuning parameter C. Largest value of C was used in the top left panel, and smaller values in the top right, bottom left and bottom right panels. Source: http://www-bcf.usc.edu/~gareth/ISL/" width="75%" />
+<p class="caption">(\#fig:svmMarginC)Margin of a support vector classifier changing with tuning parameter C. Largest value of C was used in the top left panel, and smaller values in the top right, bottom left and bottom right panels. Source: http://www-bcf.usc.edu/~gareth/ISL/</p>
 </div>
 
 ## Support Vector Machine
@@ -82,8 +82,8 @@ The SVM uses the **kernel trick** to project the data into higher dimensions whe
 
 
 <div class="figure" style="text-align: center">
-<img src="images/svm.9.9.png" alt="Left: SVM with polynomial kernel of degree 3. Right: SVM with radial kernel." width="90%" />
-<p class="caption">(\#fig:svmPolyAndRadialKernelSVM)Left: SVM with polynomial kernel of degree 3. Right: SVM with radial kernel.</p>
+<img src="images/svm.9.9.png" alt="Left: SVM with polynomial kernel of degree 3. Right: SVM with radial kernel. Source: http://www-bcf.usc.edu/~gareth/ISL/" width="90%" />
+<p class="caption">(\#fig:svmPolyAndRadialKernelSVM)Left: SVM with polynomial kernel of degree 3. Right: SVM with radial kernel. Source: http://www-bcf.usc.edu/~gareth/ISL/</p>
 </div>
 
 
@@ -141,6 +141,10 @@ library(pROC)
 ## The following objects are masked from 'package:stats':
 ## 
 ##     cov, smooth, var
+```
+
+```r
+library(e1071)
 ```
 
 Initialize parallel processing
@@ -220,6 +224,75 @@ ggplot(moonsTrain, aes(V1,V2)) +
 </div>
 
 
+### Define a custom model
+
+Caret has over two hundred built in models, including several support vector machines:
+[https://topepo.github.io/caret/available-models.html](https://topepo.github.io/caret/available-models.html)
+
+However, despite this wide range of options, you may occasionally need to define your own model. Caret does not currently have a radial SVM implemented using the [e1071 library](https://cran.r-project.org/package=e1071), so we will define one here.
+
+
+```r
+svmRadialE1071 <- list(
+  label = "Support Vector Machines with Radial Kernel - e1071",
+  library = "e1071",
+  type = c("Regression", "Classification"),
+  parameters = data.frame(parameter="cost",
+                          class="numeric",
+                          label="Cost"),
+  grid = function (x, y, len = NULL, search = "grid") 
+    {
+      if (search == "grid") {
+        out <- expand.grid(cost = 2^((1:len) - 3))
+      }
+      else {
+        out <- data.frame(cost = 2^runif(len, min = -5, max = 10))
+      }
+      out
+    },
+  loop=NULL,
+  fit=function (x, y, wts, param, lev, last, classProbs, ...) 
+    {
+      if (any(names(list(...)) == "probability") | is.numeric(y)) {
+        out <- e1071::svm(x = as.matrix(x), y = y, kernel = "radial", 
+                          cost = param$cost, ...)
+      }
+      else {
+        out <- e1071::svm(x = as.matrix(x), y = y, kernel = "radial", 
+                          cost = param$cost, probability = classProbs, ...)
+      }
+      out
+    },
+  predict = function (modelFit, newdata, submodels = NULL) 
+    {
+      predict(modelFit, newdata)
+    },
+  prob = function (modelFit, newdata, submodels = NULL) 
+    {
+      out <- predict(modelFit, newdata, probability = TRUE)
+      attr(out, "probabilities")
+    },
+  predictors = function (x, ...) 
+    {
+      out <- if (!is.null(x$terms)) 
+        predictors.terms(x$terms)
+      else x$xNames
+      if (is.null(out)) 
+        out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
+      if (is.null(out)) 
+        out <- NA
+      out
+    },
+  tags = c("Kernel Methods", "Support Vector Machines", "Regression", "Classifier", "Robust Methods"),
+  levels = function(x) x$levels,
+  sort = function(x)
+  {
+    x[order(x$cost), ]
+  }
+)
+```
+Note that the radial SVM model we have defined has only one tuning parameter, cost (_C_). If we do not define the kernel parameter _gamma_, e1071 will automatically calculate it as 1/(data dimension); _i.e._ if we have 58 predictors, _gamma_ will be 1/58 = 0.01724.
+
 ### Model cross-validation and tuning
 Set seeds for reproducibility. We will be trying 9 values of the tuning parameter with 10 repeats of 10 fold cross-validation, so we need the following list of seeds.
 
@@ -241,35 +314,22 @@ cvCtrl <- trainControl(method = "repeatedcv",
                        seeds=seeds)
 ```
 
-We set the **method** of the **train** function to **svmRadial** to specify a radial kernel SVM. In this implementation we only have to tune one parameter, **cost**. An appropriate value of the **sigma** parameter (used to the kernel feature space) is estimated from the data. The default grid of cost parameters start at 0.25 and double at each iteration. Choosing tuneLength = 9 will give us cost parameters of 0.25, 0.5, 1, 2, 4, 8, 16, 32 and 64. 
+We set the **method** of the **train** function to **svmRadial** to specify a radial kernel SVM. In this implementation we only have to tune one parameter, **cost**. The default grid of cost parameters start at 0.25 and double at each iteration. Choosing tuneLength = 9 will give us cost parameters of 0.25, 0.5, 1, 2, 4, 8, 16, 32 and 64. 
 
 ```r
 svmTune <- train(x = moonsTrain[,c(1:2)],
                  y = moonsTrain[,3],
-                 method = "svmRadial",
+                 method = svmRadialE1071,
                  tuneLength = 9,
                  preProc = c("center", "scale"),
                  metric = "ROC",
                  trControl = cvCtrl)
-```
-
-```
-## 
-## Attaching package: 'kernlab'
-```
-
-```
-## The following object is masked from 'package:ggplot2':
-## 
-##     alpha
-```
-
-```r
+                 
 svmTune
 ```
 
 ```
-## Support Vector Machines with Radial Basis Function Kernel 
+## Support Vector Machines with Radial Kernel - e1071 
 ## 
 ## 280 samples
 ##   2 predictor
@@ -280,20 +340,19 @@ svmTune
 ## Summary of sample sizes: 224, 224, 224, 224, 224, 224, ... 
 ## Resampling results across tuning parameters:
 ## 
-##   C      ROC        Sens       Spec     
-##    0.25  0.9519898  0.8728571  0.8928571
-##    0.50  0.9564286  0.8842857  0.8971429
-##    1.00  0.9581633  0.8914286  0.9085714
-##    2.00  0.9585204  0.8900000  0.9000000
-##    4.00  0.9595918  0.8885714  0.8928571
-##    8.00  0.9600510  0.8757143  0.8914286
-##   16.00  0.9585714  0.8671429  0.8857143
-##   32.00  0.9545408  0.8671429  0.8842857
-##   64.00  0.9526531  0.8542857  0.8857143
+##   cost   ROC        Sens       Spec     
+##    0.25  0.9337245  0.8485714  0.8900000
+##    0.50  0.9437245  0.8571429  0.8942857
+##    1.00  0.9517857  0.8542857  0.8971429
+##    2.00  0.9584184  0.8685714  0.9014286
+##    4.00  0.9611224  0.8785714  0.9014286
+##    8.00  0.9633163  0.8842857  0.8985714
+##   16.00  0.9633673  0.8900000  0.8957143
+##   32.00  0.9629592  0.8914286  0.8914286
+##   64.00  0.9609184  0.8771429  0.8871429
 ## 
-## Tuning parameter 'sigma' was held constant at a value of 1.060521
 ## ROC was used to select the optimal model using  the largest value.
-## The final values used for the model were sigma = 1.060521 and C = 8.
+## The final value used for the model was cost = 16.
 ```
 
 
@@ -302,19 +361,19 @@ svmTune$finalModel
 ```
 
 ```
-## Support Vector Machine object of class "ksvm" 
 ## 
-## SV type: C-svc  (classification) 
-##  parameter : cost C = 8 
+## Call:
+## svm.default(x = as.matrix(x), y = y, kernel = "radial", cost = param$cost, 
+##     probability = classProbs)
 ## 
-## Gaussian Radial Basis kernel function. 
-##  Hyperparameter : sigma =  1 
 ## 
-## Number of Support Vectors : 81 
+## Parameters:
+##    SVM-Type:  C-classification 
+##  SVM-Kernel:  radial 
+##        cost:  16 
+##       gamma:  0.5 
 ## 
-## Objective Function Value : -483.3213 
-## Training error : 0.110714 
-## Probability model included.
+## Number of Support Vectors:  79
 ```
 
 
@@ -343,8 +402,8 @@ confusionMatrix(svmPred, moonsTest[,3])
 ## 
 ##           Reference
 ## Prediction  A  B
-##          A 55  5
-##          B  5 55
+##          A 56  6
+##          B  4 54
 ##                                           
 ##                Accuracy : 0.9167          
 ##                  95% CI : (0.8521, 0.9593)
@@ -352,15 +411,15 @@ confusionMatrix(svmPred, moonsTest[,3])
 ##     P-Value [Acc > NIR] : <2e-16          
 ##                                           
 ##                   Kappa : 0.8333          
-##  Mcnemar's Test P-Value : 1               
+##  Mcnemar's Test P-Value : 0.7518          
 ##                                           
-##             Sensitivity : 0.9167          
-##             Specificity : 0.9167          
-##          Pos Pred Value : 0.9167          
-##          Neg Pred Value : 0.9167          
+##             Sensitivity : 0.9333          
+##             Specificity : 0.9000          
+##          Pos Pred Value : 0.9032          
+##          Neg Pred Value : 0.9310          
 ##              Prevalence : 0.5000          
-##          Detection Rate : 0.4583          
-##    Detection Prevalence : 0.5000          
+##          Detection Rate : 0.4667          
+##    Detection Prevalence : 0.5167          
 ##       Balanced Accuracy : 0.9167          
 ##                                           
 ##        'Positive' Class : A               
@@ -375,13 +434,13 @@ head(svmProbs)
 ```
 
 ```
-##            A          B
-## 1 0.06975433 0.93024567
-## 2 0.11237177 0.88762823
-## 3 0.98902819 0.01097181
-## 4 0.98920401 0.01079599
-## 5 0.07275020 0.92724980
-## 6 0.92569425 0.07430575
+##             A          B
+## 2 0.006794294 0.99320571
+## 5 0.056411649 0.94358835
+## 6 0.966313899 0.03368610
+## 7 0.996845020 0.00315498
+## 8 0.023448085 0.97655192
+## 9 0.939438609 0.06056139
 ```
 
 Build a ROC curve.
@@ -392,7 +451,7 @@ auc(svmROC)
 ```
 
 ```
-## Area under the curve: 0.9583
+## Area under the curve: 0.96
 ```
 
 Plot ROC curve, including the threshold with the highest sum sensitivity + specificity.
@@ -424,7 +483,7 @@ auc(svmROC)
 ```
 
 ```
-## Area under the curve: 0.9583
+## Area under the curve: 0.96
 ```
 
 ### Plot decision boundary
@@ -515,7 +574,7 @@ In the arguments to the ```train``` function we change ```method``` from ```knn`
 ```r
 svmTune2 <- train(descrTrain,
                  concRatioTrain,
-                 method="svmLinear2",
+                 method=svmRadialE1071,
                  tuneLength = 9,
                  trControl = trainControl(method="repeatedcv",
                                           number = 5,
@@ -529,7 +588,7 @@ svmTune2
 ```
 
 ```
-## Support Vector Machines with Linear Kernel 
+## Support Vector Machines with Radial Kernel - e1071 
 ## 
 ## 168 samples
 ##  61 predictor
@@ -540,18 +599,18 @@ svmTune2
 ## Resampling results across tuning parameters:
 ## 
 ##   cost   RMSE       Rsquared   MAE      
-##    0.25  0.6600942  0.3613530  0.5033959
-##    0.50  0.6868435  0.3408595  0.5255486
-##    1.00  0.7205320  0.3212819  0.5492876
-##    2.00  0.7488398  0.3040829  0.5687824
-##    4.00  0.7681497  0.2959570  0.5826033
-##    8.00  0.7817154  0.2866469  0.5915705
-##   16.00  0.7882145  0.2834861  0.5964804
-##   32.00  0.7896897  0.2830242  0.5975740
-##   64.00  0.7923345  0.2825472  0.5994106
+##    0.25  0.5975889  0.4731069  0.4431324
+##    0.50  0.5635694  0.4995130  0.4163780
+##    1.00  0.5474320  0.5010678  0.4108350
+##    2.00  0.5381658  0.5078395  0.4065265
+##    4.00  0.5328509  0.5168000  0.4014653
+##    8.00  0.5299465  0.5221113  0.4017165
+##   16.00  0.5297629  0.5224211  0.4016452
+##   32.00  0.5297629  0.5224211  0.4016452
+##   64.00  0.5297629  0.5224211  0.4016452
 ## 
 ## RMSE was used to select the optimal model using  the smallest value.
-## The final value used for the model was cost = 0.25.
+## The final value used for the model was cost = 16.
 ```
 
 
@@ -592,7 +651,7 @@ cor(concRatioTest, test_pred)
 ```
 
 ```
-## [1] 0.7453403
+## [1] 0.8078836
 ```
 
 
@@ -611,76 +670,11 @@ data(segmentationData)
 
 The aim of the exercise is to build a binary classifier to predict the quality of segmentation (poorly segmented or well segmented) based on the various morphological features. 
 
-Do not worry about feature selection, but you may want to pre-process the data. 
+* Do not worry about feature selection, but you may want to pre-process the data. 
 
-Select a radial kernel SVM and tune over the cost function C. 
+* Use a radial SVM model and tune over the cost function C. 
 
-Produce a ROC curve to show the performance of the classifier on the test set. 
-
-
-```r
-svmRadialE1071 <- list(
-  label = "Support Vector Machines with Radial Kernel - e1071",
-  library = "e1071",
-  type = c("Regression", "Classification"),
-  parameters = data.frame(parameter="cost",
-                          class="numeric",
-                          label="Cost"),
-  grid = function (x, y, len = NULL, search = "grid") 
-    {
-      if (search == "grid") {
-        out <- expand.grid(cost = 2^((1:len) - 3))
-      }
-      else {
-        out <- data.frame(cost = 2^runif(len, min = -5, max = 10))
-      }
-      out
-    },
-  loop=NULL,
-  fit=function (x, y, wts, param, lev, last, classProbs, ...) 
-    {
-      if (any(names(list(...)) == "probability") | is.numeric(y)) {
-        out <- e1071::svm(x = as.matrix(x), y = y, kernel = "radial", 
-                          cost = param$cost, ...)
-      }
-      else {
-        out <- e1071::svm(x = as.matrix(x), y = y, kernel = "radial", 
-                          cost = param$cost, probability = classProbs, ...)
-      }
-      out
-    },
-  predict = function (modelFit, newdata, submodels = NULL) 
-    {
-      predict(modelFit, newdata)
-    },
-  prob = function (modelFit, newdata, submodels = NULL) 
-    {
-      out <- predict(modelFit, newdata, probability = TRUE)
-      attr(out, "probabilities")
-    },
-  predictors = function (x, ...) 
-    {
-      out <- if (!is.null(x$terms)) 
-        predictors.terms(x$terms)
-      else x$xNames
-      if (is.null(out)) 
-        out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
-      if (is.null(out)) 
-        out <- NA
-      out
-    },
-  tags = c("Kernel Methods", "Support Vector Machines", "Regression", "Classifier", "Robust Methods"),
-  levels = function(x) x$levels,
-  sort = function(x)
-  {
-    x[order(x$cost), ]
-  }
-)
-```
-
-
-
-
+* Produce a ROC curve to show the performance of the classifier on the test set. 
 
 
 Solutions to exercises can be found in appendix \@ref(solutions-svm)

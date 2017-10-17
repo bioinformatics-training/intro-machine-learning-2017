@@ -96,49 +96,6 @@ clusterresults[1,which(clusterresults[2,]==2)]
 ```
 
 ```
-##    preimp  preimp.1  preimp.2  preimp.3  preimp.4  preimp.5  preimp.6 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-##  preimp.7  preimp.8  preimp.9 preimp.10 preimp.11       ESC     ESC.1 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"     "ESC"     "ESC" 
-## preimp.12 preimp.13 preimp.14 preimp.15 preimp.16 preimp.17 preimp.18 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-## preimp.19 preimp.20 preimp.21 preimp.22 preimp.23 preimp.24 preimp.25 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-## preimp.26 preimp.27 preimp.28 preimp.29 preimp.30 preimp.31 preimp.32 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-## preimp.33 preimp.34 preimp.35 preimp.36 preimp.37 preimp.38 preimp.39 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-## preimp.40 preimp.41 preimp.42 preimp.43 preimp.44 preimp.45 preimp.46 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-## preimp.47 preimp.48 preimp.49 preimp.50 preimp.52 preimp.53 preimp.54 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-## preimp.55 preimp.56 preimp.57 preimp.58 preimp.59 preimp.60 preimp.61 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-## preimp.62 preimp.63 preimp.64 preimp.65 preimp.66 preimp.67 preimp.68 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-## preimp.69 preimp.70 preimp.71 preimp.72 preimp.73 preimp.74 preimp.75 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-## preimp.76 preimp.77 preimp.78 preimp.79 preimp.80 preimp.81 preimp.82 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-## preimp.83 preimp.84 preimp.85 preimp.86 preimp.87 preimp.88 preimp.89 
-##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
-##     ESC.2     ESC.3     ESC.4     ESC.5     ESC.6     ESC.7     ESC.8 
-##     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC" 
-##     ESC.9    ESC.10    ESC.11    ESC.12    ESC.13    ESC.14    ESC.15 
-##     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC" 
-##    ESC.16    ESC.17    ESC.18    ESC.19    ESC.20    ESC.21    ESC.22 
-##     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC" 
-##    ESC.23    ESC.24    ESC.25    ESC.26    ESC.27    ESC.28    ESC.29 
-##     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC" 
-##    ESC.30    ESC.32    ESC.33   soma.48   soma.49   soma.51   soma.52 
-##     "ESC"     "ESC"     "ESC"    "soma"    "soma"    "soma"    "soma"
-```
-
-```r
-clusterresults[1,which(clusterresults[2,]==3)]
-```
-
-```
 ## preimp.51    ESC.31   PGC.192   PGC.193   PGC.194   PGC.196   PGC.197 
 ##  "preimp"     "ESC"     "PGC"     "PGC"     "PGC"     "PGC"     "PGC" 
 ##   PGC.199   PGC.200   PGC.201      soma    soma.1    soma.2    soma.3 
@@ -170,7 +127,7 @@ clusterresults[1,which(clusterresults[2,]==3)]
 ```
 
 ```r
-clusterresults[1,which(clusterresults[2,]==4)]
+clusterresults[1,which(clusterresults[2,]==3)]
 ```
 
 ```
@@ -222,6 +179,49 @@ clusterresults[1,which(clusterresults[2,]==4)]
 ##   "PGC"   "PGC"   "PGC"   "PGC"
 ```
 
+```r
+clusterresults[1,which(clusterresults[2,]==4)]
+```
+
+```
+##    preimp  preimp.1  preimp.2  preimp.3  preimp.4  preimp.5  preimp.6 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+##  preimp.7  preimp.8  preimp.9 preimp.10 preimp.11       ESC     ESC.1 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"     "ESC"     "ESC" 
+## preimp.12 preimp.13 preimp.14 preimp.15 preimp.16 preimp.17 preimp.18 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+## preimp.19 preimp.20 preimp.21 preimp.22 preimp.23 preimp.24 preimp.25 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+## preimp.26 preimp.27 preimp.28 preimp.29 preimp.30 preimp.31 preimp.32 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+## preimp.33 preimp.34 preimp.35 preimp.36 preimp.37 preimp.38 preimp.39 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+## preimp.40 preimp.41 preimp.42 preimp.43 preimp.44 preimp.45 preimp.46 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+## preimp.47 preimp.48 preimp.49 preimp.50 preimp.52 preimp.53 preimp.54 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+## preimp.55 preimp.56 preimp.57 preimp.58 preimp.59 preimp.60 preimp.61 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+## preimp.62 preimp.63 preimp.64 preimp.65 preimp.66 preimp.67 preimp.68 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+## preimp.69 preimp.70 preimp.71 preimp.72 preimp.73 preimp.74 preimp.75 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+## preimp.76 preimp.77 preimp.78 preimp.79 preimp.80 preimp.81 preimp.82 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+## preimp.83 preimp.84 preimp.85 preimp.86 preimp.87 preimp.88 preimp.89 
+##  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp"  "preimp" 
+##     ESC.2     ESC.3     ESC.4     ESC.5     ESC.6     ESC.7     ESC.8 
+##     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC" 
+##     ESC.9    ESC.10    ESC.11    ESC.12    ESC.13    ESC.14    ESC.15 
+##     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC" 
+##    ESC.16    ESC.17    ESC.18    ESC.19    ESC.20    ESC.21    ESC.22 
+##     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC" 
+##    ESC.23    ESC.24    ESC.25    ESC.26    ESC.27    ESC.28    ESC.29 
+##     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC"     "ESC" 
+##    ESC.30    ESC.32    ESC.33   soma.48   soma.49   soma.51   soma.52 
+##     "ESC"     "ESC"     "ESC"    "soma"    "soma"    "soma"    "soma"
+```
+
 ## Exercise 8.4.
 
 In our previous section we identified clusters associated with various groups. In our application cluster 1 was associated primarily with pre-implantation cells, with cluster 3 associated with PGCs. We could therefore empirically look for genes that are differentially expressed. Since we know SOX17 is associated with PGC specification [@irie2015sox17,@tang2015unique] let's first compare the expression levels of SOX17 in the two groups:
@@ -236,13 +236,13 @@ t.test(D[which(genenames=="SOX17")+3, which(clusterresults[2,]==1)],D[which(gene
 ## 	Welch Two Sample t-test
 ## 
 ## data:  D[which(genenames == "SOX17") + 3, which(clusterresults[2, ] ==  and D[which(genenames == "SOX17") + 3, which(clusterresults[2, ] ==     1)] and     3)]
-## t = 3.7991, df = 31.722, p-value = 0.0006198
+## t = -1.4594, df = 37.977, p-value = 0.1527
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  0.7417196 2.4577549
+##  -1.535185  0.248972
 ## sample estimates:
-##  mean of x  mean of y 
-## 1.67857600 0.07883878
+## mean of x mean of y 
+##  1.678576  2.321683
 ```
 
 Typically we won't always know the important genes, but can perform an unbiased analysis by testing all genes.

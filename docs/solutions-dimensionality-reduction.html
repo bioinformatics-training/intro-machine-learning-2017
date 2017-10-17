@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-10-16">
+<meta name="date" content="2017-10-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -175,9 +175,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="7.4.1" data-path="svm.html"><a href="svm.html#setup-environment"><i class="fa fa-check"></i><b>7.4.1</b> Setup environment</a></li>
 <li class="chapter" data-level="7.4.2" data-path="svm.html"><a href="svm.html#partition-data-1"><i class="fa fa-check"></i><b>7.4.2</b> Partition data</a></li>
 <li class="chapter" data-level="7.4.3" data-path="svm.html"><a href="svm.html#visualize-training-data"><i class="fa fa-check"></i><b>7.4.3</b> Visualize training data</a></li>
-<li class="chapter" data-level="7.4.4" data-path="svm.html"><a href="svm.html#model-cross-validation-and-tuning"><i class="fa fa-check"></i><b>7.4.4</b> Model cross-validation and tuning</a></li>
-<li class="chapter" data-level="7.4.5" data-path="svm.html"><a href="svm.html#prediction-performance-measures"><i class="fa fa-check"></i><b>7.4.5</b> Prediction performance measures</a></li>
-<li class="chapter" data-level="7.4.6" data-path="svm.html"><a href="svm.html#plot-decision-boundary"><i class="fa fa-check"></i><b>7.4.6</b> Plot decision boundary</a></li>
+<li class="chapter" data-level="7.4.4" data-path="svm.html"><a href="svm.html#define-a-custom-model"><i class="fa fa-check"></i><b>7.4.4</b> Define a custom model</a></li>
+<li class="chapter" data-level="7.4.5" data-path="svm.html"><a href="svm.html#model-cross-validation-and-tuning"><i class="fa fa-check"></i><b>7.4.5</b> Model cross-validation and tuning</a></li>
+<li class="chapter" data-level="7.4.6" data-path="svm.html"><a href="svm.html#prediction-performance-measures"><i class="fa fa-check"></i><b>7.4.6</b> Prediction performance measures</a></li>
+<li class="chapter" data-level="7.4.7" data-path="svm.html"><a href="svm.html#plot-decision-boundary"><i class="fa fa-check"></i><b>7.4.7</b> Plot decision boundary</a></li>
 </ul></li>
 <li class="chapter" data-level="7.5" data-path="svm.html"><a href="svm.html#example---regression"><i class="fa fa-check"></i><b>7.5</b> Example - regression</a></li>
 <li class="chapter" data-level="7.6" data-path="svm.html"><a href="svm.html#further-reading"><i class="fa fa-check"></i><b>7.6</b> Further reading</a></li>
@@ -345,43 +346,6 @@ clusterresults &lt;-<span class="st"> </span><span class="kw">rbind</span>(Label
 ## PGC.228 PGC.229 PGC.230 PGC.231 PGC.232 
 ##   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterresults[<span class="dv">1</span>,<span class="kw">which</span>(clusterresults[<span class="dv">2</span>,]<span class="op">==</span><span class="dv">2</span>)]</code></pre></div>
-<pre><code>##    preimp  preimp.1  preimp.2  preimp.3  preimp.4  preimp.5  preimp.6 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-##  preimp.7  preimp.8  preimp.9 preimp.10 preimp.11       ESC     ESC.1 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;     &quot;ESC&quot;     &quot;ESC&quot; 
-## preimp.12 preimp.13 preimp.14 preimp.15 preimp.16 preimp.17 preimp.18 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-## preimp.19 preimp.20 preimp.21 preimp.22 preimp.23 preimp.24 preimp.25 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-## preimp.26 preimp.27 preimp.28 preimp.29 preimp.30 preimp.31 preimp.32 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-## preimp.33 preimp.34 preimp.35 preimp.36 preimp.37 preimp.38 preimp.39 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-## preimp.40 preimp.41 preimp.42 preimp.43 preimp.44 preimp.45 preimp.46 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-## preimp.47 preimp.48 preimp.49 preimp.50 preimp.52 preimp.53 preimp.54 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-## preimp.55 preimp.56 preimp.57 preimp.58 preimp.59 preimp.60 preimp.61 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-## preimp.62 preimp.63 preimp.64 preimp.65 preimp.66 preimp.67 preimp.68 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-## preimp.69 preimp.70 preimp.71 preimp.72 preimp.73 preimp.74 preimp.75 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-## preimp.76 preimp.77 preimp.78 preimp.79 preimp.80 preimp.81 preimp.82 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-## preimp.83 preimp.84 preimp.85 preimp.86 preimp.87 preimp.88 preimp.89 
-##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
-##     ESC.2     ESC.3     ESC.4     ESC.5     ESC.6     ESC.7     ESC.8 
-##     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot; 
-##     ESC.9    ESC.10    ESC.11    ESC.12    ESC.13    ESC.14    ESC.15 
-##     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot; 
-##    ESC.16    ESC.17    ESC.18    ESC.19    ESC.20    ESC.21    ESC.22 
-##     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot; 
-##    ESC.23    ESC.24    ESC.25    ESC.26    ESC.27    ESC.28    ESC.29 
-##     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot; 
-##    ESC.30    ESC.32    ESC.33   soma.48   soma.49   soma.51   soma.52 
-##     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;    &quot;soma&quot;    &quot;soma&quot;    &quot;soma&quot;    &quot;soma&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterresults[<span class="dv">1</span>,<span class="kw">which</span>(clusterresults[<span class="dv">2</span>,]<span class="op">==</span><span class="dv">3</span>)]</code></pre></div>
 <pre><code>## preimp.51    ESC.31   PGC.192   PGC.193   PGC.194   PGC.196   PGC.197 
 ##  &quot;preimp&quot;     &quot;ESC&quot;     &quot;PGC&quot;     &quot;PGC&quot;     &quot;PGC&quot;     &quot;PGC&quot;     &quot;PGC&quot; 
 ##   PGC.199   PGC.200   PGC.201      soma    soma.1    soma.2    soma.3 
@@ -410,7 +374,7 @@ clusterresults &lt;-<span class="st"> </span><span class="kw">rbind</span>(Label
 ##    &quot;soma&quot;    &quot;soma&quot;    &quot;soma&quot;    &quot;soma&quot;    &quot;soma&quot;    &quot;soma&quot;    &quot;soma&quot; 
 ##   soma.85 
 ##    &quot;soma&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterresults[<span class="dv">1</span>,<span class="kw">which</span>(clusterresults[<span class="dv">2</span>,]<span class="op">==</span><span class="dv">4</span>)]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterresults[<span class="dv">1</span>,<span class="kw">which</span>(clusterresults[<span class="dv">2</span>,]<span class="op">==</span><span class="dv">3</span>)]</code></pre></div>
 <pre><code>##     PGC   PGC.1   PGC.2   PGC.3   PGC.4   PGC.5   PGC.6   PGC.7   PGC.8 
 ##   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot; 
 ##   PGC.9  PGC.10  PGC.11  PGC.12  PGC.13  PGC.14  PGC.15  PGC.16  PGC.17 
@@ -457,6 +421,43 @@ clusterresults &lt;-<span class="st"> </span><span class="kw">rbind</span>(Label
 ##   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot; 
 ## PGC.238 PGC.239 PGC.240 PGC.241 
 ##   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;   &quot;PGC&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clusterresults[<span class="dv">1</span>,<span class="kw">which</span>(clusterresults[<span class="dv">2</span>,]<span class="op">==</span><span class="dv">4</span>)]</code></pre></div>
+<pre><code>##    preimp  preimp.1  preimp.2  preimp.3  preimp.4  preimp.5  preimp.6 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+##  preimp.7  preimp.8  preimp.9 preimp.10 preimp.11       ESC     ESC.1 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;     &quot;ESC&quot;     &quot;ESC&quot; 
+## preimp.12 preimp.13 preimp.14 preimp.15 preimp.16 preimp.17 preimp.18 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+## preimp.19 preimp.20 preimp.21 preimp.22 preimp.23 preimp.24 preimp.25 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+## preimp.26 preimp.27 preimp.28 preimp.29 preimp.30 preimp.31 preimp.32 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+## preimp.33 preimp.34 preimp.35 preimp.36 preimp.37 preimp.38 preimp.39 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+## preimp.40 preimp.41 preimp.42 preimp.43 preimp.44 preimp.45 preimp.46 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+## preimp.47 preimp.48 preimp.49 preimp.50 preimp.52 preimp.53 preimp.54 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+## preimp.55 preimp.56 preimp.57 preimp.58 preimp.59 preimp.60 preimp.61 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+## preimp.62 preimp.63 preimp.64 preimp.65 preimp.66 preimp.67 preimp.68 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+## preimp.69 preimp.70 preimp.71 preimp.72 preimp.73 preimp.74 preimp.75 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+## preimp.76 preimp.77 preimp.78 preimp.79 preimp.80 preimp.81 preimp.82 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+## preimp.83 preimp.84 preimp.85 preimp.86 preimp.87 preimp.88 preimp.89 
+##  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot;  &quot;preimp&quot; 
+##     ESC.2     ESC.3     ESC.4     ESC.5     ESC.6     ESC.7     ESC.8 
+##     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot; 
+##     ESC.9    ESC.10    ESC.11    ESC.12    ESC.13    ESC.14    ESC.15 
+##     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot; 
+##    ESC.16    ESC.17    ESC.18    ESC.19    ESC.20    ESC.21    ESC.22 
+##     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot; 
+##    ESC.23    ESC.24    ESC.25    ESC.26    ESC.27    ESC.28    ESC.29 
+##     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot; 
+##    ESC.30    ESC.32    ESC.33   soma.48   soma.49   soma.51   soma.52 
+##     &quot;ESC&quot;     &quot;ESC&quot;     &quot;ESC&quot;    &quot;soma&quot;    &quot;soma&quot;    &quot;soma&quot;    &quot;soma&quot;</code></pre>
 </div>
 <div id="exercise-8.4." class="section level2">
 <h2><span class="header-section-number">H.4</span> Exercise 8.4.</h2>
@@ -466,13 +467,13 @@ clusterresults &lt;-<span class="st"> </span><span class="kw">rbind</span>(Label
 ##  Welch Two Sample t-test
 ## 
 ## data:  D[which(genenames == &quot;SOX17&quot;) + 3, which(clusterresults[2, ] ==  and D[which(genenames == &quot;SOX17&quot;) + 3, which(clusterresults[2, ] ==     1)] and     3)]
-## t = 3.7991, df = 31.722, p-value = 0.0006198
+## t = -1.4594, df = 37.977, p-value = 0.1527
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  0.7417196 2.4577549
+##  -1.535185  0.248972
 ## sample estimates:
-##  mean of x  mean of y 
-## 1.67857600 0.07883878</code></pre>
+## mean of x mean of y 
+##  1.678576  2.321683</code></pre>
 <p>Typically we won’t always know the important genes, but can perform an unbiased analysis by testing all genes.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pvalstore &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="dt">mode=</span><span class="st">&quot;numeric&quot;</span>, <span class="dt">length=</span><span class="kw">length</span>(genenames))
 <span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(genenames))){
