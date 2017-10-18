@@ -222,7 +222,7 @@ library("arm")
 ```
 
 ```
-## Working directory is /Users/matt/git_repositories/intro-machine-learning
+## Working directory is /Users/matt/git_repositories/intro-machine-learning-2017
 ```
 
 ```r

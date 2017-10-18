@@ -14,7 +14,7 @@
   
   <meta property="og:image" content="figures/cover_image.png" />
   <meta property="og:description" content="Course materials for An Introduction to Machine Learning" />
-  <meta name="github-repo" content="bioinformatics-training/intro-machine-learning" />
+  <meta name="github-repo" content="bioinformatics-training/intro-machine-learning-2017" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="An Introduction to Machine Learning" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-10-17">
+<meta name="date" content="2017-10-18">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -412,7 +412,7 @@ pred1&lt;-<span class="kw">predict</span>(lrfit4, <span class="dt">data=</span><
 <pre><code>## Loading required package: lme4</code></pre>
 <pre><code>## 
 ## arm (Version 1.9-3, built: 2016-11-21)</code></pre>
-<pre><code>## Working directory is /Users/matt/git_repositories/intro-machine-learning</code></pre>
+<pre><code>## Working directory is /Users/matt/git_repositories/intro-machine-learning-2017</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lrfit4    &lt;-<span class="st"> </span><span class="kw">lm</span>(y<span class="op">~</span><span class="kw">poly</span>(x,<span class="dt">degree=</span><span class="dv">4</span>), <span class="dt">data=</span><span class="kw">data.frame</span>(<span class="dt">x=</span>D[<span class="dv">1</span><span class="op">:</span><span class="dv">24</span>,<span class="dv">1</span>],<span class="dt">y=</span>D[<span class="dv">1</span><span class="op">:</span><span class="dv">24</span>,geneindex]))
 simulate  &lt;-<span class="st"> </span><span class="kw">coef</span>(<span class="kw">sim</span>(lrfit4))
 paramsamp &lt;-<span class="st"> </span><span class="kw">head</span>(simulate,<span class="dv">10</span>)</code></pre></div>

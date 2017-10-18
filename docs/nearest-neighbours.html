@@ -14,7 +14,7 @@
   
   <meta property="og:image" content="figures/cover_image.png" />
   <meta property="og:description" content="Course materials for An Introduction to Machine Learning" />
-  <meta name="github-repo" content="bioinformatics-training/intro-machine-learning" />
+  <meta name="github-repo" content="bioinformatics-training/intro-machine-learning-2017" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="An Introduction to Machine Learning" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-10-17">
+<meta name="date" content="2017-10-18">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -727,7 +727,7 @@ Figure 5.8: Binary classification of the simulated training and test sets with <
 <p>The simulated data in our previous example were randomly sampled from a normal (Gaussian) distribution and so did not require pre-processing. In practice, data collected in real studies often require transformation and/or filtering. Furthermore, the simulated data contained only two predictors; in practice, you are likely to have many variables. For example, in a gene expression study you might have thousands of variables. When using <em>k</em>-nn for classification or regression, removing variables that are not associated with the outcome of interest may improve the predictive power of the model. The process of choosing the best predictors from the available variables is known as <em>feature selection</em>. For honest estimates of model performance, pre-processing and feature selection should be performed within the loops of the cross validation process.</p>
 <div id="cell-segmentation-data-set" class="section level3">
 <h3><span class="header-section-number">5.3.1</span> Cell segmentation data set</h3>
-<p>Pre-processing and feature selection will be demonstrated using the cell segmentation data of (<span class="citation">A. A. Hill et al. (<a href="#ref-Hill2007">2007</a>)</span>). High Content Screening (HCS) automates the collection and analysis of biological images of cultured cells. However, image segmentation algorithms are not perfect and sometimes to not reliably quantitate the morphology of cells. Hill et al. sought to differentiate between well- and poorly-segmented cells based on the morphometric data collected in HCS. If poorly-segmented cells can be automatically detected and eliminated, then the accuracy of studies using HCS will be improved. Hill et al. collected morphometric data on 2019 cells and asked human reviewers to classify the cells as well- or poorly-segmented.</p>
+<p>Pre-processing and feature selection will be demonstrated using the cell segmentation data of (<span class="citation">A. A. Hill et al. (<a href="#ref-Hill2007">2007</a>)</span>). High Content Screening (HCS) automates the collection and analysis of biological images of cultured cells. However, image segmentation algorithms are not perfect and sometimes do not reliably quantitate the morphology of cells. Hill et al. sought to differentiate between well- and poorly-segmented cells based on the morphometric data collected in HCS. If poorly-segmented cells can be automatically detected and eliminated, then the accuracy of studies using HCS will be improved. Hill et al. collected morphometric data on 2019 cells and asked human reviewers to classify the cells as well- or poorly-segmented.</p>
 <div class="figure" style="text-align: center"><span id="fig:imageSegmentationHCS"></span>
 <img src="images/Hill_2007_cell_segmentation.jpg" alt="Image segmentation in high content screening. Images **b** and **c** are examples of well-segmented cells; **d** and **e** show poor-segmentation. Source: Hill(2007) https://doi.org/10.1186/1471-2105-8-340" width="75%" />
 <p class="caption">
@@ -1134,7 +1134,7 @@ knn_sbf</code></pre></div>
 ## Resampling performance:
 ## 
 ##     ROC   Sens   Spec   ROCSD  SensSD  SpecSD
-##  0.8847 0.8311 0.7689 0.02118 0.02669 0.07227
+##  0.8821 0.8292 0.7639 0.02343 0.02692 0.06365
 ## 
 ## Using the training set, 16 variables were selected:
 ##    ConvexHullPerimRatioCh1, EntropyIntenCh1, FiberWidthCh1, IntenCoocASMCh4, IntenCoocContrastCh3...
@@ -1155,8 +1155,8 @@ knn_sbf</code></pre></div>
 ## [15] &quot;VarIntenCh4&quot;             &quot;WidthCh1&quot;</code></pre>
 <p>Here are some performance metrics for the final model:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knn_sbf<span class="op">$</span>results</code></pre></div>
-<pre><code>##         ROC      Sens      Spec      ROCSD     SensSD     SpecSD
-## 1 0.8847372 0.8310769 0.7688889 0.02117985 0.02669131 0.07226672</code></pre>
+<pre><code>##         ROC      Sens      Spec     ROCSD     SensSD     SpecSD
+## 1 0.8820791 0.8292308 0.7638889 0.0234347 0.02692308 0.06364688</code></pre>
 <p>To retrieve the optimum value of k found during training run:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knn_sbf<span class="op">$</span>fit<span class="op">$</span>finalModel<span class="op">$</span>k</code></pre></div>
 <pre><code>## [1] 25</code></pre>
