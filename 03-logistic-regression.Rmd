@@ -453,14 +453,14 @@ library(devtools)
 library(DEtime)
 ```
 
-Within {DEtime}, we can call the function {DEtime_rank} to calculate marginal likelihood ratios for two time series, similar to our application in the previous section. Note that here the hyperparameters are optimised by gradient search rather than grid searches. 
+Within {DEtime}, we can call the function {DEtime_rank} to calculate marginal likelihood ratios for two time series, similar to our application in the previous section. Note that here, the hyperparameters are optimised by gradient search rather than grid searches. 
 
 ```{r echo=T}
 res_rank <- DEtime_rank(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTimes = Xs, PerturbedData = D[25:48,3], savefile=TRUE)
 #idx <- which(res_rank[,2]>1)
 ```
 
-For genes that are DE, we identify the timing of divergence between two time series using the function {DEtime_infer}.
+For genes that are DE, we identify the timing of divergence between two time series using the function {DEtime_infer} and visualise the plot using the {plot_DEtime} function.
 
 ```{r echo=T}
 res <- DEtime_infer(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTimes = Xs, PerturbedData = D[25:48,3])
@@ -468,10 +468,15 @@ print_DEtime
 plot_DEtime(res)
 ```
 
-We can do it for all genes using the example below. By doing so, we can plot a histogram of the times of divergence, shedding light on the temporal progression of the infection process.
+We can do it for all genes using the example below:
 
 ```{r echo=T}
 res <- DEtime_infer(ControlTimes = Xs, ControlData = t(D[1:24,]), PerturbedTimes = Xs, PerturbedData = t(D[25:48,]))
+```
+
+By systematically evaluating the time of divergence for all genes (and visualising the results as a histogram), we can we can begin to shed light on the temporal progression of the infection process. 
+
+```{r echo=T}
 hist(as.numeric(res$result[,2]),breaks=20)
 ```
 
@@ -626,15 +631,14 @@ GP and other nonlinear approaches become necesary if, for example, the data is n
 
 ```{r echo=T}
 xtrain = D[,bestpredictor] 
-ytrain = as.factor(D$Class)
 
 ytrain = as.numeric(D$Class)
-ytrain[which(x>12.5)]=0
-ytrain[which(x<10)]=0
+ytrain[which(xtrain>12.5)]=0
+ytrain[which(xtrain<10)]=0
 ytrain = as.factor(ytrain)
 
 xpred = Dpred[,bestpredictor] 
-ypred = as.factor(Dpred$Class)
+ypred = as.numeric(Dpred$Class)
 ypred[which(xpred>12.5)]=0
 ypred[which(xpred<10)]=0
 ypred = as.factor(ypred)
