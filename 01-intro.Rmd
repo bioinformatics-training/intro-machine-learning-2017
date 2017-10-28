@@ -7,7 +7,7 @@ output:
 
 In the era of large scale data collection we are trying to make meaningful intepretation of data. 
 
-There are two ways to meaningfully intepret data. 
+There are two ways to meaningfully intepret data and they are 
 
 1. Mechanistic or mathematical modeling based
 2. Descriptive or Data Driven
