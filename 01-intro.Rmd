@@ -12,7 +12,7 @@ There are two ways to meaningfully intepret data and they are
 1. Mechanistic or mathematical modeling based
 2. Descriptive or Data Driven
 
-We are here to discuss the later approach using Machine learning. 
+We are here to discuss the later approach using machine learning approaches. 
 
 ## What is machine learning?
 
