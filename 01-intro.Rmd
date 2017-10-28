@@ -64,7 +64,7 @@ The algorithms take a subset of observations called as the training data and tes
 
 The error between the prediction of the outcome variable the actual data is evaulated as test error. The objective function of the algorithm is to minimise these test errors by tuning the parameters of the hypothesis. 
 
-Models that successffully capture these desidered outcomes are further evalutated for **Bias** and **Variance** (overfitting and underfitting). 
+Models that successffully capture these desidered outcomes are further evaluatated for **Bias** and **Variance** (overfitting and underfitting). 
 
 All the above concepts will be discussed in detail in the following lectures. 
 
