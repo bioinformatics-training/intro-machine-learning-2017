@@ -7,12 +7,12 @@ output:
 
 In the era of large scale data collection we are trying to make meaningful intepretation of data. 
 
-There are two ways to meaningfully intepret data. 
+There are two ways to meaningfully intepret data and they are 
 
 1. Mechanistic or mathematical modeling based
 2. Descriptive or Data Driven
 
-We are here to discuss the later approach using Machine learning. 
+We are here to discuss the later approach using machine learning (ML) approaches. 
 
 ## What is machine learning?
 
@@ -59,12 +59,12 @@ There are two aspects of ML
 
 **Supervised learning**: When we give both input and outcome variables and we ask the algorithm to formulate an hypothesis that closely captures the relationship. 
 
-## What actually happend under the hood
+## What actually happened under the hood
 The algorithms take a subset of observations called as the training data and tests them on a different subset of data called as the test data. 
 
 The error between the prediction of the outcome variable the actual data is evaulated as test error. The objective function of the algorithm is to minimise these test errors by tuning the parameters of the hypothesis. 
 
-Models that successffully capture these desidered outcomes are further evalutated for **Bias** and **Variance** (overfitting and underfitting). 
+Models that successfully capture these desired outcomes are further evaluated for **Bias** and **Variance** (overfitting and underfitting). 
 
 All the above concepts will be discussed in detail in the following lectures. 
 

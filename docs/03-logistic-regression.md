@@ -602,7 +602,7 @@ library(devtools)
 library(DEtime)
 ```
 
-Within {DEtime}, we can call the function {DEtime_rank} to calculate marginal likelihood ratios for two time series, similar to our application in the previous section. Note that here the hyperparameters are optimised by gradient search rather than grid searches. 
+Within {DEtime}, we can call the function {DEtime_rank} to calculate marginal likelihood ratios for two time series, similar to our application in the previous section. Note that here, the hyperparameters are optimised by gradient search rather than grid searches. 
 
 
 ```r
@@ -618,7 +618,7 @@ res_rank <- DEtime_rank(ControlTimes = Xs, ControlData = D[1:24,3], PerturbedTim
 #idx <- which(res_rank[,2]>1)
 ```
 
-For genes that are DE, we identify the timing of divergence between two time series using the function {DEtime_infer}.
+For genes that are DE, we identify the timing of divergence between two time series using the function {DEtime_infer} and visualise the plot using the {plot_DEtime} function.
 
 
 ```r
@@ -657,7 +657,7 @@ plot_DEtime(res)
 ## 1 is plotted
 ```
 
-We can do it for all genes using the example below. By doing so, we can plot a histogram of the times of divergence, shedding light on the temporal progression of the infection process.
+We can do it for all genes using the example below:
 
 
 ```r
@@ -837,11 +837,14 @@ res <- DEtime_infer(ControlTimes = Xs, ControlData = t(D[1:24,]), PerturbedTimes
 ## Please use print_DEtime or plot_DEtime to view the results.
 ```
 
+By systematically evaluating the time of divergence for all genes (and visualising the results as a histogram), we can we can begin to shed light on the temporal progression of the infection process. 
+
+
 ```r
 hist(as.numeric(res$result[,2]),breaks=20)
 ```
 
-<img src="03-logistic-regression_files/figure-html/unnamed-chunk-28-1.png" width="672" />
+<img src="03-logistic-regression_files/figure-html/unnamed-chunk-29-1.png" width="672" />
 
 #### Scalability
 
@@ -935,7 +938,7 @@ perf <- performance(pred, measure = "tpr", x.measure = "fpr")
 plot(perf)
 ```
 
-<img src="03-logistic-regression_files/figure-html/unnamed-chunk-31-1.png" width="672" />
+<img src="03-logistic-regression_files/figure-html/unnamed-chunk-32-1.png" width="672" />
 
 ```r
 auc <- performance(pred, measure = "auc")
@@ -944,7 +947,7 @@ auc
 ```
 
 ```
-## [1] 0.5
+## [1] 0.6111111
 ```
 
 Okay, so a score of $0.61$ is certainly better than random, but not particularly good. This is perhaps not surprising, as half the time series (the control) is uninfected over the entirety of the time series, whilst in the second times series (infection) Botrytis is able to infect from around time point 8 onwards. The slight better than random performence seems to arise by the slight bias in the number of instances of each class.
@@ -966,7 +969,7 @@ aucscore[i] <- auc@y.values[[1]]
 plot(aucscore[1,3:ncol(aucscore)],ylab="AUC",xlab="gene index")
 ```
 
-<img src="03-logistic-regression_files/figure-html/unnamed-chunk-32-1.png" width="672" />
+<img src="03-logistic-regression_files/figure-html/unnamed-chunk-33-1.png" width="672" />
 
 We note that, several genes in the list apear to have AUC scores much greater than 0.6. We can take a look at some of the genes with high predictive power:
 
@@ -976,10 +979,12 @@ genenames[which(aucscore>0.8)]
 ```
 
 ```
-##  [1] "AT1G29990" "AT1G67170" "AT2G21380" "AT3G13720" "AT3G25710"
-##  [6] "AT3G44720" "AT4G02150" "AT4G16380" "AT4G19700" "AT4G26450"
-## [11] "AT4G28640" "AT4G34710" "AT4G39050" "AT5G11980" "AT5G22630"
-## [16] "AT5G50010"
+##  [1] "AT1G29990" "AT1G67170" "AT2G21380" "AT2G28890" "AT2G35500"
+##  [6] "AT2G45660" "AT3G09980" "AT3G11590" "AT3G13720" "AT3G25710"
+## [11] "AT3G44720" "AT3G48150" "AT4G00710" "AT4G02150" "AT4G16380"
+## [16] "AT4G19700" "AT4G26450" "AT4G28640" "AT4G34710" "AT4G36970"
+## [21] "AT4G39050" "AT5G11980" "AT5G22630" "AT5G24660" "AT5G43700"
+## [26] "AT5G50010" "AT5G56250"
 ```
 
 Unsurprisingly, amongst these genes we see a variety whose proteins are known to be targeted by various pathogen effectors, and are therefore directly implicated in immune response (Table 3.1). 
@@ -1018,7 +1023,7 @@ plot(D[,bestpredictor],D$Class,xlab=genenames[bestpredictor],ylab="Class")
 lines(seq(min(D[,bestpredictor]),max(D[,bestpredictor]),length=200),predict(best_mod_fit,newdata=data.frame(x = seq(min(D[,bestpredictor]),max(D[,bestpredictor]),length=200)),type="prob")[,2])
 ```
 
-<img src="03-logistic-regression_files/figure-html/unnamed-chunk-34-1.png" width="672" />
+<img src="03-logistic-regression_files/figure-html/unnamed-chunk-35-1.png" width="672" />
 
 
 ### GP classification {#gp-classification}
@@ -1228,7 +1233,7 @@ We can compare the performence against the logistic regression:
 plot(t(aucscore),t(aucscore2),xlab="Logistic",ylab="GP")
 ```
 
-<img src="03-logistic-regression_files/figure-html/unnamed-chunk-37-1.png" width="672" />
+<img src="03-logistic-regression_files/figure-html/unnamed-chunk-38-1.png" width="672" />
 
 Note that the results are, similar. Dissapointingly so. We have gone to the effort to utilise a far more powerful method and the empircal results are no better, and in some cases are actually worse. 
 
@@ -1237,15 +1242,14 @@ GP and other nonlinear approaches become necesary if, for example, the data is n
 
 ```r
 xtrain = D[,bestpredictor] 
-ytrain = as.factor(D$Class)
 
 ytrain = as.numeric(D$Class)
-ytrain[which(x>12.5)]=0
-ytrain[which(x<10)]=0
+ytrain[which(xtrain>12.5)]=0
+ytrain[which(xtrain<10)]=0
 ytrain = as.factor(ytrain)
 
 xpred = Dpred[,bestpredictor] 
-ypred = as.factor(Dpred$Class)
+ypred = as.numeric(Dpred$Class)
 ypred[which(xpred>12.5)]=0
 ypred[which(xpred<10)]=0
 ypred = as.factor(ypred)
@@ -1262,14 +1266,14 @@ plot(xtrain,as.numeric(ytrain)-1,xlab="Marker gene",ylab="Class")
 lines(seq(min(xtrain),max(xtrain),length=200),predict(mod_fit3,newdata=data.frame(x = seq(min(xtrain),max(xtrain),length=200),y= matrix(200,1,1)),type="prob")[,2])
 ```
 
-<img src="03-logistic-regression_files/figure-html/unnamed-chunk-39-1.png" width="672" />
+<img src="03-logistic-regression_files/figure-html/unnamed-chunk-40-1.png" width="672" />
 
 ```r
 mod_fit3$results$Accuracy
 ```
 
 ```
-## [1] 0.8556247
+## [1] 0.8660466
 ```
 
 We can see from the plot that the model fit is very poor. However, if we look at the accuracy (printed at the bottom) the result appear to be good. This is due to the skewed number of samples from each class: there are far more non infected samples than there are infected, which means that if the model predicts uninfected for every instance, it will be correct more than it's incorrect. We can similary check the result on our test dataset:
@@ -1285,7 +1289,7 @@ auc
 ```
 
 ```
-## [1] 0.7033802
+## [1] 0.7104377
 ```
 
 We can now instead attempt to take advantage the extra flexibility of GPs.
@@ -1305,7 +1309,7 @@ lines(seq(min(xtrain),max(xtrain),length=200),predict(mod_fit3,newdata=data.fram
 lines(seq(min(xtrain),max(xtrain),length=200),predict(mod_fit2,seq(min(xtrain),max(xtrain),length=200), type="prob")[,2],col="red")
 ```
 
-<img src="03-logistic-regression_files/figure-html/unnamed-chunk-41-1.png" width="672" />
+<img src="03-logistic-regression_files/figure-html/unnamed-chunk-42-1.png" width="672" />
 
 
 ```r
@@ -1319,7 +1323,7 @@ auc
 ```
 
 ```
-## [1] 0.7841425
+## [1] 0.8193042
 ```
 
 We can see that this is a much better model, both in terms of the model fit which has attempted to find a nonlinear classifier, and in terms of the AUC score.

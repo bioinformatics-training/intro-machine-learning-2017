@@ -59,7 +59,7 @@ There are two aspects of ML
 
 **Supervised learning**: When we give both input and outcome variables and we ask the algorithm to formulate an hypothesis that closely captures the relationship. 
 
-## What actually happend under the hood
+## What actually happened under the hood
 The algorithms take a subset of observations called as the training data and tests them on a different subset of data called as the test data. 
 
 The error between the prediction of the outcome variable the actual data is evaulated as test error. The objective function of the algorithm is to minimise these test errors by tuning the parameters of the hypothesis. 

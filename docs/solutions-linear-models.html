@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-10-18">
+<meta name="date" content="2017-10-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -115,7 +115,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>2</b> Introduction</a><ul>
 <li class="chapter" data-level="2.1" data-path="intro.html"><a href="intro.html#what-is-machine-learning"><i class="fa fa-check"></i><b>2.1</b> What is machine learning?</a></li>
 <li class="chapter" data-level="2.2" data-path="intro.html"><a href="intro.html#aspects-of-ml"><i class="fa fa-check"></i><b>2.2</b> Aspects of ML</a></li>
-<li class="chapter" data-level="2.3" data-path="intro.html"><a href="intro.html#what-actually-happend-under-the-hood"><i class="fa fa-check"></i><b>2.3</b> What actually happend under the hood</a></li>
+<li class="chapter" data-level="2.3" data-path="intro.html"><a href="intro.html#what-actually-happened-under-the-hood"><i class="fa fa-check"></i><b>2.3</b> What actually happened under the hood</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="linear-models.html"><a href="linear-models.html"><i class="fa fa-check"></i><b>3</b> Linear models and matrix algebra</a><ul>
 <li class="chapter" data-level="3.1" data-path="linear-models.html"><a href="linear-models.html#linear-models"><i class="fa fa-check"></i><b>3.1</b> Linear models</a></li>
@@ -314,10 +314,10 @@ y &lt;-<span class="st">  </span>f <span class="op">+</span><span class="st"> </
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tt2 &lt;-tt<span class="op">^</span><span class="dv">2</span>
 fit &lt;-<span class="st"> </span><span class="kw">lm</span>(y<span class="op">~</span>tt<span class="op">+</span>tt2)
 <span class="kw">summary</span>(fit)<span class="op">$</span>coef</code></pre></div>
-<pre><code>##               Estimate Std. Error     t value     Pr(&gt;|t|)
-## (Intercept) 57.3124533  0.4713998 121.5792985 1.314389e-32
-## tt          -0.5322807  0.6421459  -0.8289094 4.160588e-01
-## tt2         -4.8431279  0.1824243 -26.5486984 3.332516e-18</code></pre>
+<pre><code>##                Estimate Std. Error      t value     Pr(&gt;|t|)
+## (Intercept) 56.84552793  0.6055901  93.86799014 3.851613e-30
+## tt          -0.07314346  0.8249414  -0.08866503 9.301503e-01
+## tt2         -4.84430988  0.2343539 -20.67091915 6.678183e-16</code></pre>
 </div>
 <div id="example-2-1" class="section level2">
 <h2><span class="header-section-number">B.2</span> Example 2</h2>

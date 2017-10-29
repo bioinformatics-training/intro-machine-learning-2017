@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-10-18">
+<meta name="date" content="2017-10-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -115,7 +115,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>2</b> Introduction</a><ul>
 <li class="chapter" data-level="2.1" data-path="intro.html"><a href="intro.html#what-is-machine-learning"><i class="fa fa-check"></i><b>2.1</b> What is machine learning?</a></li>
 <li class="chapter" data-level="2.2" data-path="intro.html"><a href="intro.html#aspects-of-ml"><i class="fa fa-check"></i><b>2.2</b> Aspects of ML</a></li>
-<li class="chapter" data-level="2.3" data-path="intro.html"><a href="intro.html#what-actually-happend-under-the-hood"><i class="fa fa-check"></i><b>2.3</b> What actually happend under the hood</a></li>
+<li class="chapter" data-level="2.3" data-path="intro.html"><a href="intro.html#what-actually-happened-under-the-hood"><i class="fa fa-check"></i><b>2.3</b> What actually happened under the hood</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="linear-models.html"><a href="linear-models.html"><i class="fa fa-check"></i><b>3</b> Linear models and matrix algebra</a><ul>
 <li class="chapter" data-level="3.1" data-path="linear-models.html"><a href="linear-models.html#linear-models"><i class="fa fa-check"></i><b>3.1</b> Linear models</a></li>
@@ -652,12 +652,12 @@ Figure 4.1: Differential expression analysis for time series. Here we have two t
 ###install_github(&quot;ManchesterBioinference/DEtime&quot;)
 ###import(DEtime)
 <span class="kw">library</span>(DEtime)</code></pre></div>
-<p>Within {DEtime}, we can call the function {DEtime_rank} to calculate marginal likelihood ratios for two time series, similar to our application in the previous section. Note that here the hyperparameters are optimised by gradient search rather than grid searches.</p>
+<p>Within {DEtime}, we can call the function {DEtime_rank} to calculate marginal likelihood ratios for two time series, similar to our application in the previous section. Note that here, the hyperparameters are optimised by gradient search rather than grid searches.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res_rank &lt;-<span class="st"> </span><span class="kw">DEtime_rank</span>(<span class="dt">ControlTimes =</span> Xs, <span class="dt">ControlData =</span> D[<span class="dv">1</span><span class="op">:</span><span class="dv">24</span>,<span class="dv">3</span>], <span class="dt">PerturbedTimes =</span> Xs, <span class="dt">PerturbedData =</span> D[<span class="dv">25</span><span class="op">:</span><span class="dv">48</span>,<span class="dv">3</span>], <span class="dt">savefile=</span><span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## [1] &quot;gene IDs are not provided. Numbers are used instead&quot;
 ## rank list saved in DEtime_rank.txt</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#idx &lt;- which(res_rank[,2]&gt;1)</span></code></pre></div>
-<p>For genes that are DE, we identify the timing of divergence between two time series using the function {DEtime_infer}.</p>
+<p>For genes that are DE, we identify the timing of divergence between two time series using the function {DEtime_infer} and visualise the plot using the {plot_DEtime} function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">DEtime_infer</span>(<span class="dt">ControlTimes =</span> Xs, <span class="dt">ControlData =</span> D[<span class="dv">1</span><span class="op">:</span><span class="dv">24</span>,<span class="dv">3</span>], <span class="dt">PerturbedTimes =</span> Xs, <span class="dt">PerturbedData =</span> D[<span class="dv">25</span><span class="op">:</span><span class="dv">48</span>,<span class="dv">3</span>])</code></pre></div>
 <pre><code>## gene IDs are not provided. Numbers are used instead.
 ## Testing perturbation time points are not provided. Default one is used.
@@ -676,7 +676,7 @@ Figure 4.1: Differential expression analysis for time series. Here we have two t
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_DEtime</span>(res)</code></pre></div>
 <pre><code>## All genes will be plotted 
 ## 1 is plotted</code></pre>
-<p>We can do it for all genes using the example below. By doing so, we can plot a histogram of the times of divergence, shedding light on the temporal progression of the infection process.</p>
+<p>We can do it for all genes using the example below:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">DEtime_infer</span>(<span class="dt">ControlTimes =</span> Xs, <span class="dt">ControlData =</span> <span class="kw">t</span>(D[<span class="dv">1</span><span class="op">:</span><span class="dv">24</span>,]), <span class="dt">PerturbedTimes =</span> Xs, <span class="dt">PerturbedData =</span> <span class="kw">t</span>(D[<span class="dv">25</span><span class="op">:</span><span class="dv">48</span>,]))</code></pre></div>
 <pre><code>## ControlData is accepted
 ## PerturbedData is accepted
@@ -848,8 +848,9 @@ Figure 4.1: Differential expression analysis for time series. Here we have two t
 ## gene 164 is done
 ## DEtime inference is done.
 ## Please use print_DEtime or plot_DEtime to view the results.</code></pre>
+<p>By systematically evaluating the time of divergence for all genes (and visualising the results as a histogram), we can we can begin to shed light on the temporal progression of the infection process.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hist</span>(<span class="kw">as.numeric</span>(res<span class="op">$</span>result[,<span class="dv">2</span>]),<span class="dt">breaks=</span><span class="dv">20</span>)</code></pre></div>
-<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 </div>
 <div id="scalability" class="section level4">
 <h4><span class="header-section-number">4.1.4.6</span> Scalability</h4>
@@ -896,11 +897,11 @@ pred &lt;-<span class="st"> </span><span class="kw">prediction</span>(prob<span 
 <p>To evaluate how well the algorithm has done, we can calculate a variety of summary statistics. For example the number of true positives, true negatives, false positive and false negatives. A useful summary is to plot the ROC curve (false positive rate versus true positive rate) and calculate the area under that curve. For a perfect algorithm, the area under this curve (AUC) will be equal to <span class="math inline">\(1\)</span>, whereas random assignment would give an area of <span class="math inline">\(0.5\)</span>. In the example below, we will calculate the AUC for a logistic regression model:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">perf &lt;-<span class="st"> </span><span class="kw">performance</span>(pred, <span class="dt">measure =</span> <span class="st">&quot;tpr&quot;</span>, <span class="dt">x.measure =</span> <span class="st">&quot;fpr&quot;</span>)
 <span class="kw">plot</span>(perf)</code></pre></div>
-<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">auc &lt;-<span class="st"> </span><span class="kw">performance</span>(pred, <span class="dt">measure =</span> <span class="st">&quot;auc&quot;</span>)
 auc &lt;-<span class="st"> </span>auc<span class="op">@</span>y.values[[<span class="dv">1</span>]]
 auc</code></pre></div>
-<pre><code>## [1] 0.5</code></pre>
+<pre><code>## [1] 0.6111111</code></pre>
 <p>Okay, so a score of <span class="math inline">\(0.61\)</span> is certainly better than random, but not particularly good. This is perhaps not surprising, as half the time series (the control) is uninfected over the entirety of the time series, whilst in the second times series (infection) Botrytis is able to infect from around time point 8 onwards. The slight better than random performence seems to arise by the slight bias in the number of instances of each class.</p>
 <p>In the example, below, we instead try to regress infection status against gene expression levels. The idea, then, is to identify genes that have expression values indicative of <em>Botrytis</em> infection.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aucscore &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">164</span>), <span class="dv">1</span>, <span class="dv">164</span>)
@@ -914,13 +915,15 @@ aucscore[i] &lt;-<span class="st"> </span>auc<span class="op">@</span>y.values[[
 }
 
 <span class="kw">plot</span>(aucscore[<span class="dv">1</span>,<span class="dv">3</span><span class="op">:</span><span class="kw">ncol</span>(aucscore)],<span class="dt">ylab=</span><span class="st">&quot;AUC&quot;</span>,<span class="dt">xlab=</span><span class="st">&quot;gene index&quot;</span>)</code></pre></div>
-<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 <p>We note that, several genes in the list apear to have AUC scores much greater than 0.6. We can take a look at some of the genes with high predictive power:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">genenames[<span class="kw">which</span>(aucscore<span class="op">&gt;</span><span class="fl">0.8</span>)]</code></pre></div>
-<pre><code>##  [1] &quot;AT1G29990&quot; &quot;AT1G67170&quot; &quot;AT2G21380&quot; &quot;AT3G13720&quot; &quot;AT3G25710&quot;
-##  [6] &quot;AT3G44720&quot; &quot;AT4G02150&quot; &quot;AT4G16380&quot; &quot;AT4G19700&quot; &quot;AT4G26450&quot;
-## [11] &quot;AT4G28640&quot; &quot;AT4G34710&quot; &quot;AT4G39050&quot; &quot;AT5G11980&quot; &quot;AT5G22630&quot;
-## [16] &quot;AT5G50010&quot;</code></pre>
+<pre><code>##  [1] &quot;AT1G29990&quot; &quot;AT1G67170&quot; &quot;AT2G21380&quot; &quot;AT2G28890&quot; &quot;AT2G35500&quot;
+##  [6] &quot;AT2G45660&quot; &quot;AT3G09980&quot; &quot;AT3G11590&quot; &quot;AT3G13720&quot; &quot;AT3G25710&quot;
+## [11] &quot;AT3G44720&quot; &quot;AT3G48150&quot; &quot;AT4G00710&quot; &quot;AT4G02150&quot; &quot;AT4G16380&quot;
+## [16] &quot;AT4G19700&quot; &quot;AT4G26450&quot; &quot;AT4G28640&quot; &quot;AT4G34710&quot; &quot;AT4G36970&quot;
+## [21] &quot;AT4G39050&quot; &quot;AT5G11980&quot; &quot;AT5G22630&quot; &quot;AT5G24660&quot; &quot;AT5G43700&quot;
+## [26] &quot;AT5G50010&quot; &quot;AT5G56250&quot;</code></pre>
 <p>Unsurprisingly, amongst these genes we see a variety whose proteins are known to be targeted by various pathogen effectors, and are therefore directly implicated in immune response (Table 3.1).</p>
 <table>
 <thead>
@@ -1012,7 +1015,7 @@ best_mod_fit &lt;-<span class="st"> </span><span class="kw">train</span>(y <span
 
 <span class="kw">plot</span>(D[,bestpredictor],D<span class="op">$</span>Class,<span class="dt">xlab=</span>genenames[bestpredictor],<span class="dt">ylab=</span><span class="st">&quot;Class&quot;</span>)
 <span class="kw">lines</span>(<span class="kw">seq</span>(<span class="kw">min</span>(D[,bestpredictor]),<span class="kw">max</span>(D[,bestpredictor]),<span class="dt">length=</span><span class="dv">200</span>),<span class="kw">predict</span>(best_mod_fit,<span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="kw">min</span>(D[,bestpredictor]),<span class="kw">max</span>(D[,bestpredictor]),<span class="dt">length=</span><span class="dv">200</span>)),<span class="dt">type=</span><span class="st">&quot;prob&quot;</span>)[,<span class="dv">2</span>])</code></pre></div>
-<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
 </div>
 <div id="gp-classification" class="section level3">
 <h3><span class="header-section-number">4.2.2</span> GP classification</h3>
@@ -1197,19 +1200,18 @@ aucscore2[i] &lt;-<span class="st"> </span>auc<span class="op">@</span>y.values[
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel</code></pre>
 <p>We can compare the performence against the logistic regression:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">t</span>(aucscore),<span class="kw">t</span>(aucscore2),<span class="dt">xlab=</span><span class="st">&quot;Logistic&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;GP&quot;</span>)</code></pre></div>
-<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
 <p>Note that the results are, similar. Dissapointingly so. We have gone to the effort to utilise a far more powerful method and the empircal results are no better, and in some cases are actually worse.</p>
 <p>GP and other nonlinear approaches become necesary if, for example, the data is nonlinear. To illustrate this we will construct an artifical dataset in which low expression levels of a gene indicate no infection, with moderate levels indicating infection; very high levels of the gene, however, do not indicate infected status, but only arise artifically, due to e.g., inducible overexpression. For this dataset very high levels are thus labelled as uninfected. Below we construct this <em>in silico</em> dataset based loosley on the expression levels of AT3G44720.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">xtrain =<span class="st"> </span>D[,bestpredictor] 
-ytrain =<span class="st"> </span><span class="kw">as.factor</span>(D<span class="op">$</span>Class)
 
 ytrain =<span class="st"> </span><span class="kw">as.numeric</span>(D<span class="op">$</span>Class)
-ytrain[<span class="kw">which</span>(x<span class="op">&gt;</span><span class="fl">12.5</span>)]=<span class="dv">0</span>
-ytrain[<span class="kw">which</span>(x<span class="op">&lt;</span><span class="dv">10</span>)]=<span class="dv">0</span>
+ytrain[<span class="kw">which</span>(xtrain<span class="op">&gt;</span><span class="fl">12.5</span>)]=<span class="dv">0</span>
+ytrain[<span class="kw">which</span>(xtrain<span class="op">&lt;</span><span class="dv">10</span>)]=<span class="dv">0</span>
 ytrain =<span class="st"> </span><span class="kw">as.factor</span>(ytrain)
 
 xpred =<span class="st"> </span>Dpred[,bestpredictor] 
-ypred =<span class="st"> </span><span class="kw">as.factor</span>(Dpred<span class="op">$</span>Class)
+ypred =<span class="st"> </span><span class="kw">as.numeric</span>(Dpred<span class="op">$</span>Class)
 ypred[<span class="kw">which</span>(xpred<span class="op">&gt;</span><span class="fl">12.5</span>)]=<span class="dv">0</span>
 ypred[<span class="kw">which</span>(xpred<span class="op">&lt;</span><span class="dv">10</span>)]=<span class="dv">0</span>
 ypred =<span class="st"> </span><span class="kw">as.factor</span>(ypred)</code></pre></div>
@@ -1219,9 +1221,9 @@ ypred =<span class="st"> </span><span class="kw">as.factor</span>(ypred)</code><
 <span class="kw">plot</span>(xtrain,<span class="kw">as.numeric</span>(ytrain)<span class="op">-</span><span class="dv">1</span>,<span class="dt">xlab=</span><span class="st">&quot;Marker gene&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;Class&quot;</span>)
 
 <span class="kw">lines</span>(<span class="kw">seq</span>(<span class="kw">min</span>(xtrain),<span class="kw">max</span>(xtrain),<span class="dt">length=</span><span class="dv">200</span>),<span class="kw">predict</span>(mod_fit3,<span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="kw">min</span>(xtrain),<span class="kw">max</span>(xtrain),<span class="dt">length=</span><span class="dv">200</span>),<span class="dt">y=</span> <span class="kw">matrix</span>(<span class="dv">200</span>,<span class="dv">1</span>,<span class="dv">1</span>)),<span class="dt">type=</span><span class="st">&quot;prob&quot;</span>)[,<span class="dv">2</span>])</code></pre></div>
-<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
+<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_fit3<span class="op">$</span>results<span class="op">$</span>Accuracy</code></pre></div>
-<pre><code>## [1] 0.8556247</code></pre>
+<pre><code>## [1] 0.8660466</code></pre>
 <p>We can see from the plot that the model fit is very poor. However, if we look at the accuracy (printed at the bottom) the result appear to be good. This is due to the skewed number of samples from each class: there are far more non infected samples than there are infected, which means that if the model predicts uninfected for every instance, it will be correct more than it’s incorrect. We can similary check the result on our test dataset:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">prob&lt;-<span class="kw">predict</span>(mod_fit3, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">x =</span>xpred, <span class="dt">y =</span> <span class="kw">as.factor</span>(ypred)), <span class="dt">type=</span><span class="st">&quot;prob&quot;</span>)
 pred &lt;-<span class="st"> </span><span class="kw">prediction</span>(prob[,<span class="dv">2</span>], ypred)
@@ -1229,14 +1231,14 @@ perf &lt;-<span class="st"> </span><span class="kw">performance</span>(pred, <sp
 auc &lt;-<span class="st"> </span><span class="kw">performance</span>(pred, <span class="dt">measure =</span> <span class="st">&quot;auc&quot;</span>)
 auc &lt;-<span class="st"> </span>auc<span class="op">@</span>y.values[[<span class="dv">1</span>]]
 auc</code></pre></div>
-<pre><code>## [1] 0.7033802</code></pre>
+<pre><code>## [1] 0.7104377</code></pre>
 <p>We can now instead attempt to take advantage the extra flexibility of GPs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_fit2 &lt;-<span class="st"> </span><span class="kw">gausspr</span>(y<span class="op">~</span>x,<span class="dt">x=</span>xtrain, <span class="dt">y=</span>ytrain, <span class="dt">scaled =</span> <span class="ot">TRUE</span>, <span class="dt">type=</span> <span class="ot">NULL</span>, <span class="dt">kernel=</span><span class="st">&quot;rbfdot&quot;</span>, <span class="dt">kpar=</span><span class="st">&quot;automatic&quot;</span>, <span class="dt">variance.model =</span> <span class="ot">FALSE</span>, <span class="dt">tol=</span><span class="fl">0.0005</span>, <span class="dt">cross=</span><span class="dv">0</span>, <span class="dt">fit=</span><span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## Using automatic sigma estimation (sigest) for RBF or laplace kernel</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(xtrain,<span class="kw">as.numeric</span>(ytrain)<span class="op">-</span><span class="dv">1</span>,<span class="dt">xlab=</span><span class="st">&quot;Marker gene&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;Class&quot;</span>)
 <span class="kw">lines</span>(<span class="kw">seq</span>(<span class="kw">min</span>(xtrain),<span class="kw">max</span>(xtrain),<span class="dt">length=</span><span class="dv">200</span>),<span class="kw">predict</span>(mod_fit3,<span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="kw">min</span>(xtrain),<span class="kw">max</span>(xtrain),<span class="dt">length=</span><span class="dv">200</span>),<span class="dt">y=</span> <span class="kw">matrix</span>(<span class="dv">200</span>,<span class="dv">1</span>,<span class="dv">1</span>)),<span class="dt">type=</span><span class="st">&quot;prob&quot;</span>)[,<span class="dv">2</span>])
 <span class="kw">lines</span>(<span class="kw">seq</span>(<span class="kw">min</span>(xtrain),<span class="kw">max</span>(xtrain),<span class="dt">length=</span><span class="dv">200</span>),<span class="kw">predict</span>(mod_fit2,<span class="kw">seq</span>(<span class="kw">min</span>(xtrain),<span class="kw">max</span>(xtrain),<span class="dt">length=</span><span class="dv">200</span>), <span class="dt">type=</span><span class="st">&quot;prob&quot;</span>)[,<span class="dv">2</span>],<span class="dt">col=</span><span class="st">&quot;red&quot;</span>)</code></pre></div>
-<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
+<p><img src="03-logistic-regression_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">prob2&lt;-kernlab<span class="op">::</span><span class="kw">predict</span>(mod_fit2, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">x =</span>xpred), <span class="dt">type=</span><span class="st">&quot;probabilities&quot;</span>)
 prob&lt;-<span class="kw">predict</span>(mod_fit2, xpred, <span class="dt">type=</span><span class="st">&quot;probabilities&quot;</span>)
 pred &lt;-<span class="st"> </span><span class="kw">prediction</span>(prob2[,<span class="dv">2</span>], ypred)
@@ -1244,7 +1246,7 @@ perf &lt;-<span class="st"> </span><span class="kw">performance</span>(pred, <sp
 auc &lt;-<span class="st"> </span><span class="kw">performance</span>(pred, <span class="dt">measure =</span> <span class="st">&quot;auc&quot;</span>)
 auc &lt;-<span class="st"> </span>auc<span class="op">@</span>y.values[[<span class="dv">1</span>]]
 auc</code></pre></div>
-<pre><code>## [1] 0.7841425</code></pre>
+<pre><code>## [1] 0.8193042</code></pre>
 <p>We can see that this is a much better model, both in terms of the model fit which has attempted to find a nonlinear classifier, and in terms of the AUC score.</p>
 </div>
 <div id="other-classification-approaches." class="section level3">

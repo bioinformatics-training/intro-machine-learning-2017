@@ -25,7 +25,7 @@
 <meta name="author" content="Sudhakaran Prabakaran, Matt Wayland and Chris Penfold">
 
 
-<meta name="date" content="2017-10-18">
+<meta name="date" content="2017-10-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -115,7 +115,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>2</b> Introduction</a><ul>
 <li class="chapter" data-level="2.1" data-path="intro.html"><a href="intro.html#what-is-machine-learning"><i class="fa fa-check"></i><b>2.1</b> What is machine learning?</a></li>
 <li class="chapter" data-level="2.2" data-path="intro.html"><a href="intro.html#aspects-of-ml"><i class="fa fa-check"></i><b>2.2</b> Aspects of ML</a></li>
-<li class="chapter" data-level="2.3" data-path="intro.html"><a href="intro.html#what-actually-happend-under-the-hood"><i class="fa fa-check"></i><b>2.3</b> What actually happend under the hood</a></li>
+<li class="chapter" data-level="2.3" data-path="intro.html"><a href="intro.html#what-actually-happened-under-the-hood"><i class="fa fa-check"></i><b>2.3</b> What actually happened under the hood</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="linear-models.html"><a href="linear-models.html"><i class="fa fa-check"></i><b>3</b> Linear models and matrix algebra</a><ul>
 <li class="chapter" data-level="3.1" data-path="linear-models.html"><a href="linear-models.html#linear-models"><i class="fa fa-check"></i><b>3.1</b> Linear models</a></li>
@@ -855,11 +855,6 @@ Figure 10.18: K-means clustering of the noisy moons data set: scatterplot of clu
 <h4><span class="header-section-number">10.4.4.3</span> Different density</h4>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">diff_density &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">read.csv</span>(<span class="st">&quot;data/example_clusters/different_density.csv&quot;</span>, <span class="dt">header=</span>F))
 res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, <span class="cf">function</span>(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], i, <span class="dt">nstart=</span><span class="dv">50</span>)})</code></pre></div>
-<pre><code>## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations</code></pre>
 <p>Failure to converge, so increase number of iterations.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">lapply</span>(k, <span class="cf">function</span>(i){<span class="kw">kmeans</span>(diff_density[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], i, <span class="dt">iter.max=</span><span class="dv">20</span>, <span class="dt">nstart=</span><span class="dv">50</span>)})
 <span class="kw">plot_tot_withinss</span>(res)</code></pre></div>

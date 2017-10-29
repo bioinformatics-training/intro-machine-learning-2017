@@ -544,7 +544,7 @@ ggplot(xgrid, aes(V1,V2)) +
 
 
 ## Example - regression
-This example serves to demonstrate the use of SVMs in regression, but perhaps more importantly, it highlights the power and flexibility of the [caret](http://cran.r-project.org/web/packages/caret/index.html) package. Earlier we used _k_-NN for a regression analysis of the **BloodBrain** dataset (see section \@ref(knn-regression)). We will repeat the regression analysis, but this time we will fit a linear kernel SVM. Remarkably, a re-run of this analysis using a completely different type of model, requires changes to only two lines of code.
+This example serves to demonstrate the use of SVMs in regression, but perhaps more importantly, it highlights the power and flexibility of the [caret](http://cran.r-project.org/web/packages/caret/index.html) package. Earlier we used _k_-NN for a regression analysis of the **BloodBrain** dataset (see section \@ref(knn-regression)). We will repeat the regression analysis, but this time we will fit a radial kernel SVM. Remarkably, a re-run of this analysis using a completely different type of model, requires changes to only two lines of code.
 
 The pre-processing steps and generation of seeds are identical, therefore if the data were still in memory, we could skip this next block of code:
 
@@ -569,7 +569,7 @@ for(i in 1:25) seeds[[i]] <- sample.int(1000, 50)
 seeds[[26]] <- sample.int(1000,1)
 ```
 
-In the arguments to the ```train``` function we change ```method``` from ```knn``` to ```svmRadial```. The ```tunegrid``` parameter is replaced with ```tuneLength = 9```. Now we are ready to fit an SVM model.
+In the arguments to the ```train``` function we change ```method``` from ```knn``` to ```svmRadialE1071```. The ```tunegrid``` parameter is replaced with ```tuneLength = 9```. Now we are ready to fit an SVM model.
 
 ```r
 svmTune2 <- train(descrTrain,

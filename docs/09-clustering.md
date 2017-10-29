@@ -647,14 +647,6 @@ plot_clusters(noisy_moons, res, 2)
 diff_density <- as.data.frame(read.csv("data/example_clusters/different_density.csv", header=F))
 res <- lapply(k, function(i){kmeans(diff_density[,1:2], i, nstart=50)})
 ```
-
-```
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-
-## Warning: did not converge in 10 iterations
-```
 Failure to converge, so increase number of iterations.
 
 ```r
